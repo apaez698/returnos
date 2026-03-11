@@ -19,7 +19,7 @@ describe("Dashboard integration", () => {
     const navItems = [
       { label: "Dashboard", href: "/dashboard" },
       { label: "Customers", href: "/customers" },
-      { label: "Visits", href: "/visits" },
+      { label: "Visits", href: "/dashboard/visits" },
       { label: "Rewards", href: "/rewards" },
       { label: "Campaigns", href: "/campaigns" },
     ];
