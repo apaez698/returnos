@@ -1,10 +1,5 @@
-import { RoutePlaceholder } from "@/components/placeholders/route-placeholder";
+import { redirect } from "next/navigation";
 
 export default function CustomersPage() {
-  return (
-    <RoutePlaceholder
-      title="Customers"
-      description="Customer list and profile activity."
-    />
-  );
+  redirect("/dashboard/customers");
 }
