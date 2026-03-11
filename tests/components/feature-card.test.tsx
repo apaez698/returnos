@@ -17,7 +17,9 @@ describe("FeatureCard", () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Recupera clientes inactivos con ofertas personalizadas."),
+      screen.getByText(
+        "Recupera clientes inactivos con ofertas personalizadas.",
+      ),
     ).toBeInTheDocument();
   });
 });

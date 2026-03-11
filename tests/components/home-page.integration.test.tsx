@@ -21,7 +21,9 @@ describe("HomePage integration", () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Analitica de negocio en tiempo real" }),
+      screen.getByRole("heading", {
+        name: "Analitica de negocio en tiempo real",
+      }),
     ).toBeInTheDocument();
 
     expect(
