@@ -44,12 +44,25 @@ export interface RewardProgress {
   remaining_points: number;
 }
 
+export interface CustomerRewardStateResult {
+  status: RewardProgressStatus;
+  redeemableReward: RewardRule | null;
+  nextReward: RewardRule | null;
+  progressPercentageToNext: number;
+  remainingPointsToNext: number;
+}
+
 export interface CustomerRewardProgress {
   customer_id: string;
   customer_name: string;
   current_points: number;
-  nearest_reward: RewardRule | null;
-  progress_percentage: number;
-  remaining_points: number;
+  redeemable_reward: RewardRule | null;
+  next_reward: RewardRule | null;
+  progress_percentage_to_next: number;
+  remaining_points_to_next: number;
+  // Legacy fields kept optional while callers migrate to canonical names.
+  nearest_reward?: RewardRule | null;
+  progress_percentage?: number;
+  remaining_points?: number;
   status: RewardProgressStatus;
 }

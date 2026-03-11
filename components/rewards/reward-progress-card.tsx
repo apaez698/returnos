@@ -21,16 +21,17 @@ export function RewardProgressCard({
   );
   const statusLabel =
     progress.status === "redeemable"
-      ? "Premio disponible"
+      ? "Reward available"
       : progress.status === "in_progress"
-        ? "En progreso"
-        : "Sin recompensa";
+        ? "In progress"
+        : "No reward";
   const badgeClassName =
     progress.status === "redeemable"
       ? "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-800"
       : progress.status === "in_progress"
         ? "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-indigo-100 text-indigo-800"
         : "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-slate-100 text-slate-700";
+  const hasNextGoal = progress.nextReward !== null;
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 hover:shadow-sm transition">
@@ -46,38 +47,86 @@ export function RewardProgressCard({
         <span className={badgeClassName}>{statusLabel}</span>
       </div>
 
-      {progress.reward ? (
-        <div className="mt-4">
-          <p className="text-sm font-medium text-slate-700">
-            {progress.reward.name}
+      {progress.status === "in_progress" && progress.nextReward && (
+        <section className="mt-4 rounded-md border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+            Current progress
           </p>
-          <p className="text-xs text-slate-500 mt-1">
-            {progress.reward.reward_description}
+          <p className="mt-1 text-sm font-medium text-slate-900">
+            {progress.nextReward.name}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            {progress.nextReward.reward_description}
           </p>
 
-          {progress.status === "in_progress" && (
-            <>
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+              <div
+                className="h-full bg-indigo-600 transition-all"
+                style={{ width: `${progress.progressPercentageToNext}%` }}
+              />
+            </div>
+            <span className="whitespace-nowrap text-xs font-semibold text-slate-700">
+              {progress.progressPercentageToNext}%
+            </span>
+          </div>
+          <p className="mt-2 text-xs text-slate-500">
+            {progress.remainingPointsToNext} points to next reward
+          </p>
+        </section>
+      )}
+
+      {progress.status === "redeemable" && progress.redeemableReward && (
+        <div className="mt-4 space-y-3">
+          <section className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              Reward available
+            </p>
+            <p className="mt-1 text-sm font-medium text-emerald-900">
+              {progress.redeemableReward.name}
+            </p>
+            <p className="mt-1 text-xs text-emerald-800/90">
+              {progress.redeemableReward.reward_description}
+            </p>
+          </section>
+
+          {hasNextGoal && progress.nextReward ? (
+            <section className="rounded-md border border-slate-200 bg-slate-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+                Next goal
+              </p>
+              <p className="mt-1 text-sm font-medium text-slate-900">
+                {progress.nextReward.name}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                {progress.nextReward.reward_description}
+              </p>
+
               <div className="mt-3 flex items-center justify-between gap-2">
-                <div className="flex-1 bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
                   <div
-                    className="bg-indigo-600 h-full transition-all"
-                    style={{ width: `${progress.progress_percentage}%` }}
+                    className="h-full bg-indigo-600 transition-all"
+                    style={{ width: `${progress.progressPercentageToNext}%` }}
                   />
                 </div>
-                <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">
-                  {progress.progress_percentage}%
+                <span className="whitespace-nowrap text-xs font-semibold text-slate-700">
+                  {progress.progressPercentageToNext}%
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
-                {progress.remaining_points} puntos faltantes
+              <p className="mt-2 text-xs text-slate-500">
+                {progress.remainingPointsToNext} points to next reward
               </p>
-            </>
+            </section>
+          ) : (
+            <p className="text-xs text-slate-500">Highest reward reached.</p>
           )}
         </div>
-      ) : (
-        <div className="mt-4 text-sm text-slate-500">
-          Sin recompensa por ahora.
-        </div>
+      )}
+
+      {progress.status === "no_reward" && (
+        <p className="mt-4 text-sm text-slate-500">
+          No rewards available yet for this customer.
+        </p>
       )}
     </div>
   );

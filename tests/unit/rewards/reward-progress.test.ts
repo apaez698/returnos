@@ -25,9 +25,10 @@ describe("calculateRewardProgress", () => {
     const result = calculateRewardProgress(40, [buildRule("r1", 50, false)]);
 
     expect(result).toEqual({
-      reward: null,
-      progress_percentage: 0,
-      remaining_points: 0,
+      redeemableReward: null,
+      nextReward: null,
+      progressPercentageToNext: 0,
+      remainingPointsToNext: 0,
       status: "no_reward",
     });
   });
@@ -37,32 +38,47 @@ describe("calculateRewardProgress", () => {
 
     const result = calculateRewardProgress(40, rules);
 
-    expect(result.reward?.id).toBe("r1");
+    expect(result.nextReward?.id).toBe("r1");
+    expect(result.redeemableReward).toBeNull();
     expect(result.status).toBe("in_progress");
-    expect(result.remaining_points).toBe(60);
-    expect(result.progress_percentage).toBe(40);
+    expect(result.remainingPointsToNext).toBe(60);
+    expect(result.progressPercentageToNext).toBe(40);
   });
 
-  it("returns redeemable when points are exactly equal to a rule threshold", () => {
+  it("returns redeemable and keeps next reward null when at highest rule", () => {
     const rules = [buildRule("r1", 100)];
 
     const result = calculateRewardProgress(100, rules);
 
-    expect(result.reward?.id).toBe("r1");
+    expect(result.redeemableReward?.id).toBe("r1");
+    expect(result.nextReward).toBeNull();
     expect(result.status).toBe("redeemable");
-    expect(result.remaining_points).toBe(0);
-    expect(result.progress_percentage).toBe(100);
+    expect(result.remainingPointsToNext).toBe(0);
+    expect(result.progressPercentageToNext).toBe(100);
   });
 
-  it("returns redeemable when points are above a rule threshold", () => {
-    const rules = [buildRule("r1", 100)];
+  it("indicates max reward reached when redeemable exists but no next reward", () => {
+    const rules = [buildRule("r1", 100), buildRule("r2", 200)];
+
+    const result = calculateRewardProgress(260, rules);
+
+    expect(result.redeemableReward?.id).toBe("r2");
+    expect(result.nextReward).toBeNull();
+    expect(result.status).toBe("redeemable");
+    expect(result.remainingPointsToNext).toBe(0);
+    expect(result.progressPercentageToNext).toBe(100);
+  });
+
+  it("returns redeemable and next reward progress when another tier exists", () => {
+    const rules = [buildRule("r1", 100), buildRule("r2", 200)];
 
     const result = calculateRewardProgress(120, rules);
 
-    expect(result.reward?.id).toBe("r1");
+    expect(result.redeemableReward?.id).toBe("r1");
+    expect(result.nextReward?.id).toBe("r2");
     expect(result.status).toBe("redeemable");
-    expect(result.remaining_points).toBe(0);
-    expect(result.progress_percentage).toBe(100);
+    expect(result.remainingPointsToNext).toBe(80);
+    expect(result.progressPercentageToNext).toBe(60);
   });
 
   it("prefers best redeemable reward when claimable", () => {
@@ -74,17 +90,19 @@ describe("calculateRewardProgress", () => {
 
     const inProgressResult = calculateRewardProgress(120, rules);
 
-    expect(inProgressResult.reward?.id).toBe("r2");
+    expect(inProgressResult.redeemableReward?.id).toBe("r2");
+    expect(inProgressResult.nextReward?.id).toBe("r3");
     expect(inProgressResult.status).toBe("redeemable");
-    expect(inProgressResult.remaining_points).toBe(0);
-    expect(inProgressResult.progress_percentage).toBe(100);
+    expect(inProgressResult.remainingPointsToNext).toBe(30);
+    expect(inProgressResult.progressPercentageToNext).toBe(80);
 
     const redeemableResult = calculateRewardProgress(180, rules);
 
-    expect(redeemableResult.reward?.id).toBe("r3");
+    expect(redeemableResult.redeemableReward?.id).toBe("r3");
+    expect(redeemableResult.nextReward).toBeNull();
     expect(redeemableResult.status).toBe("redeemable");
-    expect(redeemableResult.remaining_points).toBe(0);
-    expect(redeemableResult.progress_percentage).toBe(100);
+    expect(redeemableResult.remainingPointsToNext).toBe(0);
+    expect(redeemableResult.progressPercentageToNext).toBe(100);
   });
 });
 

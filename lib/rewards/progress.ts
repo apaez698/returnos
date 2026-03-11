@@ -1,11 +1,4 @@
-import { RewardProgressStatus, RewardRule } from "./types";
-
-export interface RewardProgressCalculation {
-  reward: RewardRule | null;
-  progress_percentage: number;
-  remaining_points: number;
-  status: RewardProgressStatus;
-}
+import { CustomerRewardStateResult, RewardRule } from "./types";
 
 function getActiveSortedRules(rewardRules: RewardRule[]): RewardRule[] {
   return rewardRules
@@ -13,7 +6,7 @@ function getActiveSortedRules(rewardRules: RewardRule[]): RewardRule[] {
     .sort((a, b) => a.points_required - b.points_required);
 }
 
-export function getBestRedeemableReward(
+export function getRedeemableReward(
   customerPoints: number,
   rewardRules: RewardRule[],
 ): RewardRule | null {
@@ -27,6 +20,8 @@ export function getBestRedeemableReward(
     ? redeemableRules[redeemableRules.length - 1]
     : null;
 }
+
+export const getBestRedeemableReward = getRedeemableReward;
 
 export function getNextReward(
   customerPoints: number,
@@ -42,43 +37,47 @@ export function getNextReward(
 export function calculateRewardProgress(
   customerPoints: number,
   rewardRules: RewardRule[],
-): RewardProgressCalculation {
+): CustomerRewardStateResult {
   const activeRules = getActiveSortedRules(rewardRules);
 
   if (activeRules.length === 0) {
     return {
-      reward: null,
-      progress_percentage: 0,
-      remaining_points: 0,
+      redeemableReward: null,
+      nextReward: null,
+      progressPercentageToNext: 0,
+      remainingPointsToNext: 0,
       status: "no_reward",
     };
   }
 
-  const redeemableReward = getBestRedeemableReward(customerPoints, activeRules);
-  if (redeemableReward) {
+  const redeemableReward = getRedeemableReward(customerPoints, activeRules);
+  const nextReward = getNextReward(customerPoints, activeRules);
+
+  if (redeemableReward && !nextReward) {
     return {
-      reward: redeemableReward,
-      progress_percentage: 100,
-      remaining_points: 0,
+      redeemableReward,
+      nextReward: null,
+      progressPercentageToNext: 100,
+      remainingPointsToNext: 0,
       status: "redeemable",
     };
   }
 
-  const nextReward = getNextReward(customerPoints, activeRules);
   if (!nextReward) {
     return {
-      reward: null,
-      progress_percentage: 0,
-      remaining_points: 0,
+      redeemableReward,
+      nextReward: null,
+      progressPercentageToNext: 0,
+      remainingPointsToNext: 0,
       status: "no_reward",
     };
   }
 
-  const remainingPoints = Math.max(
+  const remainingPointsToNext = Math.max(
     0,
     nextReward.points_required - customerPoints,
   );
-  const progressPercentage = Math.min(
+  const progressPercentageToNext = Math.min(
     100,
     Math.max(
       0,
@@ -87,9 +86,10 @@ export function calculateRewardProgress(
   );
 
   return {
-    reward: nextReward,
-    progress_percentage: progressPercentage,
-    remaining_points: remainingPoints,
-    status: "in_progress",
+    redeemableReward,
+    nextReward,
+    progressPercentageToNext,
+    remainingPointsToNext,
+    status: redeemableReward ? "redeemable" : "in_progress",
   };
 }

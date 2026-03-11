@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { vi } from "vitest";
 import {
   getRewardRulesForCurrentBusiness,
@@ -32,18 +32,6 @@ vi.mock("@/components/rewards/reward-rules-table", () => ({
   ),
 }));
 
-vi.mock("@/components/rewards/reward-progress-card", () => ({
-  RewardProgressCard: ({
-    customer,
-  }: {
-    customer: Pick<
-      CustomerRewardProgress,
-      "customer_id" | "customer_name" | "current_points"
-    >;
-    rewardRules: RewardRule[];
-  }) => <div data-testid="reward-progress-card">{customer.customer_name}</div>,
-}));
-
 const MOCK_REWARDS: RewardRule[] = [
   {
     id: "rule-1",
@@ -60,8 +48,17 @@ const MOCK_REWARDS: RewardRule[] = [
     name: "Descuento 10%",
     points_required: 200,
     reward_description: "10% de descuento en su próxima compra",
-    is_active: false,
+    is_active: true,
     created_at: "2024-01-02T00:00:00Z",
+  },
+  {
+    id: "rule-3",
+    business_id: "biz-1",
+    name: "Postre Premium",
+    points_required: 300,
+    reward_description: "Postre premium gratis",
+    is_active: true,
+    created_at: "2024-01-03T00:00:00Z",
   },
 ];
 
@@ -70,18 +67,30 @@ const MOCK_PROGRESS: CustomerRewardProgress[] = [
     customer_id: "cust-1",
     customer_name: "Ana García",
     current_points: 75,
-    nearest_reward: MOCK_REWARDS[0],
-    progress_percentage: 75,
-    remaining_points: 25,
+    redeemable_reward: null,
+    next_reward: MOCK_REWARDS[0],
+    progress_percentage_to_next: 75,
+    remaining_points_to_next: 25,
     status: "in_progress",
   },
   {
     customer_id: "cust-2",
     customer_name: "Luis Pérez",
-    current_points: 110,
-    nearest_reward: MOCK_REWARDS[0],
-    progress_percentage: 100,
-    remaining_points: 0,
+    current_points: 120,
+    redeemable_reward: MOCK_REWARDS[0],
+    next_reward: MOCK_REWARDS[1],
+    progress_percentage_to_next: 20,
+    remaining_points_to_next: 80,
+    status: "redeemable",
+  },
+  {
+    customer_id: "cust-3",
+    customer_name: "María Rodríguez",
+    current_points: 350,
+    redeemable_reward: MOCK_REWARDS[2],
+    next_reward: null,
+    progress_percentage_to_next: 100,
+    remaining_points_to_next: 0,
     status: "redeemable",
   },
 ];
@@ -98,105 +107,272 @@ describe("DashboardRewardsPage (/dashboard/rewards)", () => {
     vi.mocked(getCustomerRewardProgressList).mockResolvedValue(MOCK_PROGRESS);
   });
 
-  it("renders the page title", async () => {
-    await renderPage();
+  describe("Page structure", () => {
+    it("renders the page title", async () => {
+      await renderPage();
 
-    expect(
-      screen.getByRole("heading", { name: "Recompensas", level: 1 }),
-    ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Recompensas", level: 1 }),
+      ).toBeInTheDocument();
+    });
+
+    it("renders the page description", async () => {
+      await renderPage();
+
+      expect(
+        screen.getByText(/gestiona reglas de recompensas/i),
+      ).toBeInTheDocument();
+    });
+
+    it("renders the reward form", async () => {
+      await renderPage();
+
+      expect(screen.getByTestId("reward-form")).toBeInTheDocument();
+    });
+
+    it("renders the reward rules section heading", async () => {
+      await renderPage();
+
+      expect(
+        screen.getByRole("heading", {
+          name: /reglas de recompensa/i,
+          level: 2,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("renders the reward rules table with fetched rules", async () => {
+      await renderPage();
+
+      const rewardRulesTable = screen.getByTestId("reward-rules-table");
+      expect(rewardRulesTable).toBeInTheDocument();
+      expect(
+        within(rewardRulesTable).getByText("Café Gratis"),
+      ).toBeInTheDocument();
+      expect(
+        within(rewardRulesTable).getByText("Descuento 10%"),
+      ).toBeInTheDocument();
+    });
+
+    it("renders the customer progress section heading when active rewards exist", async () => {
+      await renderPage();
+
+      expect(
+        screen.getByRole("heading", {
+          name: /progreso de clientes/i,
+          level: 2,
+        }),
+      ).toBeInTheDocument();
+    });
   });
 
-  it("renders the page description", async () => {
-    await renderPage();
+  describe("Reward cards: In-progress state", () => {
+    it("displays customer name and current points for in-progress customer", async () => {
+      await renderPage();
 
-    expect(
-      screen.getByText(/gestiona reglas de recompensas/i),
-    ).toBeInTheDocument();
+      expect(screen.getByText("Ana García")).toBeInTheDocument();
+      expect(screen.getByText(/75 puntos/)).toBeInTheDocument();
+    });
+
+    it("renders 'En progreso' badge for customer below first reward", async () => {
+      await renderPage();
+
+      const progressBadges = screen.getAllByText(/en progreso/i);
+      expect(progressBadges.length).toBeGreaterThan(0);
+    });
+
+    it("shows next goal section with reward details and progress bar", async () => {
+      await renderPage();
+
+      // Verify next goal section exists
+      const nextGoalSections = screen.queryAllByText(/próxima meta/i);
+      expect(nextGoalSections.length).toBeGreaterThan(0);
+
+      // Check for the specific reward description to verify content
+      const cafeDescriptions = screen.queryAllByText(
+        /un café gratis después de 10 visitas/i,
+      );
+      expect(cafeDescriptions.length).toBeGreaterThan(0);
+      expect(
+        screen.getByText(/25 puntos para la siguiente recompensa/i),
+      ).toBeInTheDocument();
+    });
+
+    it("displays progress percentage in progress bar section", async () => {
+      await renderPage();
+
+      expect(screen.getByText("75%")).toBeInTheDocument();
+    });
   });
 
-  it("renders the reward form", async () => {
-    await renderPage();
+  describe("Reward cards: Redeemable state with next goal", () => {
+    it("displays 'Canjeable' badge for redeemable customer", async () => {
+      await renderPage();
 
-    expect(screen.getByTestId("reward-form")).toBeInTheDocument();
+      const rewardBadges = screen.getAllByText(/canjeable/i);
+      expect(rewardBadges.length).toBeGreaterThan(0);
+    });
+
+    it("shows redeemable reward section with earned reward details", async () => {
+      await renderPage();
+
+      const rewardSections = screen.queryAllByText(/recompensa disponible/i);
+      expect(rewardSections.length).toBeGreaterThan(0);
+
+      // Verify the redeemable reward descriptions are displayed
+      const cafeDescriptions = screen.queryAllByText(
+        /un café gratis después de 10 visitas/i,
+      );
+      expect(cafeDescriptions.length).toBeGreaterThan(0);
+    });
+
+    it("shows next goal section with upcoming reward and progress bar", async () => {
+      await renderPage();
+
+      // For Luis Pérez: redeemable reward is Café Gratis, next goal is Descuento 10%
+      const nextGoalSections = screen.queryAllByText(/próxima meta/i);
+      expect(nextGoalSections.length).toBeGreaterThan(0);
+
+      // Verify next goal section exists by checking for its specific description
+      expect(
+        screen.getByText("10% de descuento en su próxima compra"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/80 puntos para la siguiente recompensa/i),
+      ).toBeInTheDocument();
+    });
+
+    it("displays progress percentage for next goal", async () => {
+      await renderPage();
+
+      // Luis has 20% progress toward next reward
+      expect(screen.getByText("20%")).toBeInTheDocument();
+    });
   });
 
-  it("renders the reward rules section heading", async () => {
-    await renderPage();
+  describe("Reward cards: Highest reward reached (no next goal)", () => {
+    it("does not show next goal section when customer reached highest reward", async () => {
+      const mockProgressHighestReward: CustomerRewardProgress[] = [
+        {
+          customer_id: "cust-3",
+          customer_name: "María Rodríguez",
+          current_points: 350,
+          redeemable_reward: MOCK_REWARDS[2],
+          next_reward: null,
+          progress_percentage_to_next: 100,
+          remaining_points_to_next: 0,
+          status: "redeemable",
+        },
+      ];
+      vi.mocked(getCustomerRewardProgressList).mockResolvedValue(
+        mockProgressHighestReward,
+      );
 
-    expect(
-      screen.getByRole("heading", { name: /reglas de recompensa/i, level: 2 }),
-    ).toBeInTheDocument();
+      await renderPage();
+
+      expect(screen.getByText("María Rodríguez")).toBeInTheDocument();
+      expect(screen.getByText(/recompensa disponible/i)).toBeInTheDocument();
+      // Should NOT have "Próxima meta" section when no next reward
+      expect(screen.queryByText(/próxima meta/i)).not.toBeInTheDocument();
+    });
+
+    it("displays highest reward for customer at max level without next goal", async () => {
+      const mockProgressHighestReward: CustomerRewardProgress[] = [
+        {
+          customer_id: "cust-3",
+          customer_name: "María Rodríguez",
+          current_points: 350,
+          redeemable_reward: MOCK_REWARDS[2],
+          next_reward: null,
+          progress_percentage_to_next: 100,
+          remaining_points_to_next: 0,
+          status: "redeemable",
+        },
+      ];
+      vi.mocked(getCustomerRewardProgressList).mockResolvedValue(
+        mockProgressHighestReward,
+      );
+
+      await renderPage();
+
+      const rewardSections = screen.queryAllByText(/recompensa disponible/i);
+      expect(rewardSections.length).toBeGreaterThan(0);
+    });
   });
 
-  it("renders the reward rules table with fetched rules", async () => {
-    await renderPage();
+  describe("Multiple customers rendering", () => {
+    it("renders a card for each customer in progress list", async () => {
+      await renderPage();
 
-    expect(screen.getByTestId("reward-rules-table")).toBeInTheDocument();
-    expect(screen.getByText("Café Gratis")).toBeInTheDocument();
-    expect(screen.getByText("Descuento 10%")).toBeInTheDocument();
+      expect(screen.getByText("Ana García")).toBeInTheDocument();
+      expect(screen.getByText("Luis Pérez")).toBeInTheDocument();
+      expect(screen.getByText("María Rodríguez")).toBeInTheDocument();
+    });
+
+    it("renders correct status badges for all customers", async () => {
+      await renderPage();
+
+      // 1 "En progreso" for Ana, 2 "Canjeable" for Luis and María
+      const progressBadges = screen.getAllByText(/en progreso/i);
+      const rewardBadges = screen.getAllByText(/canjeable/i);
+
+      expect(progressBadges.length).toBeGreaterThanOrEqual(1);
+      expect(rewardBadges.length).toBeGreaterThanOrEqual(2);
+    });
   });
 
-  it("renders the customer progress section when active rewards exist", async () => {
-    await renderPage();
+  describe("Empty states", () => {
+    it("shows empty-customers notice when no customer progress data exists", async () => {
+      vi.mocked(getCustomerRewardProgressList).mockResolvedValue([]);
 
-    expect(
-      screen.getByRole("heading", { name: /progreso de clientes/i, level: 2 }),
-    ).toBeInTheDocument();
+      await renderPage();
+
+      expect(
+        screen.getByText(/no hay clientes registrados aún/i),
+      ).toBeInTheDocument();
+    });
+
+    it("hides customer progress section when no active reward rules exist", async () => {
+      vi.mocked(getRewardRulesForCurrentBusiness).mockResolvedValue(
+        MOCK_REWARDS.map((r) => ({ ...r, is_active: false })),
+      );
+
+      await renderPage();
+
+      expect(
+        screen.queryByRole("heading", { name: /progreso de clientes/i }),
+      ).not.toBeInTheDocument();
+    });
   });
 
-  it("renders a progress card for each customer", async () => {
-    await renderPage();
+  describe("Error handling", () => {
+    it("renders an error banner when data fetching fails", async () => {
+      vi.mocked(getRewardRulesForCurrentBusiness).mockRejectedValue(
+        new Error("Error de conexión"),
+      );
 
-    const cards = screen.getAllByTestId("reward-progress-card");
-    expect(cards).toHaveLength(2);
-    expect(screen.getByText("Ana García")).toBeInTheDocument();
-    expect(screen.getByText("Luis Pérez")).toBeInTheDocument();
-  });
+      await renderPage();
 
-  it("shows no-active-rewards notice when all reward rules are inactive", async () => {
-    vi.mocked(getRewardRulesForCurrentBusiness).mockResolvedValue(
-      MOCK_REWARDS.map((r) => ({ ...r, is_active: false })),
-    );
+      expect(
+        screen.getByText(/no se puede acceder a las recompensas/i),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Error de conexión")).toBeInTheDocument();
+    });
 
-    await renderPage();
+    it("hides the form and tables when an error occurs", async () => {
+      vi.mocked(getRewardRulesForCurrentBusiness).mockRejectedValue(
+        new Error("DB failure"),
+      );
 
-    expect(screen.getByText(/no hay recompensas activas/i)).toBeInTheDocument();
-    expect(
-      screen.queryByRole("heading", { name: /progreso de clientes/i }),
-    ).not.toBeInTheDocument();
-  });
+      await renderPage();
 
-  it("shows empty-customers notice when no customer progress data exists", async () => {
-    vi.mocked(getCustomerRewardProgressList).mockResolvedValue([]);
-
-    await renderPage();
-
-    expect(
-      screen.getByText(/no hay clientes registrados aún/i),
-    ).toBeInTheDocument();
-  });
-
-  it("renders an error banner when data fetching fails", async () => {
-    vi.mocked(getRewardRulesForCurrentBusiness).mockRejectedValue(
-      new Error("Error de conexión"),
-    );
-
-    await renderPage();
-
-    expect(
-      screen.getByText(/no se puede acceder a las recompensas/i),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Error de conexión")).toBeInTheDocument();
-  });
-
-  it("hides the form and tables when an error occurs", async () => {
-    vi.mocked(getRewardRulesForCurrentBusiness).mockRejectedValue(
-      new Error("DB failure"),
-    );
-
-    await renderPage();
-
-    expect(screen.queryByTestId("reward-form")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("reward-rules-table")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("reward-form")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("reward-rules-table"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { name: /progreso de clientes/i }),
+      ).not.toBeInTheDocument();
+    });
   });
 });

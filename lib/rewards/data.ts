@@ -75,14 +75,22 @@ export async function getCustomerRewardProgress(
 
   const activeRewards = (rewards ?? []) as RewardRule[];
   const progress = calculateRewardProgress(customer.points, activeRewards);
+  const nearestReward = progress.redeemableReward ?? progress.nextReward;
+  const progressPercentageToNext = progress.progressPercentageToNext;
+  const remainingPointsToNext = progress.remainingPointsToNext;
 
   return {
     customer_id: customer.id,
     customer_name: customer.name,
     current_points: customer.points,
-    nearest_reward: progress.reward,
-    progress_percentage: progress.progress_percentage,
-    remaining_points: progress.remaining_points,
+    redeemable_reward: progress.redeemableReward,
+    next_reward: progress.nextReward,
+    progress_percentage_to_next: progressPercentageToNext,
+    remaining_points_to_next: remainingPointsToNext,
+    // Legacy fields for existing UI consumers.
+    nearest_reward: nearestReward,
+    progress_percentage: progressPercentageToNext,
+    remaining_points: remainingPointsToNext,
     status: progress.status,
   };
 }
@@ -120,14 +128,22 @@ export async function getCustomerRewardProgressList(): Promise<
 
   return customers.map((customer) => {
     const progress = calculateRewardProgress(customer.points, activeRewards);
+    const nearestReward = progress.redeemableReward ?? progress.nextReward;
+    const progressPercentageToNext = progress.progressPercentageToNext;
+    const remainingPointsToNext = progress.remainingPointsToNext;
 
     return {
       customer_id: customer.id,
       customer_name: customer.name,
       current_points: customer.points,
-      nearest_reward: progress.reward,
-      progress_percentage: progress.progress_percentage,
-      remaining_points: progress.remaining_points,
+      redeemable_reward: progress.redeemableReward,
+      next_reward: progress.nextReward,
+      progress_percentage_to_next: progressPercentageToNext,
+      remaining_points_to_next: remainingPointsToNext,
+      // Legacy fields for existing UI consumers.
+      nearest_reward: nearestReward,
+      progress_percentage: progressPercentageToNext,
+      remaining_points: remainingPointsToNext,
       status: progress.status,
     };
   });
