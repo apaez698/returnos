@@ -33,9 +33,15 @@ vi.mock("@/components/rewards/reward-rules-table", () => ({
 }));
 
 vi.mock("@/components/rewards/reward-progress-card", () => ({
-  RewardProgressCard: ({ progress }: { progress: CustomerRewardProgress }) => (
-    <div data-testid="reward-progress-card">{progress.customer_name}</div>
-  ),
+  RewardProgressCard: ({
+    customer,
+  }: {
+    customer: Pick<
+      CustomerRewardProgress,
+      "customer_id" | "customer_name" | "current_points"
+    >;
+    rewardRules: RewardRule[];
+  }) => <div data-testid="reward-progress-card">{customer.customer_name}</div>,
 }));
 
 const MOCK_REWARDS: RewardRule[] = [
@@ -76,7 +82,7 @@ const MOCK_PROGRESS: CustomerRewardProgress[] = [
     nearest_reward: MOCK_REWARDS[0],
     progress_percentage: 100,
     remaining_points: 0,
-    status: "eligible",
+    status: "redeemable",
   },
 ];
 

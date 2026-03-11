@@ -24,7 +24,25 @@ export const initialRewardActionState: RewardActionState = {
   status: "idle",
 };
 
-export type RewardProgressStatus = "eligible" | "in_progress" | "no_reward";
+export type RewardProgressStatus = "redeemable" | "in_progress" | "no_reward";
+
+export interface CustomerPoints {
+  customer_id: string;
+  points: number;
+}
+
+export enum RewardStatus {
+  no_reward = "no_reward",
+  in_progress = "in_progress",
+  redeemable = "redeemable",
+}
+
+export interface RewardProgress {
+  reward: RewardRule;
+  status: RewardStatus;
+  progress_percentage: number;
+  remaining_points: number;
+}
 
 export interface CustomerRewardProgress {
   customer_id: string;

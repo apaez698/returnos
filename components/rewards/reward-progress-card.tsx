@@ -1,49 +1,58 @@
 "use client";
 
-import { CustomerRewardProgress } from "@/lib/rewards/types";
+import { calculateRewardProgress } from "@/lib/rewards/progress";
+import { CustomerRewardProgress, RewardRule } from "@/lib/rewards/types";
 
 interface RewardProgressCardProps {
-  progress: CustomerRewardProgress;
+  customer: Pick<
+    CustomerRewardProgress,
+    "customer_id" | "customer_name" | "current_points"
+  >;
+  rewardRules: RewardRule[];
 }
 
-export function RewardProgressCard({ progress }: RewardProgressCardProps) {
+export function RewardProgressCard({
+  customer,
+  rewardRules,
+}: RewardProgressCardProps) {
+  const progress = calculateRewardProgress(
+    customer.current_points,
+    rewardRules,
+  );
   const statusLabel =
-    progress.status === "eligible"
-      ? "¡Elegible!"
+    progress.status === "redeemable"
+      ? "Premio disponible"
       : progress.status === "in_progress"
         ? "En progreso"
         : "Sin recompensa";
-  const isEligible = progress.status === "eligible";
+  const badgeClassName =
+    progress.status === "redeemable"
+      ? "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-800"
+      : progress.status === "in_progress"
+        ? "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-indigo-100 text-indigo-800"
+        : "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-slate-100 text-slate-700";
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 hover:shadow-sm transition">
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1">
           <h3 className="font-semibold text-slate-900">
-            {progress.customer_name}
+            {customer.customer_name}
           </h3>
           <p className="text-sm text-slate-600 mt-1">
-            {progress.current_points} puntos
+            {customer.current_points} puntos
           </p>
         </div>
-        <span
-          className={
-            isEligible
-              ? "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-800"
-              : "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-indigo-100 text-indigo-800"
-          }
-        >
-          {statusLabel}
-        </span>
+        <span className={badgeClassName}>{statusLabel}</span>
       </div>
 
-      {progress.nearest_reward ? (
+      {progress.reward ? (
         <div className="mt-4">
           <p className="text-sm font-medium text-slate-700">
-            {progress.nearest_reward.name}
+            {progress.reward.name}
           </p>
           <p className="text-xs text-slate-500 mt-1">
-            {progress.nearest_reward.reward_description}
+            {progress.reward.reward_description}
           </p>
 
           {progress.status === "in_progress" && (
@@ -64,16 +73,10 @@ export function RewardProgressCard({ progress }: RewardProgressCardProps) {
               </p>
             </>
           )}
-
-          {progress.status === "eligible" && (
-            <div className="mt-3 rounded-md bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
-              ¡El cliente puede reclamar esta recompensa!
-            </div>
-          )}
         </div>
       ) : (
         <div className="mt-4 text-sm text-slate-500">
-          No hay recompensas activas disponibles.
+          Sin recompensa por ahora.
         </div>
       )}
     </div>

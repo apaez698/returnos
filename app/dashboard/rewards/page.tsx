@@ -78,10 +78,11 @@ export default async function DashboardRewardsPage() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                    {customerProgress.map((progress) => (
+                    {customerProgress.map((customer) => (
                       <RewardProgressCard
-                        key={progress.customer_id}
-                        progress={progress}
+                        key={customer.customer_id}
+                        customer={customer}
+                        rewardRules={activeRewards}
                       />
                     ))}
                   </div>

@@ -80,9 +80,9 @@ export async function getCustomerRewardProgress(
     customer_id: customer.id,
     customer_name: customer.name,
     current_points: customer.points,
-    nearest_reward: progress.nearestReward,
-    progress_percentage: progress.progressPercentage,
-    remaining_points: progress.remainingPoints,
+    nearest_reward: progress.reward,
+    progress_percentage: progress.progress_percentage,
+    remaining_points: progress.remaining_points,
     status: progress.status,
   };
 }
@@ -125,9 +125,9 @@ export async function getCustomerRewardProgressList(): Promise<
       customer_id: customer.id,
       customer_name: customer.name,
       current_points: customer.points,
-      nearest_reward: progress.nearestReward,
-      progress_percentage: progress.progressPercentage,
-      remaining_points: progress.remainingPoints,
+      nearest_reward: progress.reward,
+      progress_percentage: progress.progress_percentage,
+      remaining_points: progress.remaining_points,
       status: progress.status,
     };
   });

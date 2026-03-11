@@ -11,8 +11,8 @@ export function CustomerRewardProgressList({
 }: CustomerRewardProgressListProps) {
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "eligible":
-        return "¡Elegible!";
+      case "redeemable":
+        return "¡Canjeable!";
       case "in_progress":
         return "En progreso";
       default:
@@ -22,7 +22,7 @@ export function CustomerRewardProgressList({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "eligible":
+      case "redeemable":
         return "bg-emerald-100 text-emerald-800";
       case "in_progress":
         return "bg-indigo-100 text-indigo-800";
@@ -96,7 +96,7 @@ export function CustomerRewardProgressList({
                   </div>
                 )}
 
-                {progress.status === "eligible" && (
+                {progress.status === "redeemable" && (
                   <div className="rounded-md bg-emerald-50 px-2 py-1 text-xs text-emerald-800">
                     El cliente puede reclamar esta recompensa
                   </div>
@@ -172,7 +172,7 @@ export function CustomerRewardProgressList({
                         {progress.progress_percentage}%
                       </span>
                     </div>
-                  ) : progress.status === "eligible" ? (
+                  ) : progress.status === "redeemable" ? (
                     <span className="text-emerald-600 font-medium">100%</span>
                   ) : (
                     <span className="text-slate-500">—</span>
