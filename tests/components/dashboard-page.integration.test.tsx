@@ -18,10 +18,10 @@ describe("Dashboard integration", () => {
 
     const navItems = [
       { label: "Dashboard", href: "/dashboard" },
-      { label: "Customers", href: "/customers" },
+      { label: "Customers", href: "/dashboard/customers" },
       { label: "Visits", href: "/dashboard/visits" },
-      { label: "Rewards", href: "/rewards" },
-      { label: "Campaigns", href: "/campaigns" },
+      { label: "Rewards", href: "/dashboard/rewards" },
+      { label: "Campaigns", href: "/dashboard/campaigns" },
     ];
 
     navItems.forEach((item) => {
