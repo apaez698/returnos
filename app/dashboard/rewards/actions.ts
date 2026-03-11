@@ -18,6 +18,12 @@ export type CreateRewardRuleResult = {
   message: string | null;
 };
 
+export type RedeemRewardResult = {
+  success: boolean;
+  error: string | null;
+  message: string | null;
+};
+
 export async function insertRewardRuleAction(
   input: unknown,
 ): Promise<CreateRewardRuleResult> {
@@ -329,6 +335,137 @@ export async function deleteRewardRuleAction(
     return {
       status: "error",
       message: "Ocurrió un error inesperado.",
+    };
+  }
+}
+
+export async function redeemRewardAction(
+  previousState: RedeemRewardResult,
+  formData: FormData,
+): Promise<RedeemRewardResult> {
+  void previousState;
+
+  const customerId = String(formData.get("customer_id") ?? "").trim();
+  const rewardRuleId = String(formData.get("reward_rule_id") ?? "").trim();
+
+  if (!customerId || !rewardRuleId) {
+    return {
+      success: false,
+      error: "Faltan datos para canjear la recompensa.",
+      message: null,
+    };
+  }
+
+  try {
+    const businessId = await getCurrentBusinessId();
+    const supabase = createServerClient();
+
+    const { data: customer, error: customerError } = await supabase
+      .from("customers")
+      .select("id, points")
+      .eq("id", customerId)
+      .eq("business_id", businessId)
+      .limit(1)
+      .maybeSingle();
+
+    if (customerError || !customer) {
+      return {
+        success: false,
+        error: "Cliente no encontrado.",
+        message: null,
+      };
+    }
+
+    const { data: rewardRule, error: rewardError } = await supabase
+      .from("reward_rules")
+      .select("id, name, points_required, is_active")
+      .eq("id", rewardRuleId)
+      .eq("business_id", businessId)
+      .limit(1)
+      .maybeSingle();
+
+    if (rewardError || !rewardRule || !rewardRule.is_active) {
+      return {
+        success: false,
+        error: "Recompensa no disponible.",
+        message: null,
+      };
+    }
+
+    if (customer.points < rewardRule.points_required) {
+      return {
+        success: false,
+        error: "El cliente ya no tiene puntos suficientes.",
+        message: null,
+      };
+    }
+
+    const { data: redemption, error: redemptionError } = await supabase
+      .from("reward_redemptions")
+      .insert({
+        business_id: businessId,
+        customer_id: customerId,
+        reward_rule_id: rewardRuleId,
+        points_spent: rewardRule.points_required,
+      })
+      .select("id")
+      .limit(1)
+      .maybeSingle();
+
+    if (redemptionError || !redemption) {
+      return {
+        success: false,
+        error: "No se pudo registrar el canje.",
+        message: null,
+      };
+    }
+
+    const pointsAfterRedemption = customer.points - rewardRule.points_required;
+
+    const { data: updatedCustomer, error: updateError } = await supabase
+      .from("customers")
+      .update({ points: pointsAfterRedemption })
+      .eq("id", customerId)
+      .eq("business_id", businessId)
+      .gte("points", rewardRule.points_required)
+      .select("id")
+      .limit(1)
+      .maybeSingle();
+
+    if (updateError || !updatedCustomer) {
+      await supabase
+        .from("reward_redemptions")
+        .delete()
+        .eq("id", redemption.id);
+
+      return {
+        success: false,
+        error: "No se pudieron descontar los puntos del cliente.",
+        message: null,
+      };
+    }
+
+    revalidatePath("/dashboard/rewards");
+    revalidatePath("/dashboard/customers");
+
+    return {
+      success: true,
+      error: null,
+      message: `Recompensa canjeada: ${rewardRule.name}.`,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        error: error.message,
+        message: null,
+      };
+    }
+
+    return {
+      success: false,
+      error: "Ocurrió un error inesperado.",
+      message: null,
     };
   }
 }

@@ -16,6 +16,7 @@ vi.mock("@/app/dashboard/rewards/actions", () => ({
   createRewardRuleAction: vi.fn(),
   toggleRewardRuleAction: vi.fn(),
   deleteRewardRuleAction: vi.fn(),
+  redeemRewardAction: vi.fn(),
 }));
 
 vi.mock("@/components/rewards/reward-form", () => ({

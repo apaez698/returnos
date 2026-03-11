@@ -1,11 +1,12 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { RewardForm } from "@/components/rewards/reward-form";
 import { RewardRulesTable } from "@/components/rewards/reward-rules-table";
+import { RedeemRewardButton } from "@/components/rewards/redeem-reward-button";
 import {
   getRewardRulesForCurrentBusiness,
   getCustomerRewardProgressList,
 } from "@/lib/rewards/data";
-import { createRewardRuleAction } from "./actions";
+import { createRewardRuleAction, redeemRewardAction } from "./actions";
 
 export default async function DashboardRewardsPage() {
   let rewards: Awaited<ReturnType<typeof getRewardRulesForCurrentBusiness>> =
@@ -127,6 +128,18 @@ export default async function DashboardRewardsPage() {
                                       .reward_description
                                   }
                                 </p>
+
+                                <RedeemRewardButton
+                                  customerId={customer.customer_id}
+                                  customerName={customer.customer_name}
+                                  currentPoints={customer.current_points}
+                                  rewardRuleId={customer.redeemable_reward.id}
+                                  rewardName={customer.redeemable_reward.name}
+                                  pointsRequired={
+                                    customer.redeemable_reward.points_required
+                                  }
+                                  action={redeemRewardAction}
+                                />
                               </section>
                             )}
 
