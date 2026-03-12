@@ -8,6 +8,7 @@ import { AppShell } from "@/components/shell/app-shell";
 
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(() => ({ push: vi.fn() })),
+  usePathname: vi.fn(() => "/dashboard"),
 }));
 
 vi.mock("@/lib/supabase/client", () => ({
@@ -126,6 +127,261 @@ describe("AppShell — authenticated shell", () => {
       links.forEach((link) => {
         expect(link.getAttribute("href")).toMatch(/^\/dashboard/);
       });
+    });
+  });
+
+  describe("business logo handling", () => {
+    it("displays business logo when logoUrl is provided", () => {
+      render(
+        <AppShell
+          {...DEFAULT_PROPS}
+          businessLogoUrl="https://example.com/logo.png"
+        >
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      const logo = screen.getByAltText("Panadería La Esperanza");
+      expect(logo).toBeInTheDocument();
+      expect(logo).toHaveAttribute("src", "https://example.com/logo.png");
+    });
+
+    it("displays initial avatar when logoUrl is null", () => {
+      render(
+        <AppShell {...DEFAULT_PROPS} businessLogoUrl={null}>
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      const avatar = screen.getByText("P");
+      expect(avatar).toBeInTheDocument();
+      expect(avatar.parentElement).toHaveClass("bg-indigo-500");
+    });
+
+    it("displays initial avatar when logoUrl is undefined", () => {
+      render(
+        <AppShell {...DEFAULT_PROPS} businessLogoUrl={undefined}>
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      const avatar = screen.getByText("P");
+      expect(avatar).toBeInTheDocument();
+    });
+
+    it("uses first character of business name for avatar initial", () => {
+      render(
+        <AppShell
+          businessName="Café Moderno"
+          businessType="bakery"
+          userEmail="user@example.com"
+          businessLogoUrl={null}
+        >
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      const avatar = screen.getByText("C");
+      expect(avatar).toBeInTheDocument();
+    });
+  });
+
+  describe("user role information", () => {
+    it("displays owner role label", () => {
+      render(
+        <AppShell {...DEFAULT_PROPS} userRole="owner">
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.getByText("Propietario")).toBeInTheDocument();
+    });
+
+    it("displays admin role label", () => {
+      render(
+        <AppShell {...DEFAULT_PROPS} userRole="admin">
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.getByText("Administrador")).toBeInTheDocument();
+    });
+
+    it("displays staff role label", () => {
+      render(
+        <AppShell {...DEFAULT_PROPS} userRole="staff">
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.getByText("Colaborador")).toBeInTheDocument();
+    });
+
+    it("does not display role when role is null", () => {
+      render(
+        <AppShell {...DEFAULT_PROPS} userRole={null}>
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.queryByText("Propietario")).not.toBeInTheDocument();
+      expect(screen.queryByText("Administrador")).not.toBeInTheDocument();
+    });
+
+    it("does not display role when role is undefined", () => {
+      render(
+        <AppShell {...DEFAULT_PROPS} userRole={undefined}>
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.queryByText("Propietario")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("complete business context resolution", () => {
+    it("renders all business context information together", () => {
+      render(
+        <AppShell
+          businessName="El Buen Comer"
+          businessType="restaurant"
+          businessLogoUrl="https://example.com/restaurant-logo.png"
+          userEmail="admin@restaurante.mx"
+          userRole="admin"
+        >
+          <div data-testid="page-content">Resumen</div>
+        </AppShell>,
+      );
+
+      // Business context
+      expect(screen.getByText("El Buen Comer")).toBeInTheDocument();
+      expect(screen.getByText("Restaurante")).toBeInTheDocument();
+
+      // User context
+      expect(screen.getByText("admin@restaurante.mx")).toBeInTheDocument();
+      expect(screen.getByText("Administrador")).toBeInTheDocument();
+
+      // Logo
+      const logo = screen.getByAltText("El Buen Comer");
+      expect(logo).toHaveAttribute(
+        "src",
+        "https://example.com/restaurant-logo.png",
+      );
+
+      // Content
+      expect(screen.getByTestId("page-content")).toBeInTheDocument();
+    });
+
+    it("renders with missing logo but complete user and business info", () => {
+      render(
+        <AppShell
+          businessName="Panadería Express"
+          businessType="bakery"
+          businessLogoUrl={null}
+          userEmail="staff@panderia.mx"
+          userRole="staff"
+        >
+          <div data-testid="page-content">Panel</div>
+        </AppShell>,
+      );
+
+      // Business name and type present
+      expect(screen.getByText("Panadería Express")).toBeInTheDocument();
+      expect(screen.getByText("Panadería / Cafetería")).toBeInTheDocument();
+
+      // Use default avatar for missing logo
+      expect(screen.getByText("P")).toBeInTheDocument();
+
+      // User info present
+      expect(screen.getByText("staff@panderia.mx")).toBeInTheDocument();
+      expect(screen.getByText("Colaborador")).toBeInTheDocument();
+    });
+  });
+
+  describe("invalid context handling", () => {
+    it("renders shell with empty business name", () => {
+      render(
+        <AppShell
+          businessName=""
+          businessType="bakery"
+          userEmail="user@example.com"
+          businessLogoUrl={null}
+          userRole={null}
+        >
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.getByTestId("page-content")).toBeInTheDocument();
+    });
+
+    it("renders shell with unknown business type", () => {
+      render(
+        <AppShell
+          businessName="Negocio Nuevo"
+          businessType="unknown-type"
+          userEmail="user@example.com"
+          businessLogoUrl={null}
+        >
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      // Falls back to raw type for unknown types
+      expect(screen.getByText("unknown-type")).toBeInTheDocument();
+    });
+
+    it("handles very long business name gracefully", () => {
+      const longName =
+        "Esta es una panadería con un nombre muy muy largo que excede el espacio normal";
+      render(
+        <AppShell
+          businessName={longName}
+          businessType="bakery"
+          userEmail="user@example.com"
+          businessLogoUrl={null}
+        >
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.getByText(longName)).toBeInTheDocument();
+    });
+
+    it("handles very long email address gracefully", () => {
+      const longEmail =
+        "very.long.email.with.many.parts@subdomain.example.restaurant.com";
+      render(
+        <AppShell
+          businessName="Business"
+          businessType="restaurant"
+          userEmail={longEmail}
+          businessLogoUrl={null}
+        >
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(screen.getByText(longEmail)).toBeInTheDocument();
+    });
+
+    it("renders shell with special characters in business name", () => {
+      render(
+        <AppShell
+          businessName="Café & Panadería 'Artesanal'"
+          businessType="bakery"
+          userEmail="owner@example.com"
+          businessLogoUrl={null}
+          userRole="owner"
+        >
+          <div data-testid="page-content">Content</div>
+        </AppShell>,
+      );
+
+      expect(
+        screen.getByText("Café & Panadería 'Artesanal'"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Propietario")).toBeInTheDocument();
     });
   });
 

@@ -8,7 +8,7 @@ export default async function DashboardShellLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, business] = await Promise.all([
+  const [user, membership] = await Promise.all([
     getCurrentUser(),
     requireBusinessMembership(),
   ]);
@@ -19,9 +19,10 @@ export default async function DashboardShellLayout({
 
   return (
     <AppShell
-      businessName={business.business.name}
-      businessType={business.business.business_type}
+      businessName={membership.business.name}
+      businessType={membership.business.business_type}
       userEmail={user.email}
+      userRole={membership.role}
     >
       {children}
     </AppShell>
