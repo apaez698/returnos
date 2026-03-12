@@ -1,5 +1,12 @@
 import { createCustomerSchema } from "@/lib/customers/schema";
 
+function toLocalDateString(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 describe("public customer registration schema", () => {
   const validInput = {
     name: "Ana Perez",
@@ -53,7 +60,7 @@ describe("public customer registration schema", () => {
   it("fails when birthday is in the future", () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const futureDateStr = tomorrow.toISOString().slice(0, 10);
+    const futureDateStr = toLocalDateString(tomorrow);
 
     const result = createCustomerSchema.safeParse({
       ...validInput,
@@ -68,7 +75,7 @@ describe("public customer registration schema", () => {
   });
 
   it("accepts today as a valid birthday", () => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = toLocalDateString(new Date());
 
     const result = createCustomerSchema.safeParse({
       ...validInput,
