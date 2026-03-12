@@ -1,16 +1,52 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { MetricCard } from "@/components/dashboard/metric-card";
-import { getCustomersWithPointsForCurrentBusiness } from "@/lib/customers/data";
-import { getInactiveCustomers } from "@/lib/customers/inactivity";
+import { getDashboardDataForCurrentBusiness } from "@/lib/dashboard/data";
+
+function formatMetric(value: number): string {
+  return new Intl.NumberFormat("en-US").format(value);
+}
+
+function formatActivityDate(value: string): string {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Date unavailable";
+  }
+
+  return new Intl.DateTimeFormat("es-MX", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
 
 export default async function DashboardPage() {
-  let inactiveSummary: ReturnType<typeof getInactiveCustomers> = [];
+  let totalCustomers = 0;
+  let totalVisits = 0;
+  let totalRewardsRedeemed = 0;
+  let campaignReach = 0;
+  let inactiveSummary: Awaited<
+    ReturnType<typeof getDashboardDataForCurrentBusiness>
+  >["inactiveSummary"] = [];
+  let recentActivity: Awaited<
+    ReturnType<typeof getDashboardDataForCurrentBusiness>
+  >["recentActivity"] = [];
 
   try {
-    const customers = await getCustomersWithPointsForCurrentBusiness();
-    inactiveSummary = getInactiveCustomers(customers).slice(0, 5);
+    const dashboardData = await getDashboardDataForCurrentBusiness();
+
+    totalCustomers = dashboardData.metrics.totalCustomers;
+    totalVisits = dashboardData.metrics.totalVisits;
+    totalRewardsRedeemed = dashboardData.metrics.rewardsRedeemed;
+    campaignReach = dashboardData.metrics.campaignReach;
+    inactiveSummary = dashboardData.inactiveSummary;
+    recentActivity = dashboardData.recentActivity;
   } catch {
+    totalCustomers = 0;
+    totalVisits = 0;
+    totalRewardsRedeemed = 0;
+    campaignReach = 0;
     inactiveSummary = [];
+    recentActivity = [];
   }
 
   return (
@@ -18,27 +54,27 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
           label="Total Customers"
-          value="284"
+          value={formatMetric(totalCustomers)}
           icon="👥"
-          trend="+12% this month"
+          trend="Current business total"
         />
         <MetricCard
           label="Active Visits"
-          value="1,234"
+          value={formatMetric(totalVisits)}
           icon="📍"
-          trend="+8% vs last month"
+          trend="Last 30 days"
         />
         <MetricCard
           label="Rewards Redeemed"
-          value="156"
+          value={formatMetric(totalRewardsRedeemed)}
           icon="🎁"
-          trend="+24% this month"
+          trend="All time"
         />
         <MetricCard
           label="Campaign Reach"
-          value="892"
+          value={formatMetric(campaignReach)}
           icon="📢"
-          trend="+3% engagement"
+          trend="From campaign deliveries"
         />
       </div>
 
@@ -87,9 +123,29 @@ export default async function DashboardPage() {
         <h2 className="text-2xl font-bold text-slate-900 mb-6">
           Recent Activity
         </h2>
-        <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-600">
-          <p>Recent visits and customer activity will appear here</p>
-        </div>
+        {recentActivity.length === 0 ? (
+          <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-600">
+            <p>No recent visits or reward redemptions yet.</p>
+          </div>
+        ) : (
+          <ul className="space-y-3">
+            {recentActivity.map((activity) => (
+              <li
+                key={`${activity.type}-${activity.id}`}
+                className="rounded-lg border border-slate-200 bg-white px-4 py-3"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-medium text-slate-900">
+                    {activity.description}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {formatActivityDate(activity.createdAt)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </DashboardLayout>
   );
