@@ -1,5 +1,7 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { createBusinessOwnerAction } from "@/app/onboarding/actions";
+import { BusinessOnboardingForm } from "@/features/onboarding/components/business-onboarding-form";
+import { OnboardingSteps } from "@/features/onboarding/components/onboarding-steps";
 import { getCurrentMembershipResolution } from "@/lib/auth/get-current-membership";
 
 export default async function OnboardingPage() {
@@ -18,23 +20,30 @@ export default async function OnboardingPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl items-center px-6 py-12">
-      <section className="w-full rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-semibold text-zinc-900">
-          Completa tu onboarding
-        </h1>
-        <p className="mt-3 text-zinc-600">
-          Tu usuario esta autenticado, pero todavia no pertenece a un negocio en
-          ReturnOS. Pide a un administrador que te invite o crea tu negocio para
-          continuar.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            href="/login"
-            className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-          >
-            Volver a login
-          </Link>
+    <main className="mx-auto min-h-screen w-full max-w-4xl px-6 py-12">
+      <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+            Bienvenido a ReturnOS
+          </p>
+          <h1 className="mt-2 text-2xl font-semibold text-slate-900 sm:text-3xl">
+            Configura tu negocio en menos de 1 minuto
+          </h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Pensado para panaderias y cafeterias: crea tu negocio, te vinculamos
+            como owner y te llevamos al dashboard.
+          </p>
+
+          <div className="mt-6">
+            <BusinessOnboardingForm action={createBusinessOwnerAction} />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+            Como funciona
+          </h2>
+          <OnboardingSteps />
         </div>
       </section>
     </main>
