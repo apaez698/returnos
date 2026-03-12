@@ -1,7 +1,15 @@
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { CTAButton } from "@/components/landing/cta-button";
 import { FeatureCard } from "@/components/landing/feature-card";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 via-white to-orange-50">
       <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-16 sm:px-10 lg:py-24">

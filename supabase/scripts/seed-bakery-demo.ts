@@ -63,6 +63,10 @@ async function main() {
   >;
 
   for (const [tableName, operation] of tables) {
+    if (!operation) {
+      continue;
+    }
+
     console.log(`\n${tableName.replace(/_/g, " ").toUpperCase()}:`);
     console.log(`  Inserted: ${operation.inserted}`);
     console.log(`  Skipped:  ${operation.skipped}`);

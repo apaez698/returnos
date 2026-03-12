@@ -33,28 +33,13 @@ describe("Dashboard integration", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders all navigation menu items with correct links", async () => {
+  it("renders the page-level heading", async () => {
     render(await DashboardPage());
-
-    const navItems = [
-      { label: "Dashboard", href: "/dashboard" },
-      { label: "Customers", href: "/dashboard/customers" },
-      {
-        label: "Inactive Customers",
-        href: "/dashboard/inactive-customers",
-      },
-      { label: "Visits", href: "/dashboard/visits" },
-      { label: "Rewards", href: "/dashboard/rewards" },
-      { label: "Campaigns", href: "/dashboard/campaigns" },
-    ];
-
-    navItems.forEach((item) => {
-      const link = screen.getByRole("link", {
-        name: new RegExp(`^[^A-Za-z]*${item.label}$`),
-      });
-      expect(link).toBeInTheDocument();
-      expect(link).toHaveAttribute("href", item.href);
-    });
+    // Navigation is provided by the AppShell in app/dashboard/layout.tsx;
+    // this page renders only the inner content area with its own h1.
+    expect(
+      screen.getByRole("heading", { name: "Dashboard", level: 1 }),
+    ).toBeInTheDocument();
   });
 
   it("renders all metric cards with expected labels", async () => {
@@ -95,10 +80,11 @@ describe("Dashboard integration", () => {
     expect(screen.getByText("From campaign deliveries")).toBeInTheDocument();
   });
 
-  it("renders the app branding", async () => {
+  it("renders the dashboard content wrapper", async () => {
     render(await DashboardPage());
-
-    expect(screen.getByText("ReturnOS")).toBeInTheDocument();
+    // Business branding is rendered by AppShell (app/dashboard/layout.tsx);
+    // the page itself renders the main content area.
+    expect(screen.getByRole("main")).toBeInTheDocument();
   });
 
   it("renders inactive summary section with empty state", async () => {

@@ -1,16 +1,68 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { getEmailValidationError, normalizeEmail } from "@/lib/auth/validation";
 import { createBrowserClient } from "@/lib/supabase/client";
 
 type FormState = "idle" | "loading" | "success" | "error";
+
+function extractRetryAfterSeconds(input: string): number {
+  const match = input.match(/(\d+)\s*seconds?/i);
+  if (!match) {
+    return 60;
+  }
+
+  const parsed = Number.parseInt(match[1], 10);
+  return Number.isNaN(parsed) ? 60 : parsed;
+}
+
+function mapAuthError(error: unknown): {
+  message: string;
+  retryAfterSeconds: number;
+} {
+  const rawMessage =
+    error instanceof Error
+      ? error.message
+      : "No se pudo enviar el enlace. Intenta de nuevo.";
+
+  const normalizedMessage = rawMessage.toLowerCase();
+
+  if (
+    normalizedMessage.includes("rate limit") ||
+    normalizedMessage.includes("email rate")
+  ) {
+    const retryAfterSeconds = extractRetryAfterSeconds(rawMessage);
+
+    return {
+      message: `Ya se envio un enlace recientemente. Espera ${retryAfterSeconds} segundos e intenta otra vez.`,
+      retryAfterSeconds,
+    };
+  }
+
+  return {
+    message: rawMessage,
+    retryAfterSeconds: 0,
+  };
+}
 
 export default function LoginPage() {
   const supabase = useMemo(() => createBrowserClient(), []);
   const [email, setEmail] = useState("");
   const [state, setState] = useState<FormState>("idle");
   const [message, setMessage] = useState<string | null>(null);
+  const [retryAfterSeconds, setRetryAfterSeconds] = useState(0);
+
+  useEffect(() => {
+    if (retryAfterSeconds <= 0) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setRetryAfterSeconds((current) => (current > 0 ? current - 1 : 0));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [retryAfterSeconds]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -24,14 +76,36 @@ export default function LoginPage() {
       return;
     }
 
+    if (retryAfterSeconds > 0) {
+      setState("error");
+      setMessage(
+        `Espera ${retryAfterSeconds} segundos antes de solicitar otro enlace.`,
+      );
+      return;
+    }
+
     setState("loading");
     setMessage(null);
 
     try {
+      const redirectUrl = new URL("/auth/callback", window.location.origin);
+      redirectUrl.searchParams.set("next", "/dashboard");
+      const currentParams = new URLSearchParams(window.location.search);
+
+      const businessId = currentParams.get("business_id");
+      const businessSlug = currentParams.get("business_slug");
+
+      if (businessId) {
+        redirectUrl.searchParams.set("business_id", businessId);
+      }
+      if (businessSlug) {
+        redirectUrl.searchParams.set("business_slug", businessSlug);
+      }
+
       const { error } = await supabase.auth.signInWithOtp({
         email: normalizedEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: redirectUrl.toString(),
         },
       });
 
@@ -42,12 +116,12 @@ export default function LoginPage() {
       setState("success");
       setMessage("Revisa tu correo para abrir el enlace de acceso.");
     } catch (error) {
+      const { message: authMessage, retryAfterSeconds: retrySeconds } =
+        mapAuthError(error);
+
       setState("error");
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : "No se pudo enviar el enlace. Intenta de nuevo.",
-      );
+      setRetryAfterSeconds(retrySeconds);
+      setMessage(authMessage);
     }
   }
 
@@ -88,10 +162,14 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={state === "loading"}
+            disabled={state === "loading" || retryAfterSeconds > 0}
             className="w-full rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-300"
           >
-            {state === "loading" ? "Enviando..." : "Enviar enlace"}
+            {state === "loading"
+              ? "Enviando..."
+              : retryAfterSeconds > 0
+                ? `Reintentar en ${retryAfterSeconds}s`
+                : "Enviar enlace"}
           </button>
         </form>
 

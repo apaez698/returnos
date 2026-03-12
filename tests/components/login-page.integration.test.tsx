@@ -65,11 +65,14 @@ describe("LoginPage integration", () => {
     expect(mockSignInWithOtp).toHaveBeenCalledWith({
       email: "owner@bakery.com",
       options: {
-        emailRedirectTo: "http://localhost:3000/dashboard",
+        emailRedirectTo:
+          "http://localhost:3000/auth/callback?next=%2Fdashboard",
       },
     });
 
-    resolveRequest?.({ error: null });
+    if (resolveRequest) {
+      resolveRequest({ error: null });
+    }
 
     expect(
       await screen.findByText(

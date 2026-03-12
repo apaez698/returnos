@@ -5,7 +5,8 @@ import { getCustomersForCurrentBusiness } from "@/lib/customers/data";
 import { createCustomerAction } from "./actions";
 
 export default async function DashboardCustomersPage() {
-  let customers = [];
+  let customers: Awaited<ReturnType<typeof getCustomersForCurrentBusiness>> =
+    [];
   let error: string | null = null;
 
   try {

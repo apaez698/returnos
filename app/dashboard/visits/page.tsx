@@ -6,8 +6,10 @@ import { getRecentVisitsForCurrentBusiness } from "@/lib/visits/data";
 import { createVisitAction } from "./actions";
 
 export default async function DashboardVisitsPage() {
-  let customers = [];
-  let visits = [];
+  let customers: Awaited<ReturnType<typeof getCustomersForCurrentBusiness>> =
+    [];
+  let visits: Awaited<ReturnType<typeof getRecentVisitsForCurrentBusiness>> =
+    [];
   let error: string | null = null;
 
   try {

@@ -1,50 +1,30 @@
-import { createServerClient } from "@/lib/supabase/server";
-
-const DEFAULT_BUSINESS_ID =
-  process.env.DEFAULT_BUSINESS_ID ??
-  process.env.NEXT_PUBLIC_DEFAULT_BUSINESS_ID;
+import { getCurrentMembershipResolution } from "@/lib/auth/get-current-membership";
 
 /**
  * Returns the business id currently in scope for dashboard operations.
- * For MVP simplicity, we try the signed-in user's membership first,
- * then fall back to the first business in the database.
+ * The active business is valid only when the authenticated user has exactly
+ * one business membership.
  */
 export async function getCurrentBusinessId(): Promise<string> {
-  if (DEFAULT_BUSINESS_ID) {
-    return DEFAULT_BUSINESS_ID;
+  const resolution = await getCurrentMembershipResolution();
+
+  if (resolution.status === "unauthenticated") {
+    throw new Error("Usuario no autenticado.");
   }
 
-  const supabase = createServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    const { data: membership } = await supabase
-      .from("business_users")
-      .select("business_id")
-      .eq("user_id", user.id)
-      .limit(1)
-      .maybeSingle();
-
-    if (membership?.business_id) {
-      return membership.business_id;
-    }
+  if (resolution.status === "no-memberships") {
+    throw new Error("El usuario no pertenece a ningun negocio.");
   }
 
-  const { data: business, error } = await supabase
-    .from("businesses")
-    .select("id")
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+  if (resolution.status === "multiple-memberships") {
+    throw new Error("El usuario pertenece a multiples negocios.");
+  }
 
-  if (error) {
+  const activeMembership = resolution.activeMembership;
+
+  if (!activeMembership) {
     throw new Error("No se pudo resolver el negocio actual.");
   }
-  if (!business) {
-    throw new Error("No hay negocios registrados todavia.");
-  }
 
-  return business.id;
+  return activeMembership.businessId;
 }
