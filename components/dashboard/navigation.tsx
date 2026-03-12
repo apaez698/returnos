@@ -9,6 +9,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "📊" },
   { label: "Customers", href: "/dashboard/customers", icon: "👥" },
+  { label: "Caja", href: "/dashboard/caja", icon: "🧾" },
   {
     label: "Inactive Customers",
     href: "/dashboard/inactive-customers",

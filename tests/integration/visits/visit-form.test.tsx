@@ -562,7 +562,10 @@ describe("VisitForm integration", () => {
       const pointsInputElement = pointsInput as HTMLInputElement;
       const amountInputElement = amountInput as HTMLInputElement;
       const categoryInputElement = categoryInput as HTMLInputElement;
-      expect(pointsInputElement.value).toBe("0");
+
+      await waitFor(() => {
+        expect(pointsInputElement.value).toBe("0");
+      });
       expect(sourceSelect).toHaveValue("manual");
       expect(amountInputElement.value).toBe("");
       expect(categoryInputElement.value).toBe("");
