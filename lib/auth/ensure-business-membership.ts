@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 
-type Role = "owner" | "staff";
+type Role = "owner" | "admin" | "staff";
 
 export interface EnsureBusinessMembershipInput {
   userId: string;

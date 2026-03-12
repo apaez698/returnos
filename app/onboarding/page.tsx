@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createBusinessOwnerAction } from "@/app/onboarding/actions";
 import { BusinessOnboardingForm } from "@/features/onboarding/components/business-onboarding-form";
 import { OnboardingSteps } from "@/features/onboarding/components/onboarding-steps";
@@ -36,6 +37,19 @@ export default async function OnboardingPage() {
 
           <div className="mt-6">
             <BusinessOnboardingForm action={createBusinessOwnerAction} />
+          </div>
+
+          <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+            <p className="font-medium">Ya tienes una invitacion de equipo?</p>
+            <p className="mt-1">
+              Si un owner/admin te invito, acepta tu acceso aqui.
+            </p>
+            <Link
+              href="/accept-invitation"
+              className="mt-3 inline-flex rounded-md bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+            >
+              Aceptar invitacion
+            </Link>
           </div>
         </div>
 

@@ -7,7 +7,7 @@ import type {
 
 interface MembershipRow {
   business_id: string;
-  role: "owner" | "staff" | null;
+  role: "owner" | "admin" | "staff" | null;
   businesses: Business | Business[] | null;
 }
 

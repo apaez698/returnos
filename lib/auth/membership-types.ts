@@ -1,6 +1,6 @@
 import type { Business } from "@/lib/businesses/queries";
 
-export type MembershipRole = "owner" | "staff";
+export type MembershipRole = "owner" | "admin" | "staff";
 
 export interface BusinessMembership {
   businessId: string;
