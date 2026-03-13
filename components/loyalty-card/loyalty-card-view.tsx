@@ -1,11 +1,15 @@
 import type { LoyaltyCardViewModel } from "@/features/loyalty-card/types/loyalty-card-types";
+import type { WalletPlatformAvailability } from "@/features/wallet/shared/get-wallet-platform-availability";
 import { LoyaltyCardHeader } from "./loyalty-card-header";
 import { LoyaltyProgressBar } from "./loyalty-progress-bar";
 import { LoyaltyRewardStatus } from "./loyalty-reward-status";
 import { LoyaltyCardQr } from "./loyalty-card-qr";
+import { AddToWalletButtons } from "./add-to-wallet-buttons";
 
 interface LoyaltyCardViewProps {
   card: LoyaltyCardViewModel;
+  cardToken: string;
+  walletAvailability: WalletPlatformAvailability;
   businessLogoUrl?: string | null;
   qrCodeDataUrl?: string | null;
   customerIdentifier?: string;
@@ -34,6 +38,8 @@ function buildCustomerIdentifier(card: LoyaltyCardViewModel): string {
 
 export function LoyaltyCardView({
   card,
+  cardToken,
+  walletAvailability,
   businessLogoUrl,
   qrCodeDataUrl,
   customerIdentifier,
@@ -70,29 +76,10 @@ export function LoyaltyCardView({
           customerIdentifier={resolvedCustomerIdentifier}
         />
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Coming soon
-          </h2>
-          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-500"
-            >
-              Add to Wallet
-            </button>
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-500"
-            >
-              WhatsApp notifications
-            </button>
-          </div>
-        </section>
+        <AddToWalletButtons
+          cardToken={cardToken}
+          availablePlatforms={walletAvailability}
+        />
       </div>
     </section>
   );
