@@ -22,6 +22,7 @@ export interface PosPurchaseReceipt {
   pointsEarned: number;
   updatedPoints: number;
   unlockedRewardName: string | null;
+  cardToken?: string | null;
 }
 
 export interface PosPurchaseActionState {

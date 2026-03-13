@@ -1,16 +1,18 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import {
   initialPosPurchaseActionState,
   PosCustomer,
   PosPurchaseActionState,
+  PosRewardThreshold,
 } from "@/lib/pos/types";
 import { CustomerSearch } from "./customer-search";
-import { PurchaseSuccessCard } from "./purchase-success-card";
+import { PurchaseSummaryCard } from "./purchase-summary-card";
 
 interface PosPurchaseFormProps {
   initialCustomers: PosCustomer[];
+  rewardThresholds?: PosRewardThreshold[];
   action: (
     previousState: PosPurchaseActionState,
     formData: FormData,
@@ -19,6 +21,7 @@ interface PosPurchaseFormProps {
 
 export function PosPurchaseForm({
   initialCustomers,
+  rewardThresholds = [],
   action,
 }: PosPurchaseFormProps) {
   const [state, formAction, pending] = useActionState(
@@ -30,6 +33,8 @@ export function PosPurchaseForm({
     null,
   );
   const [amount, setAmount] = useState("");
+  const [isSummaryDismissed, setIsSummaryDismissed] = useState(false);
+  const amountInputRef = useRef<HTMLInputElement>(null);
   const selectedCustomerId = selectedCustomer?.id ?? "";
 
   const results = useMemo(() => {
@@ -52,8 +57,15 @@ export function PosPurchaseForm({
   useEffect(() => {
     if (state.status === "success") {
       setAmount("");
+      setIsSummaryDismissed(false);
     }
-  }, [state.status]);
+  }, [state]);
+
+  function prepareNextPurchase() {
+    setAmount("");
+    setIsSummaryDismissed(true);
+    amountInputRef.current?.focus();
+  }
 
   useEffect(() => {
     setSelectedCustomer((current) => {
@@ -140,6 +152,7 @@ export function PosPurchaseForm({
               Monto
             </label>
             <input
+              ref={amountInputRef}
               id="amount"
               name="amount"
               type="number"
@@ -219,8 +232,14 @@ export function PosPurchaseForm({
             {pending ? "Registrando..." : "Registrar compra"}
           </button>
 
-          {state.status === "success" && state.receipt ? (
-            <PurchaseSuccessCard receipt={state.receipt} />
+          {state.status === "success" &&
+          state.receipt &&
+          !isSummaryDismissed ? (
+            <PurchaseSummaryCard
+              receipt={state.receipt}
+              rewardThresholds={rewardThresholds}
+              onRegisterAnotherPurchase={prepareNextPurchase}
+            />
           ) : null}
 
           {state.status === "error" && state.message ? (

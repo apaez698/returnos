@@ -1,15 +1,20 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { PosPurchaseForm } from "@/components/pos/pos-purchase-form";
-import { getPosCustomersForCurrentBusiness } from "@/lib/pos/queries";
-import { PosCustomer } from "@/lib/pos/types";
+import {
+  getActiveRewardThresholdsForCurrentBusiness,
+  getPosCustomersForCurrentBusiness,
+} from "@/lib/pos/queries";
+import { PosCustomer, PosRewardThreshold } from "@/lib/pos/types";
 import { registerPosPurchaseAction } from "./actions";
 
 export default async function DashboardCajaPage() {
   let customers: PosCustomer[] = [];
+  let rewardThresholds: PosRewardThreshold[] = [];
   let error: string | null = null;
 
   try {
     customers = await getPosCustomersForCurrentBusiness();
+    rewardThresholds = await getActiveRewardThresholdsForCurrentBusiness();
   } catch (err) {
     if (err instanceof Error) {
       error = err.message;
@@ -47,6 +52,7 @@ export default async function DashboardCajaPage() {
         {!error ? (
           <PosPurchaseForm
             initialCustomers={customers}
+            rewardThresholds={rewardThresholds}
             action={registerPosPurchaseAction}
           />
         ) : null}

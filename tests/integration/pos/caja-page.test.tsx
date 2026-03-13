@@ -2,8 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import DashboardCajaPage from "@/app/dashboard/caja/page";
-import { getPosCustomersForCurrentBusiness } from "@/lib/pos/queries";
-import { PosCustomer } from "@/lib/pos/types";
+import {
+  getActiveRewardThresholdsForCurrentBusiness,
+  getPosCustomersForCurrentBusiness,
+} from "@/lib/pos/queries";
+import { PosCustomer, PosRewardThreshold } from "@/lib/pos/types";
 
 // ---------------------------------------------------------------------------
 // Module mocks
@@ -11,6 +14,7 @@ import { PosCustomer } from "@/lib/pos/types";
 
 vi.mock("@/lib/pos/queries", () => ({
   getPosCustomersForCurrentBusiness: vi.fn(),
+  getActiveRewardThresholdsForCurrentBusiness: vi.fn(),
 }));
 
 vi.mock("@/app/dashboard/caja/actions", () => ({
@@ -37,6 +41,15 @@ const CUSTOMER_B: PosCustomer = {
   last_visit_at: "2026-03-10T10:00:00Z",
 };
 
+const ACTIVE_THRESHOLDS: PosRewardThreshold[] = [
+  {
+    id: "reward-1",
+    name: "Cafe gratis",
+    points_required: 100,
+    is_active: true,
+  },
+];
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -57,6 +70,9 @@ describe("DashboardCajaPage (/dashboard/caja)", () => {
       CUSTOMER_A,
       CUSTOMER_B,
     ]);
+    vi.mocked(getActiveRewardThresholdsForCurrentBusiness).mockResolvedValue(
+      ACTIVE_THRESHOLDS,
+    );
   });
 
   // -------------------------------------------------------------------------
@@ -292,6 +308,9 @@ describe("DashboardCajaPage (/dashboard/caja)", () => {
   describe("empty state — no customers", () => {
     beforeEach(() => {
       vi.mocked(getPosCustomersForCurrentBusiness).mockResolvedValue([]);
+      vi.mocked(getActiveRewardThresholdsForCurrentBusiness).mockResolvedValue(
+        ACTIVE_THRESHOLDS,
+      );
     });
 
     it("shows a notice to add customers first", async () => {
@@ -319,6 +338,9 @@ describe("DashboardCajaPage (/dashboard/caja)", () => {
     beforeEach(() => {
       vi.mocked(getPosCustomersForCurrentBusiness).mockRejectedValue(
         new Error("Error de conexión con la base de datos"),
+      );
+      vi.mocked(getActiveRewardThresholdsForCurrentBusiness).mockResolvedValue(
+        ACTIVE_THRESHOLDS,
       );
     });
 

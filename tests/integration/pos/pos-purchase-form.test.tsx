@@ -372,6 +372,21 @@ describe("PosPurchaseForm", () => {
       await screen.findByText("Compra registrada correctamente");
       expect(screen.getByLabelText("Monto")).toHaveValue(null);
     });
+
+    it("hides the success summary when clicking 'Registrar otra compra'", async () => {
+      await submitAndGetSuccess();
+      await screen.findByText("Compra registrada correctamente");
+
+      const registerAnotherButton = screen.getByRole("button", {
+        name: /registrar otra compra/i,
+      });
+      await userEvent.click(registerAnotherButton);
+
+      expect(
+        screen.queryByText("Compra registrada correctamente"),
+      ).not.toBeInTheDocument();
+      expect(screen.getByLabelText("Monto")).toHaveValue(null);
+    });
   });
 
   // -------------------------------------------------------------------------

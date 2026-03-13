@@ -68,7 +68,7 @@ export async function registerPosPurchaseAction(
 
   const { data: customer, error: customerError } = await supabase
     .from("customers")
-    .select("id, name, points")
+    .select("id, name, points, card_token")
     .eq("id", parsed.data.customer_id)
     .eq("business_id", businessId)
     .limit(1)
@@ -149,6 +149,7 @@ export async function registerPosPurchaseAction(
       pointsEarned,
       updatedPoints,
       unlockedRewardName,
+      cardToken: customer.card_token,
     },
   };
 }
