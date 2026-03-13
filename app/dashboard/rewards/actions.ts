@@ -446,6 +446,7 @@ export async function redeemRewardAction(
     }
 
     revalidatePath("/dashboard/rewards");
+    revalidatePath("/dashboard/rewards/redemptions");
     revalidatePath("/dashboard/customers");
 
     return {

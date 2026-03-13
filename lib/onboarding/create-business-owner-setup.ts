@@ -5,6 +5,7 @@ const MAX_SLUG_ATTEMPTS = 5;
 
 export interface CreateBusinessOwnerSetupInput extends CreateBusinessOwnerInput {
   userId: string;
+  userEmail?: string | null;
 }
 
 export interface CreateBusinessOwnerSetupResult {
@@ -55,6 +56,7 @@ async function cleanupOrphanBusiness(businessId: string): Promise<void> {
 
 export async function createBusinessOwnerSetup({
   userId,
+  userEmail,
   businessName,
   businessType,
 }: CreateBusinessOwnerSetupInput): Promise<CreateBusinessOwnerSetupResult> {
@@ -119,6 +121,7 @@ export async function createBusinessOwnerSetup({
       .insert({
         business_id: business.id,
         user_id: userId,
+        ...(userEmail ? { user_email: userEmail.toLowerCase() } : {}),
         role: "owner",
       });
 

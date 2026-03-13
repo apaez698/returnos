@@ -48,6 +48,7 @@ export async function createBusinessOwnerAction(
 
   const result = await createBusinessOwnerSetup({
     userId: user.id,
+    userEmail: user.email,
     businessName: parsed.data.businessName,
     businessType: parsed.data.businessType,
   });

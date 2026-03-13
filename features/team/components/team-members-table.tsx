@@ -1,6 +1,7 @@
 interface TeamMember {
   id: string;
   user_id: string;
+  user_email: string | null;
   role: "owner" | "admin" | "staff";
   created_at: string;
 }
@@ -13,10 +14,6 @@ function formatRole(role: TeamMember["role"]): string {
   if (role === "owner") return "Owner";
   if (role === "admin") return "Admin";
   return "Staff";
-}
-
-function shortUserId(userId: string): string {
-  return `${userId.slice(0, 8)}...${userId.slice(-4)}`;
 }
 
 function formatDate(dateInput: string): string {
@@ -47,7 +44,7 @@ export function TeamMembersTable({ members }: TeamMembersTableProps) {
       <table className="min-w-full divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50 text-left text-slate-700">
           <tr>
-            <th className="px-4 py-3 font-semibold">Usuario</th>
+            <th className="px-4 py-3 font-semibold">Correo</th>
             <th className="px-4 py-3 font-semibold">Rol</th>
             <th className="px-4 py-3 font-semibold">Fecha alta</th>
           </tr>
@@ -55,9 +52,7 @@ export function TeamMembersTable({ members }: TeamMembersTableProps) {
         <tbody className="divide-y divide-slate-100 text-slate-700">
           {members.map((member) => (
             <tr key={member.id}>
-              <td className="px-4 py-3 font-mono text-xs sm:text-sm">
-                {shortUserId(member.user_id)}
-              </td>
+              <td className="px-4 py-3">{member.user_email ?? "-"}</td>
               <td className="px-4 py-3">{formatRole(member.role)}</td>
               <td className="px-4 py-3">{formatDate(member.created_at)}</td>
             </tr>

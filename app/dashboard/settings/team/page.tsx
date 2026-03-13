@@ -10,6 +10,7 @@ import { createServerClient } from "@/lib/supabase/server";
 interface TeamMemberRow {
   id: string;
   user_id: string;
+  user_email: string | null;
   role: "owner" | "admin" | "staff";
   created_at: string;
 }
@@ -38,7 +39,7 @@ export default async function DashboardTeamSettingsPage() {
     ] = await Promise.all([
       supabase
         .from("business_users")
-        .select("id, user_id, role, created_at")
+        .select("id, user_id, user_email, role, created_at")
         .eq("business_id", membership.businessId)
         .order("created_at", { ascending: true }),
       supabase

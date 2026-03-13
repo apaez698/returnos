@@ -109,6 +109,7 @@ describe("Accept invitation flow", () => {
     expect(membershipInsertMock).toHaveBeenCalledWith({
       business_id: "biz-1",
       user_id: "user-2",
+      user_email: "staff@demo.com",
       role: "admin",
     });
     expect(revalidatePath).toHaveBeenCalledWith("/dashboard");

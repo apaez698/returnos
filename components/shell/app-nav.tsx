@@ -14,6 +14,7 @@ const mainNavItems: NavItem[] = [
   { label: "Caja (POS)", href: "/dashboard/caja", icon: "🧾" },
   { label: "Clientes", href: "/dashboard/customers", icon: "👥" },
   { label: "Recompensas", href: "/dashboard/rewards", icon: "🎁" },
+  { label: "Canjes", href: "/dashboard/rewards/redemptions", icon: "🎟️" },
   { label: "Campañas", href: "/dashboard/campaigns", icon: "📢" },
 ];
 

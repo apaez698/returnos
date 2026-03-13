@@ -133,6 +133,7 @@ export async function acceptInvitationAction(
       .insert({
         business_id: invitationRow.business_id,
         user_id: user.id,
+        user_email: user.email.toLowerCase(),
         role: invitationRow.role,
       });
 

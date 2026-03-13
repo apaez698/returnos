@@ -2,6 +2,14 @@ import { getCurrentBusinessId } from "@/lib/businesses/current-business";
 import { createServerClient } from "@/lib/supabase/server";
 import { RewardRule, CustomerRewardProgress } from "./types";
 import { calculateRewardProgress } from "./progress";
+import {
+  GetReddemptionsOptions,
+  ReddemptionsQueryResult,
+} from "./redemptions-types";
+import {
+  mapRedemptionsToViewModel,
+  RawRedemptionRow,
+} from "./map-redemptions-to-view-model";
 
 export async function getRewardRulesForCurrentBusiness(): Promise<
   RewardRule[]
@@ -147,4 +155,68 @@ export async function getCustomerRewardProgressList(): Promise<
       status: progress.status,
     };
   });
+}
+
+export async function getRedemptionsForCurrentBusiness(
+  options?: GetReddemptionsOptions,
+): Promise<ReddemptionsQueryResult> {
+  const businessId = await getCurrentBusinessId();
+  const supabase = createServerClient();
+
+  let query = supabase
+    .from("reward_redemptions")
+    .select(
+      `
+      id,
+      customer_id,
+      reward_rule_id,
+      points_spent,
+      redeemed_at,
+      created_at,
+      customers (id, name, phone),
+      reward_rules (id, name, reward_description)
+    `,
+      { count: "exact" },
+    )
+    .eq("business_id", businessId)
+    .order("redeemed_at", { ascending: false });
+
+  // Apply filters
+  if (options?.customer_search) {
+    query = query.or(
+      `customers.name.ilike.%${options.customer_search}%,customers.phone.ilike.%${options.customer_search}%`,
+    );
+  }
+
+  if (options?.reward_id) {
+    query = query.eq("reward_rule_id", options.reward_id);
+  }
+
+  if (options?.reward_name) {
+    query = query.ilike("reward_rules.name", `%${options.reward_name}%`);
+  }
+
+  if (options?.start_date) {
+    query = query.gte("redeemed_at", options.start_date);
+  }
+
+  if (options?.end_date) {
+    query = query.lte("redeemed_at", options.end_date);
+  }
+
+  const limit = options?.limit ?? 100;
+  query = query.limit(limit);
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    throw new Error("No se pudieron cargar los canjes de recompensas.");
+  }
+
+  const items = mapRedemptionsToViewModel(data as RawRedemptionRow[]);
+
+  return {
+    items,
+    total_count: count ?? 0,
+  };
 }
