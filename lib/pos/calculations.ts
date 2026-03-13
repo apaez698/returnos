@@ -1,4 +1,5 @@
 import { PosCustomer, PosRewardThreshold } from "./types";
+import { calculatePointsEarned } from "@/features/loyalty/calculations/calculate-points-earned";
 
 export interface PosPurchaseSummary {
   amount: number;
@@ -7,11 +8,7 @@ export interface PosPurchaseSummary {
 }
 
 export function calculatePointsFromAmount(amount: number): number {
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return 0;
-  }
-
-  return Math.floor(amount);
+  return calculatePointsEarned(amount);
 }
 
 export function getPurchaseSummary(

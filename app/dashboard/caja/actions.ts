@@ -10,6 +10,7 @@ import {
   getActiveRewardThresholdsForCurrentBusiness,
   searchPosCustomersForCurrentBusiness,
 } from "@/lib/pos/queries";
+import { parseCurrencyInput } from "@/lib/pos/parse-currency-input";
 import { posPurchaseSchema } from "@/lib/pos/schemas";
 import {
   initialPosPurchaseActionState,
@@ -43,11 +44,21 @@ export async function registerPosPurchaseAction(
 ): Promise<PosPurchaseActionState> {
   void previousState;
 
-  const rawAmount = Number(String(formData.get("amount") ?? ""));
+  const parsedAmount = parseCurrencyInput(String(formData.get("amount") ?? ""));
+
+  if (!parsedAmount.ok) {
+    return {
+      status: "error",
+      message: "Revisa los datos de la compra.",
+      fieldErrors: {
+        amount: "Ingresa un monto valido mayor a 0.",
+      },
+    };
+  }
 
   const parsed = posPurchaseSchema.safeParse({
     customer_id: String(formData.get("customer_id") ?? ""),
-    amount: rawAmount,
+    amount: parsedAmount.value.amount,
   });
 
   if (!parsed.success) {

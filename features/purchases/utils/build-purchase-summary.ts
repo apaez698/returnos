@@ -1,3 +1,5 @@
+import { calculatePointsEarned } from "@/features/loyalty/calculations/calculate-points-earned";
+
 export interface BuildPurchaseSummaryInput {
   purchaseAmount: number;
   currentPoints: number;
@@ -27,7 +29,7 @@ function sanitizeNonNegativeNumber(value: number): number {
 export function calculatePointsEarnedFromPurchaseAmount(
   purchaseAmount: number,
 ): number {
-  return Math.floor(sanitizeNonNegativeNumber(purchaseAmount));
+  return calculatePointsEarned(sanitizeNonNegativeNumber(purchaseAmount));
 }
 
 export function calculateTotalAccumulatedPoints(

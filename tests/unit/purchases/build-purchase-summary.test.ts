@@ -9,10 +9,10 @@ import {
 } from "@/features/purchases/utils/build-purchase-summary";
 
 describe("purchase summary helpers", () => {
-  it("calculates points earned from purchase amount using floor", () => {
-    expect(calculatePointsEarnedFromPurchaseAmount(10.99)).toBe(10);
-    expect(calculatePointsEarnedFromPurchaseAmount(1)).toBe(1);
-    expect(calculatePointsEarnedFromPurchaseAmount(0.99)).toBe(0);
+  it("calculates points earned from purchase amount using 1 point per $0.10", () => {
+    expect(calculatePointsEarnedFromPurchaseAmount(10.99)).toBe(109);
+    expect(calculatePointsEarnedFromPurchaseAmount(1)).toBe(10);
+    expect(calculatePointsEarnedFromPurchaseAmount(0.99)).toBe(9);
   });
 
   it("returns 0 points for invalid or negative purchase amount", () => {
@@ -22,7 +22,7 @@ describe("purchase summary helpers", () => {
   });
 
   it("calculates total accumulated points", () => {
-    expect(calculateTotalAccumulatedPoints(50, 12)).toBe(62);
+    expect(calculateTotalAccumulatedPoints(50, 127)).toBe(177);
     expect(calculateTotalAccumulatedPoints(0, 0)).toBe(0);
   });
 
@@ -59,13 +59,13 @@ describe("buildPurchaseSummary", () => {
       }),
     ).toEqual({
       purchaseAmount: 12.75,
-      pointsEarned: 12,
-      totalAccumulatedPoints: 82,
+      pointsEarned: 127,
+      totalAccumulatedPoints: 197,
       rewardTargetPoints: 100,
-      progressToRewardPercent: 82,
-      pointsRemainingToReward: 18,
-      rewardUnlocked: false,
-      customerMessage: "You need 18 more points for your free coffee",
+      progressToRewardPercent: 100,
+      pointsRemainingToReward: 0,
+      rewardUnlocked: true,
+      customerMessage: "Reward unlocked",
     });
   });
 
@@ -79,8 +79,8 @@ describe("buildPurchaseSummary", () => {
       }),
     ).toEqual({
       purchaseAmount: 20,
-      pointsEarned: 20,
-      totalAccumulatedPoints: 105,
+      pointsEarned: 200,
+      totalAccumulatedPoints: 285,
       rewardTargetPoints: 100,
       progressToRewardPercent: 100,
       pointsRemainingToReward: 0,

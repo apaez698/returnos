@@ -37,12 +37,12 @@ const BUSINESS_ID = "demo-biz-001";
 const INITIAL_STATE: PosPurchaseActionState = { status: "idle" };
 
 // ─── Bakery demo fixtures ─────────────────────────────────────────────────────
-// Pablo Reyes López – 95 pts; a 30-MXN purchase earns 30 pts → 125 pts total.
-// 125 pts does NOT cross the next active threshold (150 pts), so no reward unlock.
+// Pablo Reyes López – 95 pts; a 30-MXN purchase earns 300 pts → 395 pts total.
+// 395 pts crosses active thresholds up to 300 pts, so the highest newly unlocked reward is returned.
 const pabloReyes = demoCustomers.find((c) => c.name === "Pablo Reyes López")!;
 
-// Sofia González Ruiz – 78 pts; an 80-MXN purchase earns 80 pts → 158 pts total.
-// 158 pts crosses the 150-pt "Coffee & Pastry Combo" threshold.
+// Sofia González Ruiz – 78 pts; an 80-MXN purchase earns 800 pts → 878 pts total.
+// 878 pts crosses active thresholds up to 300 pts, so the highest newly unlocked reward is returned.
 const sofiaGonzalez = demoCustomers.find(
   (c) => c.name === "Sofia González Ruiz",
 )!;
@@ -201,28 +201,28 @@ describe("Purchase Registration Flow – bakery demo dataset", () => {
       expect(result.status).toBe("success");
     });
 
-    it("reports pointsEarned = floor(30) = 30", async () => {
+    it("reports pointsEarned = floor(30 * 10) = 300", async () => {
       const result = await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(pabloReyes.id, "30"),
       );
-      expect(result.receipt?.pointsEarned).toBe(30);
+      expect(result.receipt?.pointsEarned).toBe(300);
     });
 
-    it("reports updatedPoints = 95 + 30 = 125", async () => {
+    it("reports updatedPoints = 95 + 300 = 395", async () => {
       const result = await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(pabloReyes.id, "30"),
       );
-      expect(result.receipt?.updatedPoints).toBe(125);
+      expect(result.receipt?.updatedPoints).toBe(395);
     });
 
-    it("does not report an unlocked reward (125 pts < 150-pt threshold)", async () => {
+    it("reports the highest newly unlocked reward when crossing multiple thresholds", async () => {
       const result = await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(pabloReyes.id, "30"),
       );
-      expect(result.receipt?.unlockedRewardName).toBeNull();
+      expect(result.receipt?.unlockedRewardName).toBe("Premium Gift Card");
     });
 
     it("writes a visit record with correct fields", async () => {
@@ -235,14 +235,14 @@ describe("Purchase Registration Flow – bakery demo dataset", () => {
         expect.objectContaining({
           business_id: BUSINESS_ID,
           customer_id: pabloReyes.id,
-          points_earned: 30,
+          points_earned: 300,
           amount: 30,
           source: "in_store",
         }),
       );
     });
 
-    it("updates the customer's loyalty balance to 125 pts", async () => {
+    it("updates the customer's loyalty balance to 395 pts", async () => {
       await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(pabloReyes.id, "30"),
@@ -250,7 +250,7 @@ describe("Purchase Registration Flow – bakery demo dataset", () => {
       expect(mocks.customerUpdateFn).toHaveBeenCalledOnce();
       expect(mocks.customerUpdateFn).toHaveBeenCalledWith(
         expect.objectContaining({
-          points: 125,
+          points: 395,
           last_visit_at: expect.any(String),
         }),
       );
@@ -270,7 +270,7 @@ describe("Purchase Registration Flow – bakery demo dataset", () => {
 
   // ───────────────────────────────────────────────────────────────────────────
   describe("Reward unlock – Sofia González (78 pts, buys 80 MXN)", () => {
-    // 78 + 80 = 158 pts  →  crosses the 150-pt "Coffee & Pastry Combo" threshold
+    // 78 + 800 = 878 pts  →  crosses active thresholds up to 300-pt "Premium Gift Card"
     let mocks: ReturnType<typeof buildSupabaseMocks>;
 
     beforeEach(() => {
@@ -294,20 +294,20 @@ describe("Purchase Registration Flow – bakery demo dataset", () => {
       expect(result.status).toBe("success");
     });
 
-    it("reports updatedPoints = 78 + 80 = 158", async () => {
+    it("reports updatedPoints = 78 + 800 = 878", async () => {
       const result = await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(sofiaGonzalez.id, "80"),
       );
-      expect(result.receipt?.updatedPoints).toBe(158);
+      expect(result.receipt?.updatedPoints).toBe(878);
     });
 
-    it("reports the unlocked reward 'Coffee & Pastry Combo'", async () => {
+    it("reports the unlocked reward 'Premium Gift Card'", async () => {
       const result = await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(sofiaGonzalez.id, "80"),
       );
-      expect(result.receipt?.unlockedRewardName).toBe("Coffee & Pastry Combo");
+      expect(result.receipt?.unlockedRewardName).toBe("Premium Gift Card");
     });
 
     it("does not unlock the inactive VIP Experience rule (500 pts, inactive)", async () => {
@@ -318,23 +318,23 @@ describe("Purchase Registration Flow – bakery demo dataset", () => {
       expect(result.receipt?.unlockedRewardName).not.toBe("VIP Experience");
     });
 
-    it("writes a visit with points_earned = 80", async () => {
+    it("writes a visit with points_earned = 800", async () => {
       await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(sofiaGonzalez.id, "80"),
       );
       expect(mocks.insertMock).toHaveBeenCalledWith(
-        expect.objectContaining({ points_earned: 80 }),
+        expect.objectContaining({ points_earned: 800 }),
       );
     });
 
-    it("updates the customer's loyalty balance to 158 pts", async () => {
+    it("updates the customer's loyalty balance to 878 pts", async () => {
       await registerPosPurchaseAction(
         INITIAL_STATE,
         makeFormData(sofiaGonzalez.id, "80"),
       );
       expect(mocks.customerUpdateFn).toHaveBeenCalledWith(
-        expect.objectContaining({ points: 158 }),
+        expect.objectContaining({ points: 878 }),
       );
     });
   });

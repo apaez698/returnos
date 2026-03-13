@@ -104,11 +104,13 @@ describe("DashboardCajaPage (/dashboard/caja)", () => {
       ).toBeInTheDocument();
     });
 
-    it("renders the POS section heading 'Caja / POS'", async () => {
+    it("renders the POS helper copy", async () => {
       await renderPage();
 
       expect(
-        screen.getByRole("heading", { name: /caja \/ pos/i }),
+        screen.getByText(
+          /busca cliente, selecciona y registra la compra en segundos/i,
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -273,8 +275,9 @@ describe("DashboardCajaPage (/dashboard/caja)", () => {
       expect(screen.getByLabelText("Monto")).toBeInTheDocument();
     });
 
-    it("submit button becomes enabled after customer selection", async () => {
-      await renderAndSelect(CUSTOMER_A);
+    it("submit button becomes enabled after customer selection and valid amount", async () => {
+      const user = await renderAndSelect(CUSTOMER_A);
+      await user.type(screen.getByLabelText("Monto"), "1.50");
 
       expect(
         screen.getByRole("button", { name: /registrar compra/i }),

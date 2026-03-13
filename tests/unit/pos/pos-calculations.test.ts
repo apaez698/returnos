@@ -14,11 +14,11 @@ const rewardRules: PosRewardThreshold[] = [
 ];
 
 describe("POS calculations", () => {
-  it("calculates points from amount using floor(amount)", () => {
-    expect(calculatePointsFromAmount(99.99)).toBe(99);
-    expect(calculatePointsFromAmount(100)).toBe(100);
-    expect(calculatePointsFromAmount(1.8)).toBe(1);
-    expect(calculatePointsFromAmount(0.8)).toBe(0);
+  it("calculates points from amount using 1 point per $0.10", () => {
+    expect(calculatePointsFromAmount(99.99)).toBe(999);
+    expect(calculatePointsFromAmount(100)).toBe(1000);
+    expect(calculatePointsFromAmount(1.8)).toBe(18);
+    expect(calculatePointsFromAmount(0.8)).toBe(8);
   });
 
   it("returns 0 points for invalid or non-positive amount", () => {
@@ -28,14 +28,14 @@ describe("POS calculations", () => {
   });
 
   it("updates points based on current points and amount", () => {
-    expect(calculateUpdatedPoints(15, 50)).toBe(65);
+    expect(calculateUpdatedPoints(15, 50)).toBe(515);
   });
 
   it("builds purchase summary from amount and current points", () => {
     expect(getPurchaseSummary(15, 50.9)).toEqual({
       amount: 50.9,
-      pointsEarned: 50,
-      updatedPoints: 65,
+      pointsEarned: 509,
+      updatedPoints: 524,
     });
   });
 
@@ -55,40 +55,40 @@ describe("POS calculations", () => {
   });
 });
 
-describe("calculatePointsFromAmount – floor behavior", () => {
-  it("floors 3.50 to 3 points", () => {
-    expect(calculatePointsFromAmount(3.5)).toBe(3);
+describe("calculatePointsFromAmount – cents-aware behavior", () => {
+  it("returns 35 points for 3.50", () => {
+    expect(calculatePointsFromAmount(3.5)).toBe(35);
   });
 
-  it("returns 10 for a whole-number amount of 10", () => {
-    expect(calculatePointsFromAmount(10)).toBe(10);
+  it("returns 100 for a whole-number amount of 10", () => {
+    expect(calculatePointsFromAmount(10)).toBe(100);
   });
 
-  it("floors 0.99 to 0 points", () => {
-    expect(calculatePointsFromAmount(0.99)).toBe(0);
+  it("returns 9 points for 0.99", () => {
+    expect(calculatePointsFromAmount(0.99)).toBe(9);
   });
 });
 
 describe("getPurchaseSummary – pointsEarned and updatedPoints", () => {
-  it("returns pointsEarned = floor(amount)", () => {
+  it("returns pointsEarned = floor(amount * 10)", () => {
     const { pointsEarned } = getPurchaseSummary(0, 3.5);
-    expect(pointsEarned).toBe(3);
+    expect(pointsEarned).toBe(35);
   });
 
   it("adds pointsEarned to currentPoints to produce updatedPoints", () => {
     const { updatedPoints } = getPurchaseSummary(100, 3.5);
-    expect(updatedPoints).toBe(103);
+    expect(updatedPoints).toBe(135);
   });
 
-  it("updatedPoints stays unchanged when amount earns no points", () => {
+  it("adds points when amount has positive cents value", () => {
     const { pointsEarned, updatedPoints } = getPurchaseSummary(50, 0.99);
-    expect(pointsEarned).toBe(0);
-    expect(updatedPoints).toBe(50);
+    expect(pointsEarned).toBe(9);
+    expect(updatedPoints).toBe(59);
   });
 
   it("accumulates correctly from a zero balance", () => {
     const { pointsEarned, updatedPoints } = getPurchaseSummary(0, 10);
-    expect(pointsEarned).toBe(10);
-    expect(updatedPoints).toBe(10);
+    expect(pointsEarned).toBe(100);
+    expect(updatedPoints).toBe(100);
   });
 });

@@ -58,12 +58,12 @@ describe("PosPurchaseForm", () => {
   // Initial state
   // -------------------------------------------------------------------------
   describe("initial state", () => {
-    it("renders the section heading", () => {
+    it("renders the POS helper copy", () => {
       render(
         <PosPurchaseForm initialCustomers={[CUSTOMER]} action={idleAction()} />,
       );
       expect(
-        screen.getByRole("heading", { name: /caja \/ pos/i }),
+        screen.getByText(/busca cliente, selecciona y registra la compra/i),
       ).toBeInTheDocument();
     });
 
@@ -144,8 +144,20 @@ describe("PosPurchaseForm", () => {
       });
     });
 
-    it("enables the submit button after selecting a customer", async () => {
+    it("keeps submit disabled after selecting customer until amount is valid", async () => {
       await renderAndSelectCustomer(idleAction());
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: /registrar compra/i }),
+        ).toBeDisabled();
+      });
+    });
+
+    it("enables submit button when a valid decimal amount is entered", async () => {
+      const user = await renderAndSelectCustomer(idleAction());
+
+      await user.type(screen.getByLabelText("Monto"), "2.75");
 
       await waitFor(() => {
         expect(
@@ -177,7 +189,7 @@ describe("PosPurchaseForm", () => {
       );
       const user = await renderAndSelectCustomer(action);
 
-      await user.type(screen.getByLabelText("Monto"), "0");
+      await user.type(screen.getByLabelText("Monto"), "0.10");
       await user.click(
         screen.getByRole("button", { name: /registrar compra/i }),
       );
@@ -288,7 +300,7 @@ describe("PosPurchaseForm", () => {
       );
 
       await waitFor(() => expect(capturedFormData).not.toBeNull());
-      expect(capturedFormData!.get("amount")).toBe("99.5");
+      expect(capturedFormData!.get("amount")).toBe("99.50");
     });
   });
 
@@ -369,7 +381,7 @@ describe("PosPurchaseForm", () => {
       await submitAndGetSuccess();
       await screen.findByText("Compra registrada");
       await waitFor(() => {
-        expect(screen.getByLabelText("Monto")).toHaveValue(null);
+        expect(screen.getByLabelText("Monto")).toHaveValue("");
       });
     });
 
@@ -383,7 +395,7 @@ describe("PosPurchaseForm", () => {
       await userEvent.click(registerAnotherButton);
 
       expect(screen.queryByText("Compra registrada")).not.toBeInTheDocument();
-      expect(screen.getByLabelText("Monto")).toHaveValue(null);
+      expect(screen.getByLabelText("Monto")).toHaveValue("");
     });
   });
 

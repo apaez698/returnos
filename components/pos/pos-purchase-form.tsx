@@ -8,12 +8,10 @@ import {
   PosRewardThreshold,
 } from "@/lib/pos/types";
 import { twoColTabletGrid } from "@/lib/ui/responsive";
-import {
-  touchInput,
-  touchPrimary,
-  touchQuickAmount,
-} from "@/lib/ui/touch-targets";
+import { touchPrimary, touchQuickAmount } from "@/lib/ui/touch-targets";
+import { parseCurrencyInput } from "@/lib/pos/parse-currency-input";
 import { CustomerSearch } from "./customer-search";
+import { PurchaseAmountInput } from "./purchase-amount-input";
 import { PurchaseConfirmationModal } from "./purchase-confirmation-modal";
 
 interface PosPurchaseFormProps {
@@ -42,6 +40,8 @@ export function PosPurchaseForm({
   const [isSummaryDismissed, setIsSummaryDismissed] = useState(false);
   const amountInputRef = useRef<HTMLInputElement>(null);
   const selectedCustomerId = selectedCustomer?.id ?? "";
+  const parsedAmount = parseCurrencyInput(amount);
+  const isAmountValid = parsedAmount.ok;
 
   const results = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -149,34 +149,13 @@ export function PosPurchaseForm({
           ) : null}
 
           {/* Monto */}
-          <div>
-            <label
-              htmlFor="amount"
-              className="mb-1.5 block text-sm font-medium text-slate-700"
-            >
-              Monto
-            </label>
-            <input
-              ref={amountInputRef}
-              id="amount"
-              name="amount"
-              type="number"
-              inputMode="decimal"
-              min={0.01}
-              step="0.01"
-              required
-              disabled={!selectedCustomer}
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-              placeholder="0.00"
-              className={touchInput}
-            />
-            {state.fieldErrors?.amount ? (
-              <p className="mt-1 text-xs text-rose-600">
-                {state.fieldErrors.amount}
-              </p>
-            ) : null}
-          </div>
+          <PurchaseAmountInput
+            inputRef={amountInputRef}
+            value={amount}
+            onChange={setAmount}
+            disabled={!selectedCustomer}
+            fieldError={state.fieldErrors?.amount}
+          />
 
           {/* Montos rápidos */}
           <div>
@@ -218,9 +197,9 @@ export function PosPurchaseForm({
                   key={value}
                   type="button"
                   disabled={!selectedCustomer}
-                  onClick={() => setAmount(String(value))}
+                  onClick={() => setAmount(`${value}.00`)}
                   className={`${touchQuickAmount} ${
-                    amount === String(value) && selectedCustomer ? active : base
+                    amount === `${value}.00` && selectedCustomer ? active : base
                   }`}
                 >
                   ${value}
@@ -232,7 +211,7 @@ export function PosPurchaseForm({
           {/* Botón registrar */}
           <button
             type="submit"
-            disabled={!selectedCustomer || pending}
+            disabled={!selectedCustomer || pending || !isAmountValid}
             className={touchPrimary}
           >
             {pending ? "Registrando..." : "Registrar compra"}

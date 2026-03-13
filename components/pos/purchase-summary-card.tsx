@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatCurrency } from "@/lib/pos/format-currency";
 import { PosPurchaseReceipt, PosRewardThreshold } from "@/lib/pos/types";
 import { touchPrimary, touchSecondary } from "@/lib/ui/touch-targets";
 import { PurchaseRewardProgress } from "./purchase-reward-progress";
@@ -7,15 +8,6 @@ interface PurchaseSummaryCardProps {
   receipt: PosPurchaseReceipt;
   rewardThresholds: PosRewardThreshold[];
   onRegisterAnotherPurchase?: () => void;
-}
-
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "MXN",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
 }
 
 export function PurchaseSummaryCard({
