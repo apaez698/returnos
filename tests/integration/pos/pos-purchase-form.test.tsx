@@ -321,34 +321,32 @@ describe("PosPurchaseForm", () => {
 
     it("shows 'Compra registrada correctamente' heading on success", async () => {
       await submitAndGetSuccess();
-      expect(
-        await screen.findByText("Compra registrada correctamente"),
-      ).toBeInTheDocument();
+      expect(await screen.findByText("Compra registrada")).toBeInTheDocument();
     });
 
     it("shows the customer name in the success card", async () => {
       await submitAndGetSuccess();
-      await screen.findByText("Compra registrada correctamente");
+      await screen.findByText("Compra registrada");
       // Customer name appears both in the selected panel and in the receipt
       expect(screen.getAllByText(/ana perez/i).length).toBeGreaterThan(0);
     });
 
     it("shows the formatted purchase amount in the success card", async () => {
       await submitAndGetSuccess();
-      await screen.findByText("Compra registrada correctamente");
+      await screen.findByText("Compra registrada");
       // es-MX currency format for 50
       expect(screen.getByText(/\$50\.00/)).toBeInTheDocument();
     });
 
     it("shows points earned in the success card", async () => {
       await submitAndGetSuccess();
-      await screen.findByText("Compra registrada correctamente");
+      await screen.findByText("Compra registrada");
       expect(screen.getByText("+50")).toBeInTheDocument();
     });
 
     it("shows updated total points in the success card", async () => {
       await submitAndGetSuccess();
-      await screen.findByText("Compra registrada correctamente");
+      await screen.findByText("Compra registrada");
       expect(screen.getByText("70")).toBeInTheDocument();
     });
 
@@ -361,7 +359,7 @@ describe("PosPurchaseForm", () => {
 
     it("does not show a reward message when no reward was unlocked", async () => {
       await submitAndGetSuccess(null);
-      await screen.findByText("Compra registrada correctamente");
+      await screen.findByText("Compra registrada");
       expect(
         screen.queryByText(/Recompensa disponible/i),
       ).not.toBeInTheDocument();
@@ -369,22 +367,22 @@ describe("PosPurchaseForm", () => {
 
     it("clears the amount field after a successful submission", async () => {
       await submitAndGetSuccess();
-      await screen.findByText("Compra registrada correctamente");
-      expect(screen.getByLabelText("Monto")).toHaveValue(null);
+      await screen.findByText("Compra registrada");
+      await waitFor(() => {
+        expect(screen.getByLabelText("Monto")).toHaveValue(null);
+      });
     });
 
     it("hides the success summary when clicking 'Registrar otra compra'", async () => {
       await submitAndGetSuccess();
-      await screen.findByText("Compra registrada correctamente");
+      await screen.findByText("Compra registrada");
 
       const registerAnotherButton = screen.getByRole("button", {
         name: /registrar otra compra/i,
       });
       await userEvent.click(registerAnotherButton);
 
-      expect(
-        screen.queryByText("Compra registrada correctamente"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Compra registrada")).not.toBeInTheDocument();
       expect(screen.getByLabelText("Monto")).toHaveValue(null);
     });
   });

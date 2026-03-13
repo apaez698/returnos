@@ -25,14 +25,13 @@ export default async function DashboardCajaPage() {
 
   return (
     <DashboardLayout pageTitle="Caja">
-      <div className="mx-auto w-full max-w-5xl space-y-6">
-        <section className="space-y-2">
-          <h2 className="text-xl font-semibold text-slate-900">
+      <div className="mx-auto w-full max-w-5xl space-y-5">
+        <section className="space-y-1">
+          <h2 className="text-lg font-semibold text-slate-900 md:text-xl">
             Registro rápido de compras
           </h2>
           <p className="text-sm text-slate-600">
-            Registro rápido de compras en caja: busca un cliente, selecciónalo y
-            registra su compra en pocos pasos.
+            Busca un cliente, selecciónalo y registra su compra en pocos pasos.
           </p>
         </section>
 

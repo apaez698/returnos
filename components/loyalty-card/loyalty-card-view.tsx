@@ -46,10 +46,12 @@ export function LoyaltyCardView({
 }: LoyaltyCardViewProps) {
   const resolvedCustomerIdentifier =
     customerIdentifier ?? buildCustomerIdentifier(card);
+  const hasWalletActions =
+    walletAvailability.apple || walletAvailability.google;
 
   return (
-    <section className="mx-auto w-full max-w-xl rounded-3xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-4 shadow-sm sm:p-6">
-      <div className="space-y-4 sm:space-y-5">
+    <section className="mx-auto w-full max-w-2xl rounded-[1.75rem] border border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-100 p-3.5 shadow-lg shadow-slate-200/60 sm:p-4 md:p-5">
+      <div className="space-y-3.5 md:space-y-4">
         <LoyaltyCardHeader
           businessName={card.business.name}
           businessLogoUrl={businessLogoUrl}
@@ -57,29 +59,48 @@ export function LoyaltyCardView({
           maskedPhone={maskPhone(card.customer.phone)}
         />
 
-        <LoyaltyProgressBar
-          currentPoints={card.loyalty.current_points}
-          targetPoints={card.loyalty.reward_target_points}
-          progressPercentage={card.loyalty.progress_percentage_to_target}
-          remainingPoints={card.loyalty.remaining_points_to_target}
-        />
+        <div className="grid gap-3.5 md:grid-cols-5 md:gap-4">
+          <div className="md:col-span-3">
+            <LoyaltyProgressBar
+              currentPoints={card.loyalty.current_points}
+              targetPoints={card.loyalty.reward_target_points}
+              progressPercentage={card.loyalty.progress_percentage_to_target}
+              remainingPoints={card.loyalty.remaining_points_to_target}
+            />
+          </div>
 
-        <LoyaltyRewardStatus
-          status={card.loyalty.status}
-          redeemableRewardName={card.loyalty.redeemable_reward?.name}
-          nextRewardName={card.loyalty.next_reward?.name}
-          remainingPoints={card.loyalty.remaining_points_to_target}
-        />
+          <div className="md:col-span-2">
+            <LoyaltyRewardStatus
+              status={card.loyalty.status}
+              redeemableRewardName={card.loyalty.redeemable_reward?.name}
+              nextRewardName={card.loyalty.next_reward?.name}
+              remainingPoints={card.loyalty.remaining_points_to_target}
+            />
+          </div>
+        </div>
 
-        <LoyaltyCardQr
-          qrCodeDataUrl={qrCodeDataUrl}
-          customerIdentifier={resolvedCustomerIdentifier}
-        />
+        {hasWalletActions ? (
+          <div className="grid gap-3.5 md:grid-cols-5 md:gap-4">
+            <div className="md:col-span-3">
+              <LoyaltyCardQr
+                qrCodeDataUrl={qrCodeDataUrl}
+                customerIdentifier={resolvedCustomerIdentifier}
+              />
+            </div>
 
-        <AddToWalletButtons
-          cardToken={cardToken}
-          availablePlatforms={walletAvailability}
-        />
+            <div className="md:col-span-2">
+              <AddToWalletButtons
+                cardToken={cardToken}
+                availablePlatforms={walletAvailability}
+              />
+            </div>
+          </div>
+        ) : (
+          <LoyaltyCardQr
+            qrCodeDataUrl={qrCodeDataUrl}
+            customerIdentifier={resolvedCustomerIdentifier}
+          />
+        )}
       </div>
     </section>
   );

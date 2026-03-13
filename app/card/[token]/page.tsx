@@ -34,7 +34,7 @@ export default async function LoyaltyCardPage({
   const walletAvailability = getWalletPlatformAvailability();
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl items-center px-4 py-8 sm:px-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-5xl items-center px-4 py-8 sm:px-6 md:px-8 md:py-10">
       <LoyaltyCardView
         card={card}
         cardToken={decodedToken}

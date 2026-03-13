@@ -7,8 +7,14 @@ import {
   PosPurchaseActionState,
   PosRewardThreshold,
 } from "@/lib/pos/types";
+import { twoColTabletGrid } from "@/lib/ui/responsive";
+import {
+  touchInput,
+  touchPrimary,
+  touchQuickAmount,
+} from "@/lib/ui/touch-targets";
 import { CustomerSearch } from "./customer-search";
-import { PurchaseSummaryCard } from "./purchase-summary-card";
+import { PurchaseConfirmationModal } from "./purchase-confirmation-modal";
 
 interface PosPurchaseFormProps {
   initialCustomers: PosCustomer[];
@@ -82,13 +88,12 @@ export function PosPurchaseForm({
   }, [results]);
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-6">
-      <h2 className="text-lg font-semibold text-slate-900">Caja / POS</h2>
+    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
       <p className="mt-1 text-sm text-slate-600">
         Busca cliente, selecciona y registra la compra en segundos.
       </p>
 
-      <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className={`mt-5 ${twoColTabletGrid}`}>
         <CustomerSearch
           query={query}
           customers={results}
@@ -107,7 +112,7 @@ export function PosPurchaseForm({
 
           {/* Cliente seleccionado */}
           <div
-            className={`rounded-md border px-3 py-2.5 ${
+            className={`rounded-xl border px-4 py-3.5 ${
               selectedCustomer
                 ? "border-indigo-200 bg-indigo-50"
                 : "border-slate-200 bg-slate-50"
@@ -117,21 +122,21 @@ export function PosPurchaseForm({
               Cliente seleccionado
             </p>
             {selectedCustomer ? (
-              <div className="mt-1 flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-sm font-semibold text-indigo-900">
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate text-base font-semibold text-indigo-900">
                     {selectedCustomer.name}
                   </p>
-                  <p className="text-xs text-indigo-700">
+                  <p className="text-sm text-indigo-700">
                     {selectedCustomer.phone}
                   </p>
                 </div>
-                <span className="shrink-0 rounded-full bg-indigo-100 px-2 py-1 text-xs font-semibold text-indigo-700">
+                <span className="shrink-0 rounded-full bg-indigo-100 px-3 py-1.5 text-sm font-bold text-indigo-700">
                   {selectedCustomer.points} pts
                 </span>
               </div>
             ) : (
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-2 text-sm text-slate-500">
                 Selecciona un cliente de la izquierda.
               </p>
             )}
@@ -147,7 +152,7 @@ export function PosPurchaseForm({
           <div>
             <label
               htmlFor="amount"
-              className="mb-1 block text-sm font-medium text-slate-700"
+              className="mb-1.5 block text-sm font-medium text-slate-700"
             >
               Monto
             </label>
@@ -156,6 +161,7 @@ export function PosPurchaseForm({
               id="amount"
               name="amount"
               type="number"
+              inputMode="decimal"
               min={0.01}
               step="0.01"
               required
@@ -163,7 +169,7 @@ export function PosPurchaseForm({
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
               placeholder="0.00"
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-indigo-500 focus:ring-2 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+              className={touchInput}
             />
             {state.fieldErrors?.amount ? (
               <p className="mt-1 text-xs text-rose-600">
@@ -174,10 +180,10 @@ export function PosPurchaseForm({
 
           {/* Montos rápidos */}
           <div>
-            <p className="mb-1.5 text-xs font-medium text-slate-500">
+            <p className="mb-2 text-xs font-medium text-slate-500">
               Montos rápidos
             </p>
-            <div className="grid grid-cols-5 gap-1.5">
+            <div className="grid grid-cols-5 gap-2">
               {(
                 [
                   {
@@ -213,9 +219,9 @@ export function PosPurchaseForm({
                   type="button"
                   disabled={!selectedCustomer}
                   onClick={() => setAmount(String(value))}
-                  className={`rounded-md border px-2 py-1.5 text-sm font-semibold transition ${
+                  className={`${touchQuickAmount} ${
                     amount === String(value) && selectedCustomer ? active : base
-                  } disabled:cursor-not-allowed disabled:opacity-40`}
+                  }`}
                 >
                   ${value}
                 </button>
@@ -227,7 +233,7 @@ export function PosPurchaseForm({
           <button
             type="submit"
             disabled={!selectedCustomer || pending}
-            className="w-full rounded-md bg-slate-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            className={touchPrimary}
           >
             {pending ? "Registrando..." : "Registrar compra"}
           </button>
@@ -235,10 +241,10 @@ export function PosPurchaseForm({
           {state.status === "success" &&
           state.receipt &&
           !isSummaryDismissed ? (
-            <PurchaseSummaryCard
+            <PurchaseConfirmationModal
               receipt={state.receipt}
               rewardThresholds={rewardThresholds}
-              onRegisterAnotherPurchase={prepareNextPurchase}
+              onClose={prepareNextPurchase}
             />
           ) : null}
 

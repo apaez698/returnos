@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PosPurchaseReceipt, PosRewardThreshold } from "@/lib/pos/types";
+import { touchPrimary, touchSecondary } from "@/lib/ui/touch-targets";
 import { PurchaseRewardProgress } from "./purchase-reward-progress";
 
 interface PurchaseSummaryCardProps {
@@ -27,8 +28,8 @@ export function PurchaseSummaryCard({
     : null;
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5">
+    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:p-5">
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
         <h3 className="text-sm font-semibold text-emerald-800">
           Compra registrada correctamente
         </h3>
@@ -85,15 +86,12 @@ export function PurchaseSummaryCard({
 
       <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {loyaltyCardPath ? (
-          <Link
-            href={loyaltyCardPath}
-            className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 transition hover:bg-slate-100"
-          >
+          <Link href={loyaltyCardPath} className={touchSecondary}>
             Ver tarjeta de lealtad
           </Link>
         ) : (
           <span
-            className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-sm font-medium text-slate-500"
+            className="flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 bg-slate-100 px-4 py-2.5 text-sm font-medium text-slate-500"
             aria-disabled="true"
           >
             Tarjeta no disponible
@@ -103,7 +101,7 @@ export function PurchaseSummaryCard({
         <button
           type="button"
           onClick={onRegisterAnotherPurchase}
-          className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
+          className={touchPrimary}
         >
           Registrar otra compra
         </button>
