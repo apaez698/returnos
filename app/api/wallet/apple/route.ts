@@ -44,7 +44,7 @@ export async function GET(request: Request) {
       walletModel,
     });
 
-    return new NextResponse(pass.packageBuffer, {
+    return new NextResponse(new Uint8Array(pass.packageBuffer), {
       status: 200,
       headers: {
         "Content-Type": pass.contentType,

@@ -27,9 +27,29 @@ export async function GET(request: Request) {
   const supabase = await createServerAuthClient();
 
   if (code) {
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      console.error(
+        "[auth/callback] exchangeCodeForSession error:",
+        error.message,
+      );
+      return NextResponse.redirect(`${origin}/login?error=auth`);
+    }
   } else if (tokenHash && type) {
-    await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type,
+    });
+    if (error) {
+      console.error("[auth/callback] verifyOtp error:", error.message);
+      return NextResponse.redirect(`${origin}/login?error=auth`);
+    }
+  } else {
+    console.error(
+      "[auth/callback] No code or token_hash in request:",
+      Object.fromEntries(new URL(request.url).searchParams),
+    );
+    return NextResponse.redirect(`${origin}/login?error=auth`);
   }
 
   if (type === "signup") {

@@ -19,6 +19,9 @@ const mockSignOut = vi.fn();
 describe("Auth callback business membership flow", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockExchangeCodeForSession.mockResolvedValue({ error: null });
+    mockVerifyOtp.mockResolvedValue({ error: null });
+    mockSignOut.mockResolvedValue({ error: null });
 
     vi.mocked(createServerAuthClient).mockResolvedValue({
       auth: {

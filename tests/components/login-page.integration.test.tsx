@@ -18,6 +18,10 @@ describe("LoginPage integration", () => {
     mockSignInWithOtp.mockReset();
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("renders email input and submit button", () => {
     render(<LoginPage />);
 
@@ -97,6 +101,30 @@ describe("LoginPage integration", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("alert")).toHaveTextContent("Auth unavailable");
+    });
+  });
+
+  it("uses NEXT_PUBLIC_APP_URL for auth redirect when configured", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://returnos-five.vercel.app");
+    const user = userEvent.setup();
+    mockSignInWithOtp.mockResolvedValueOnce({ error: null });
+
+    render(<LoginPage />);
+
+    await user.type(
+      screen.getByLabelText("Correo electronico"),
+      "owner@bakery.com",
+    );
+    await user.click(screen.getByRole("button", { name: "Enviar enlace" }));
+
+    await waitFor(() => {
+      expect(mockSignInWithOtp).toHaveBeenCalledWith({
+        email: "owner@bakery.com",
+        options: {
+          emailRedirectTo:
+            "https://returnos-five.vercel.app/auth/callback?next=%2Fdashboard",
+        },
+      });
     });
   });
 });

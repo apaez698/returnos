@@ -45,6 +45,20 @@ function mapAuthError(error: unknown): {
   };
 }
 
+function getAuthRedirectOrigin() {
+  const publicAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+
+  if (!publicAppUrl) {
+    return window.location.origin;
+  }
+
+  try {
+    return new URL(publicAppUrl).origin;
+  } catch {
+    return window.location.origin;
+  }
+}
+
 export default function LoginPage() {
   const supabase = useMemo(() => createBrowserClient(), []);
   const [email, setEmail] = useState("");
@@ -88,7 +102,7 @@ export default function LoginPage() {
     setMessage(null);
 
     try {
-      const redirectUrl = new URL("/auth/callback", window.location.origin);
+      const redirectUrl = new URL("/auth/callback", getAuthRedirectOrigin());
       redirectUrl.searchParams.set("next", "/dashboard");
       const currentParams = new URLSearchParams(window.location.search);
 

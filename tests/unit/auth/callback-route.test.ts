@@ -19,6 +19,8 @@ vi.mock("@/lib/auth/get-current-membership", () => ({
 describe("auth callback route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockExchangeCodeForSession.mockResolvedValue({ error: null });
+    mockVerifyOtp.mockResolvedValue({ error: null });
     mockGetUser.mockResolvedValue({
       data: {
         user: {
