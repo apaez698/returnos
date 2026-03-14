@@ -74,7 +74,7 @@ export function PurchaseConfirmationModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center p-4 md:p-6"
+      className="fixed inset-0 z-[120] flex items-center justify-center p-6 md:p-10"
       role="dialog"
       aria-labelledby="pcm-title"
       aria-modal="true"
@@ -86,12 +86,12 @@ export function PurchaseConfirmationModal({
         onClick={onClose}
       />
 
-      <section className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white p-0 shadow-2xl">
+      <section className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-white p-0 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.35),0_0_0_1px_rgba(0,0,0,0.06)]">
         {/* ── Success header ──────────────────────────────────────────── */}
-        <div className="rounded-t-2xl bg-emerald-600 px-6 py-5 text-white">
-          <div className="flex items-start gap-3">
+        <div className="rounded-t-2xl bg-emerald-600 px-4 py-3 text-white md:px-6 md:py-5">
+          <div className="flex items-start gap-2 md:gap-3">
             <span
-              className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-xl"
+              className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-base md:h-10 md:w-10 md:text-xl"
               aria-hidden="true"
             >
               ✓
@@ -99,11 +99,11 @@ export function PurchaseConfirmationModal({
             <div>
               <h2
                 id="pcm-title"
-                className="text-xl font-bold leading-snug md:text-2xl"
+                className="text-base font-bold leading-snug md:text-xl lg:text-2xl"
               >
                 Compra registrada
               </h2>
-              <p className="mt-1 text-sm text-emerald-100">
+              <p className="dashboard-explainer mt-1 text-xs text-emerald-100 md:text-sm">
                 El historial del cliente se actualizó correctamente.
               </p>
             </div>
@@ -111,44 +111,44 @@ export function PurchaseConfirmationModal({
         </div>
 
         {/* ── Receipt details ─────────────────────────────────────────── */}
-        <div className="px-6 pt-5">
-          <dl className="grid grid-cols-2 gap-3">
+        <div className="px-4 pt-3 md:px-6 md:pt-5">
+          <dl className="grid grid-cols-2 gap-2 md:gap-3">
             {/* Customer – spans full row */}
             <div className="col-span-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
               <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 Cliente
               </dt>
-              <dd className="mt-1 truncate text-base font-semibold text-slate-900 md:text-lg">
+              <dd className="mt-0.5 truncate text-sm font-semibold text-slate-900 md:text-base lg:text-lg">
                 {receipt.customerName}
               </dd>
             </div>
 
             {/* Amount */}
-            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 md:px-4 md:py-3">
               <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 Monto
               </dt>
-              <dd className="mt-1 text-base font-semibold text-slate-900 md:text-lg">
+              <dd className="mt-0.5 text-sm font-semibold text-slate-900 md:text-base lg:text-lg">
                 {formatCurrency(receipt.amount)}
               </dd>
             </div>
 
             {/* Points earned */}
-            <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
+            <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 md:px-4 md:py-3">
               <dt className="text-xs font-medium uppercase tracking-wide text-indigo-600">
                 Puntos ganados
               </dt>
-              <dd className="mt-1 text-2xl font-bold leading-none text-indigo-900 md:text-3xl">
+              <dd className="mt-0.5 text-xl font-bold leading-none text-indigo-900 md:text-2xl lg:text-3xl">
                 +{receipt.pointsEarned}
               </dd>
             </div>
 
             {/* Updated total – spans full row */}
-            <div className="col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <div className="col-span-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 md:px-4 md:py-3">
               <dt className="text-xs font-medium uppercase tracking-wide text-emerald-700">
                 Puntos totales del cliente
               </dt>
-              <dd className="mt-1 text-2xl font-bold leading-none text-emerald-900 md:text-3xl">
+              <dd className="mt-0.5 text-xl font-bold leading-none text-emerald-900 md:text-2xl lg:text-3xl">
                 {receipt.updatedPoints}
               </dd>
             </div>
@@ -156,7 +156,7 @@ export function PurchaseConfirmationModal({
         </div>
 
         {/* ── Reward progress ─────────────────────────────────────────── */}
-        <div className="px-6 pt-4">
+        <div className="px-4 pt-3 md:px-6 md:pt-4">
           <PurchaseRewardProgress
             updatedPoints={receipt.updatedPoints}
             rewardThresholds={rewardThresholds}
@@ -165,7 +165,7 @@ export function PurchaseConfirmationModal({
         </div>
 
         {/* ── Actions ─────────────────────────────────────────────────── */}
-        <div className="mt-5 flex flex-col gap-3 rounded-b-2xl border-t border-slate-100 bg-slate-50 px-6 py-5">
+        <div className="mt-3 flex flex-col gap-2 rounded-b-2xl border-t border-slate-100 bg-slate-50 px-4 py-3 md:mt-5 md:gap-3 md:px-6 md:py-5">
           <button type="button" onClick={onClose} className={touchModalPrimary}>
             Registrar otra compra
           </button>

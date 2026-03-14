@@ -70,7 +70,7 @@ export default async function DashboardTeamSettingsPage() {
     <DashboardLayout pageTitle="Equipo">
       <div className="space-y-6">
         <section>
-          <p className="text-slate-600">
+          <p className="dashboard-explainer text-slate-600">
             Administra colaboradores de tu negocio. Owner y admin pueden enviar
             invitaciones y definir el rol (admin o staff).
           </p>

@@ -25,13 +25,13 @@ export default async function DashboardCajaPage() {
   }
 
   return (
-    <DashboardLayout pageTitle="Caja">
+    <DashboardLayout pageTitle="Caja" hideHeaderOnIpad>
       <div className="mx-auto w-full max-w-5xl space-y-5">
         <section className="space-y-1">
-          <h2 className="text-lg font-semibold text-slate-900 md:text-xl">
+          <h2 className="dashboard-ipad-hide text-lg font-semibold text-slate-900 md:text-xl">
             Registro rápido de compras
           </h2>
-          <p className="text-sm text-slate-600">
+          <p className="dashboard-explainer text-sm text-slate-600">
             Busca un cliente, selecciónalo y registra su compra en pocos pasos.
           </p>
         </section>

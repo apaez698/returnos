@@ -60,7 +60,7 @@ export default function RedemptionsPageClient({
     <div className="space-y-6">
       {/* Header */}
       <section>
-        <p className="mt-2 text-slate-600">
+        <p className="dashboard-explainer mt-2 text-slate-600">
           Visualiza todas las recompensas que han sido canjeadas por tus
           clientes.
         </p>

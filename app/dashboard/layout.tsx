@@ -24,7 +24,7 @@ export default async function DashboardShellLayout({
       userEmail={user.email}
       userRole={membership.role}
     >
-      {children}
+      <div className="dashboard-ipad-compact">{children}</div>
     </AppShell>
   );
 }

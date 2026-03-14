@@ -37,7 +37,7 @@ export default async function DashboardRewardsPage() {
     <DashboardLayout pageTitle="Recompensas">
       <div className="space-y-6">
         <section>
-          <p className="text-slate-600">
+          <p className="dashboard-explainer text-slate-600">
             Gestiona reglas de recompensas para fidelizar a tus clientes. Define
             cuántos puntos necesitan para obtener premios especiales.
           </p>
@@ -68,7 +68,7 @@ export default async function DashboardRewardsPage() {
                 <h2 className="mb-3 text-lg font-semibold text-slate-900">
                   Progreso de clientes
                 </h2>
-                <p className="mb-4 text-sm text-slate-600">
+                <p className="dashboard-explainer mb-4 text-sm text-slate-600">
                   Visualiza el progreso de cada cliente hacia sus recompensas.
                 </p>
                 <SearchableRewardsPanel

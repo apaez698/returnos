@@ -63,6 +63,37 @@ export function CustomerSearch({
             </button>
           ) : null}
         </div>
+
+        <div
+          className={`dashboard-ipad-only mt-2 rounded-xl border px-4 py-3 ${
+            selectedCustomer
+              ? "border-indigo-200 bg-indigo-50"
+              : "border-slate-200 bg-slate-50"
+          }`}
+        >
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            Cliente seleccionado
+          </p>
+          {selectedCustomer ? (
+            <div className="mt-2 flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="truncate text-base font-semibold text-indigo-900">
+                  {selectedCustomer.name}
+                </p>
+                <p className="text-sm text-indigo-700">
+                  {selectedCustomer.phone}
+                </p>
+              </div>
+              <span className="shrink-0 rounded-full bg-indigo-100 px-3 py-1.5 text-sm font-bold text-indigo-700">
+                {selectedCustomer.points} pts
+              </span>
+            </div>
+          ) : (
+            <p className="mt-2 text-sm text-slate-500">
+              Selecciona un cliente de la lista.
+            </p>
+          )}
+        </div>
       </div>
 
       {isLoading && customers.length === 0 ? (

@@ -56,7 +56,7 @@ export function PurchaseRewardProgress({
   }
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+    <section className="rounded-lg border border-slate-200 bg-slate-50 p-2.5 md:p-3">
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
           Progreso de recompensa

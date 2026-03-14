@@ -29,7 +29,7 @@ export default async function DashboardVisitsPage() {
     <DashboardLayout pageTitle="Visitas">
       <div className="space-y-6">
         <section className="mb-8">
-          <p className="text-slate-600">
+          <p className="dashboard-explainer text-slate-600">
             Registra visitas de clientes en caja y mantiene sus puntos siempre
             actualizados.
           </p>

@@ -9,7 +9,8 @@ import {
   PosRewardThreshold,
 } from "@/lib/pos/types";
 import { twoColTabletGrid } from "@/lib/ui/responsive";
-import { touchPrimary, touchQuickAmount } from "@/lib/ui/touch-targets";
+import { touchPrimary } from "@/lib/ui/touch-targets";
+import { calculatePointsFromAmount } from "@/lib/pos/calculations";
 import { parseCurrencyInput } from "@/lib/pos/parse-currency-input";
 import { CustomerSearch } from "./customer-search";
 import { PosCreateCustomerModal } from "./pos-create-customer-modal";
@@ -60,6 +61,12 @@ export function PosPurchaseForm({
   } = usePosCustomerFlow({ initialCustomers });
   const parsedAmount = parseCurrencyInput(amount);
   const isAmountValid = parsedAmount.ok;
+  const estimatedPoints = parsedAmount.ok
+    ? calculatePointsFromAmount(parsedAmount.value.amount)
+    : 0;
+  const projectedTotalPoints = selectedCustomer
+    ? selectedCustomer.points + estimatedPoints
+    : estimatedPoints;
 
   useEffect(() => {
     if (state.status === "success") {
@@ -76,7 +83,7 @@ export function PosPurchaseForm({
 
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="dashboard-explainer mt-1 text-sm text-slate-600">
         Busca cliente, selecciona y registra la compra en segundos.
       </p>
 
@@ -99,7 +106,7 @@ export function PosPurchaseForm({
 
           {/* Cliente seleccionado */}
           <div
-            className={`rounded-xl border px-4 py-3.5 ${
+            className={`dashboard-ipad-hide-on-ipad rounded-xl border px-4 py-3.5 ${
               selectedCustomer
                 ? "border-indigo-200 bg-indigo-50"
                 : "border-slate-200 bg-slate-50"
@@ -144,54 +151,25 @@ export function PosPurchaseForm({
             fieldError={state.fieldErrors?.amount}
           />
 
-          {/* Montos rápidos */}
-          <div>
-            <p className="mb-2 text-xs font-medium text-slate-500">
-              Montos rápidos
+          <div className="rounded-xl border border-indigo-100 bg-indigo-50/70 px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-indigo-700">
+              Preview de lealtad
             </p>
-            <div className="grid grid-cols-5 gap-2">
-              {(
-                [
-                  {
-                    value: 1,
-                    base: "border-sky-200 bg-sky-50 text-sky-800",
-                    active: "border-sky-400 bg-sky-200 text-sky-900",
-                  },
-                  {
-                    value: 2,
-                    base: "border-violet-200 bg-violet-50 text-violet-800",
-                    active: "border-violet-400 bg-violet-200 text-violet-900",
-                  },
-                  {
-                    value: 3,
-                    base: "border-indigo-200 bg-indigo-50 text-indigo-800",
-                    active: "border-indigo-400 bg-indigo-200 text-indigo-900",
-                  },
-                  {
-                    value: 5,
-                    base: "border-amber-200 bg-amber-50 text-amber-800",
-                    active: "border-amber-400 bg-amber-200 text-amber-900",
-                  },
-                  {
-                    value: 10,
-                    base: "border-emerald-200 bg-emerald-50 text-emerald-800",
-                    active:
-                      "border-emerald-400 bg-emerald-200 text-emerald-900",
-                  },
-                ] as const
-              ).map(({ value, base, active }) => (
-                <button
-                  key={value}
-                  type="button"
-                  disabled={!selectedCustomer}
-                  onClick={() => setAmount(`${value}.00`)}
-                  className={`${touchQuickAmount} ${
-                    amount === `${value}.00` && selectedCustomer ? active : base
-                  }`}
-                >
-                  ${value}
-                </button>
-              ))}
+            <div className="mt-2 flex items-end justify-between gap-3">
+              <div>
+                <p className="text-sm text-indigo-700">Puntos estimados</p>
+                <p className="text-2xl font-black leading-none text-indigo-900">
+                  +{estimatedPoints}
+                </p>
+              </div>
+              {selectedCustomer ? (
+                <div className="text-right">
+                  <p className="text-xs text-indigo-700">Total proyectado</p>
+                  <p className="text-xl font-bold text-indigo-900">
+                    {projectedTotalPoints} pts
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
 

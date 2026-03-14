@@ -24,7 +24,7 @@ export function AppShell({
   return (
     <div className="flex min-h-screen bg-slate-50">
       <aside
-        className="bg-slate-900 text-white w-60 h-screen sticky top-0 flex flex-col flex-shrink-0"
+        className="bg-slate-900 text-white w-52 md:w-52 lg:w-60 h-screen sticky top-0 flex flex-col flex-shrink-0"
         aria-label="Sidebar"
       >
         <div className="px-4 py-5 border-b border-slate-700/60">

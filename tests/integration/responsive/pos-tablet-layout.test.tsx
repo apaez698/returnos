@@ -16,8 +16,6 @@ import {
   PosPurchaseActionState,
   initialPosPurchaseActionState,
 } from "@/lib/pos/types";
-import { twoColTabletGrid } from "@/lib/ui/responsive";
-import { touchPrimary, touchInput, touchListRow } from "@/lib/ui/touch-targets";
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -70,14 +68,14 @@ describe("POS tablet layout – structure", () => {
     expect(submitBtn.className).toContain("min-h-[52px]");
   });
 
-  it("amount input carries touch-friendly sizing (py-3 text-base)", () => {
+  it("amount input uses large single-field amount styling", () => {
     render(
       <PosPurchaseForm initialCustomers={CUSTOMERS} action={idleAction()} />,
     );
 
     const amountInput = screen.getByLabelText("Monto");
-    expect(amountInput.className).toContain("py-3");
-    expect(amountInput.className).toContain("text-base");
+    expect(amountInput.className).toContain("min-h-[92px]");
+    expect(amountInput.className).toContain("text-4xl");
   });
 
   it("amount input has inputMode=decimal for numeric keyboard on touch devices", () => {
@@ -91,16 +89,27 @@ describe("POS tablet layout – structure", () => {
     );
   });
 
-  it("quick-amount buttons are at least 44 px tall (min-h-[44px])", () => {
+  it("amount-stepper buttons are touch friendly (min-h-[52px])", async () => {
     render(
       <PosPurchaseForm initialCustomers={CUSTOMERS} action={idleAction()} />,
     );
 
-    // All quick-amount buttons have dollar values as text
-    const quickButtons = screen.getAllByRole("button", { name: /^\$\d+$/ });
-    expect(quickButtons.length).toBeGreaterThan(0);
-    for (const btn of quickButtons) {
-      expect(btn.className).toContain("min-h-[44px]");
+    const stepperButtons = [
+      /reducir monto en 1\.00/i,
+      /reducir monto en 0\.10/i,
+      /reducir monto en 0\.05/i,
+      /reducir monto en 0\.01/i,
+      /aumentar monto en 0\.01/i,
+      /aumentar monto en 0\.05/i,
+      /aumentar monto en 0\.10/i,
+      /aumentar monto en 0\.25/i,
+      /aumentar monto en 0\.50/i,
+      /aumentar monto en 1\.00/i,
+    ].map((name) => screen.getByRole("button", { name }));
+
+    expect(stepperButtons.length).toBe(10);
+    for (const btn of stepperButtons) {
+      expect(btn.className).toContain("min-h-[52px]");
     }
   });
 
@@ -129,7 +138,7 @@ describe("POS tablet layout – structure", () => {
 // ---------------------------------------------------------------------------
 
 describe("POS tablet layout – touch interaction flow", () => {
-  it("tap customer → tap amount chip → submit is a complete reliable flow", async () => {
+  it("tap customer -> tap amount stepper -> submit is a complete reliable flow", async () => {
     const action = vi.fn(
       async (): Promise<PosPurchaseActionState> =>
         initialPosPurchaseActionState,
@@ -140,8 +149,10 @@ describe("POS tablet layout – touch interaction flow", () => {
     // Step 1: tap customer row
     await user.click(screen.getByRole("button", { name: /ana perez/i }));
 
-    // Step 2: tap quick-amount chip
-    await user.click(screen.getByRole("button", { name: /^\$5$/ }));
+    // Step 2: tap amount-stepper button
+    await user.click(
+      screen.getByRole("button", { name: /aumentar monto en 1\.00/i }),
+    );
 
     // Step 3: submit
     await user.click(screen.getByRole("button", { name: /registrar compra/i }));

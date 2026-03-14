@@ -84,7 +84,7 @@ export default async function DashboardPage() {
             <h2 className="text-2xl font-bold text-slate-900">
               Inactive Customers
             </h2>
-            <p className="mt-1 text-slate-600">
+            <p className="dashboard-explainer mt-1 text-slate-600">
               Top 5 customers with 14+ days since their last visit.
             </p>
           </div>

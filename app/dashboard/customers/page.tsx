@@ -24,7 +24,7 @@ export default async function DashboardCustomersPage() {
       <div className="space-y-6">
         {/* Introduction Section */}
         <section className="mb-8">
-          <p className="text-slate-600">
+          <p className="dashboard-explainer text-slate-600">
             Gestiona los clientes de tu negocio. Puedes agregar clientes
             manualmente para rastrear sus visitas, recompensas y preferencias.
           </p>

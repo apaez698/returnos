@@ -66,7 +66,7 @@ export default async function DashboardCampaignsPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
             Campanas de reactivacion
           </h1>
-          <p className="text-sm text-slate-600 sm:text-base">
+          <p className="dashboard-explainer text-sm text-slate-600 sm:text-base">
             Crea campanas para clientes con 14+ dias sin visitar. Puedes crear
             una campana directamente desde una sugerencia o editarla antes de
             guardar.

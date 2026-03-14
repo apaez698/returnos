@@ -32,7 +32,7 @@ export default async function DashboardInactiveCustomersPage() {
     <DashboardLayout pageTitle="Inactive Customers">
       <div className="space-y-6">
         <section>
-          <p className="text-slate-600">
+          <p className="dashboard-explainer text-slate-600">
             Customers who have not visited in the last 14 days. Review and
             re-engage them to increase retention.
           </p>
