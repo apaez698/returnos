@@ -35,3 +35,17 @@ export interface PosPurchaseActionState {
 export const initialPosPurchaseActionState: PosPurchaseActionState = {
   status: "idle",
 };
+
+export type PosCreateCustomerField = "name" | "phone";
+
+export interface PosCreateCustomerActionState {
+  status: "idle" | "success" | "error";
+  message?: string;
+  fieldErrors?: Partial<Record<PosCreateCustomerField, string>>;
+  customer?: PosCustomer;
+}
+
+export const initialPosCreateCustomerActionState: PosCreateCustomerActionState =
+  {
+    status: "idle",
+  };

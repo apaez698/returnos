@@ -21,6 +21,10 @@ vi.mock("@/app/dashboard/caja/actions", () => ({
   registerPosPurchaseAction: vi.fn(),
 }));
 
+vi.mock("@/app/dashboard/caja/create-customer-inline", () => ({
+  createPosCustomerInlineAction: vi.fn(),
+}));
+
 // ---------------------------------------------------------------------------
 // Fixtures
 // ---------------------------------------------------------------------------
@@ -196,7 +200,7 @@ describe("DashboardCajaPage (/dashboard/caja)", () => {
       );
 
       expect(
-        screen.getByText(/no se encontraron clientes con ese criterio/i),
+        screen.getByText(/no encontramos un cliente para esta busqueda/i),
       ).toBeInTheDocument();
     });
   });
@@ -320,7 +324,9 @@ describe("DashboardCajaPage (/dashboard/caja)", () => {
       await renderPage();
 
       expect(
-        screen.getByText(/primero agrega al menos un cliente/i),
+        screen.getByText(
+          /aun no hay clientes\. usa la busqueda para crear uno nuevo/i,
+        ),
       ).toBeInTheDocument();
     });
 

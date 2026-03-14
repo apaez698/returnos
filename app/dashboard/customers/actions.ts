@@ -1,17 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCurrentBusinessId } from "@/lib/businesses/current-business";
+import {
+  createCustomerForCurrentBusiness,
+  CreatedCustomerRecord,
+} from "@/lib/customers/create-service";
 import { createCustomerSchema } from "@/lib/customers/schema";
 import {
   CustomerActionState,
   initialCustomerActionState,
 } from "@/lib/customers/types";
-import { createServerClient } from "@/lib/supabase/server";
 
 export type CreateCustomerResult = {
   success: boolean;
   error: string | null;
+  customer: CreatedCustomerRecord | null;
 };
 
 function getFieldError(
@@ -24,69 +27,15 @@ function getFieldError(
 export async function insertCustomerAction(
   input: unknown,
 ): Promise<CreateCustomerResult> {
-  const parsed = createCustomerSchema.safeParse(input);
+  const result = await createCustomerForCurrentBusiness(input);
 
-  if (!parsed.success) {
-    return {
-      success: false,
-      error: "Revisa los datos del cliente.",
-    };
-  }
-
-  const businessId = await getCurrentBusinessId();
-  const supabase = createServerClient();
-
-  const { data: existingCustomer, error: findError } = await supabase
-    .from("customers")
-    .select("id")
-    .eq("business_id", businessId)
-    .eq("phone", parsed.data.phone)
-    .limit(1)
-    .maybeSingle();
-
-  if (findError) {
-    return {
-      success: false,
-      error: "No se pudo validar si el cliente ya existe.",
-    };
-  }
-
-  if (existingCustomer) {
-    return {
-      success: false,
-      error: "Ya existe un cliente con ese telefono en este negocio.",
-    };
-  }
-
-  const { error } = await supabase.from("customers").insert({
-    business_id: businessId,
-    name: parsed.data.name,
-    phone: parsed.data.phone,
-    email: parsed.data.email ?? null,
-    birthday: parsed.data.birthday ?? null,
-    consent_marketing: parsed.data.consent_marketing,
-  });
-
-  if (error) {
-    if (error.code === "23505") {
-      return {
-        success: false,
-        error: "Ya existe un cliente con ese telefono en este negocio.",
-      };
-    }
-
-    return {
-      success: false,
-      error: "No se pudo guardar el cliente. Intenta de nuevo.",
-    };
+  if (!result.success) {
+    return result;
   }
 
   revalidatePath("/dashboard/customers");
 
-  return {
-    success: true,
-    error: null,
-  };
+  return result;
 }
 
 export async function createCustomerAction(

@@ -4,6 +4,7 @@ import {
   touchSecondary,
 } from "@/lib/ui/touch-targets";
 import { PosCustomer } from "@/lib/pos/types";
+import { PosCustomerNotFound } from "./pos-customer-not-found";
 
 interface CustomerSearchProps {
   query: string;
@@ -15,6 +16,7 @@ interface CustomerSearchProps {
   onQueryChange: (value: string) => void;
   onSubmitSearch?: () => void;
   onSelectCustomer: (customer: PosCustomer) => void;
+  onCreateCustomer?: () => void;
 }
 
 export function CustomerSearch({
@@ -27,6 +29,7 @@ export function CustomerSearch({
   onQueryChange,
   onSubmitSearch,
   onSelectCustomer,
+  onCreateCustomer,
 }: CustomerSearchProps) {
   const isSubmitMode = searchMode === "submit";
 
@@ -66,11 +69,14 @@ export function CustomerSearch({
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
           Buscando clientes...
         </div>
+      ) : customers.length === 0 && hasSearched ? (
+        <PosCustomerNotFound
+          query={query}
+          onCreateCustomer={onCreateCustomer}
+        />
       ) : customers.length === 0 ? (
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-          {hasSearched
-            ? "No se encontraron clientes con ese criterio."
-            : "No hay clientes disponibles para mostrar."}
+          No hay clientes disponibles para mostrar.
         </div>
       ) : (
         <div className="space-y-2">

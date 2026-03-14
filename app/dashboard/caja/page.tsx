@@ -6,6 +6,7 @@ import {
 } from "@/lib/pos/queries";
 import { PosCustomer, PosRewardThreshold } from "@/lib/pos/types";
 import { registerPosPurchaseAction } from "./actions";
+import { createPosCustomerInlineAction } from "./create-customer-inline";
 
 export default async function DashboardCajaPage() {
   let customers: PosCustomer[] = [];
@@ -44,7 +45,8 @@ export default async function DashboardCajaPage() {
 
         {!error && customers.length === 0 ? (
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-            Primero agrega al menos un cliente para registrar compras.
+            Aun no hay clientes. Usa la busqueda para crear uno nuevo y
+            registrar la compra al instante.
           </div>
         ) : null}
 
@@ -53,6 +55,7 @@ export default async function DashboardCajaPage() {
             initialCustomers={customers}
             rewardThresholds={rewardThresholds}
             action={registerPosPurchaseAction}
+            createCustomerAction={createPosCustomerInlineAction}
           />
         ) : null}
       </div>

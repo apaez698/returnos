@@ -218,8 +218,37 @@ describe("CustomerSearch Integration Tests", () => {
     );
 
     expect(
-      screen.getByText("No se encontraron clientes con ese criterio."),
+      screen.getByText("No encontramos un cliente para esta busqueda."),
     ).toBeInTheDocument();
+    expect(screen.getByText(/sin coincidencias para/i)).toBeInTheDocument();
+  });
+
+  it("shows primary create button and triggers callback on not-found state", async () => {
+    const user = userEvent.setup();
+    const handleQueryChange = vi.fn();
+    const handleSelectCustomer = vi.fn();
+    const handleCreateCustomer = vi.fn();
+
+    render(
+      <CustomerSearch
+        query="Pedro"
+        customers={[]}
+        selectedCustomer={null}
+        isLoading={false}
+        hasSearched={true}
+        onQueryChange={handleQueryChange}
+        onSelectCustomer={handleSelectCustomer}
+        onCreateCustomer={handleCreateCustomer}
+      />,
+    );
+
+    const createButton = screen.getByRole("button", {
+      name: /crear cliente nuevo/i,
+    });
+    expect(createButton.className).toContain("min-h-[52px]");
+
+    await user.click(createButton);
+    expect(handleCreateCustomer).toHaveBeenCalledOnce();
   });
 
   it("displays default empty message when hasSearched is false and no customers available", () => {

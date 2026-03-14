@@ -3,7 +3,9 @@ import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import { PosPurchaseForm } from "@/components/pos/pos-purchase-form";
 import {
+  initialPosCreateCustomerActionState,
   PosCustomer,
+  PosCreateCustomerActionState,
   PosPurchaseActionState,
   initialPosPurchaseActionState,
 } from "@/lib/pos/types";
@@ -32,6 +34,13 @@ const CUSTOMER_B: PosCustomer = {
 function idleAction() {
   return vi.fn(
     async (): Promise<PosPurchaseActionState> => initialPosPurchaseActionState,
+  );
+}
+
+function idleCreateCustomerAction() {
+  return vi.fn(
+    async (): Promise<PosCreateCustomerActionState> =>
+      initialPosCreateCustomerActionState,
   );
 }
 
@@ -455,9 +464,117 @@ describe("PosPurchaseForm", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/no se encontraron clientes con ese criterio/i),
+          screen.getByText(/no encontramos un cliente para esta busqueda/i),
         ).toBeInTheDocument();
       });
+    });
+
+    it("shows create-customer CTA when no results and inline creation is enabled", async () => {
+      const user = userEvent.setup();
+      render(
+        <PosPurchaseForm
+          initialCustomers={[CUSTOMER]}
+          action={idleAction()}
+          createCustomerAction={idleCreateCustomerAction()}
+        />,
+      );
+
+      await user.type(screen.getByRole("searchbox"), "zzznomatch");
+
+      expect(
+        await screen.findByRole("button", { name: /crear cliente nuevo/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("opens inline create modal and auto-selects the created customer", async () => {
+      const user = userEvent.setup();
+      const createCustomerAction = vi.fn(
+        async (
+          _previousState: PosCreateCustomerActionState,
+          formData: FormData,
+        ): Promise<PosCreateCustomerActionState> => ({
+          status: "success",
+          customer: {
+            id: "customer-new",
+            name: String(formData.get("name") ?? ""),
+            phone: String(formData.get("phone") ?? ""),
+            points: 0,
+            last_visit_at: null,
+          },
+        }),
+      );
+
+      render(
+        <PosPurchaseForm
+          initialCustomers={[CUSTOMER]}
+          action={idleAction()}
+          createCustomerAction={createCustomerAction}
+        />,
+      );
+
+      await user.type(screen.getByRole("searchbox"), "Cliente Nuevo");
+      await user.click(
+        await screen.findByRole("button", { name: /crear cliente nuevo/i }),
+      );
+
+      expect(
+        await screen.findByRole("heading", { name: /crear cliente/i }),
+      ).toBeInTheDocument();
+
+      const phoneInput = screen.getByLabelText("Telefono");
+      await user.type(phoneInput, "+521234000999");
+      await user.click(
+        screen.getByRole("button", { name: /guardar y seleccionar/i }),
+      );
+
+      await waitFor(() => {
+        expect(createCustomerAction).toHaveBeenCalledTimes(1);
+      });
+
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+      expect(screen.getByRole("searchbox")).toHaveValue("Cliente Nuevo");
+      expect(screen.getAllByText(/cliente nuevo/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/\+521234000999/).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/0 pts/i).length).toBeGreaterThan(0);
+    });
+
+    it("shows duplicate-phone error inline and keeps the modal open", async () => {
+      const user = userEvent.setup();
+      const createCustomerAction = vi.fn(
+        async (): Promise<PosCreateCustomerActionState> => ({
+          status: "error",
+          message: "Ya existe un cliente con ese telefono en este negocio.",
+          fieldErrors: {
+            phone: "Ya existe un cliente con ese telefono en este negocio.",
+          },
+        }),
+      );
+
+      render(
+        <PosPurchaseForm
+          initialCustomers={[CUSTOMER]}
+          action={idleAction()}
+          createCustomerAction={createCustomerAction}
+        />,
+      );
+
+      await user.type(screen.getByRole("searchbox"), "Cliente Duplicado");
+      await user.click(
+        await screen.findByRole("button", { name: /crear cliente nuevo/i }),
+      );
+
+      await user.type(screen.getByLabelText("Telefono"), "+521111111111");
+      await user.click(
+        screen.getByRole("button", { name: /guardar y seleccionar/i }),
+      );
+
+      expect(
+        await screen.findAllByText(
+          /ya existe un cliente con ese telefono en este negocio/i,
+        ),
+      ).not.toHaveLength(0);
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+      expect(screen.getByRole("searchbox")).toHaveValue("Cliente Duplicado");
     });
   });
 });

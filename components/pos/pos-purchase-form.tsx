@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import {
   initialPosPurchaseActionState,
   PosCustomer,
+  PosCreateCustomerActionState,
   PosPurchaseActionState,
   PosRewardThreshold,
 } from "@/lib/pos/types";
@@ -11,8 +12,10 @@ import { twoColTabletGrid } from "@/lib/ui/responsive";
 import { touchPrimary, touchQuickAmount } from "@/lib/ui/touch-targets";
 import { parseCurrencyInput } from "@/lib/pos/parse-currency-input";
 import { CustomerSearch } from "./customer-search";
+import { PosCreateCustomerModal } from "./pos-create-customer-modal";
 import { PurchaseAmountInput } from "./purchase-amount-input";
 import { PurchaseConfirmationModal } from "./purchase-confirmation-modal";
+import { usePosCustomerFlow } from "./use-pos-customer-flow";
 
 interface PosPurchaseFormProps {
   initialCustomers: PosCustomer[];
@@ -21,44 +24,42 @@ interface PosPurchaseFormProps {
     previousState: PosPurchaseActionState,
     formData: FormData,
   ) => Promise<PosPurchaseActionState>;
+  createCustomerAction?: (
+    previousState: PosCreateCustomerActionState,
+    formData: FormData,
+  ) => Promise<PosCreateCustomerActionState>;
 }
 
 export function PosPurchaseForm({
   initialCustomers,
   rewardThresholds = [],
   action,
+  createCustomerAction,
 }: PosPurchaseFormProps) {
   const [state, formAction, pending] = useActionState(
     action,
     initialPosPurchaseActionState,
   );
-  const [query, setQuery] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState<PosCustomer | null>(
-    null,
-  );
   const [amount, setAmount] = useState("");
   const [isSummaryDismissed, setIsSummaryDismissed] = useState(false);
   const amountInputRef = useRef<HTMLInputElement>(null);
-  const selectedCustomerId = selectedCustomer?.id ?? "";
+  const {
+    query,
+    setQuery,
+    results,
+    hasSearched,
+    selectedCustomer,
+    selectedCustomerId,
+    selectCustomer,
+    isCreateCustomerModalOpen,
+    createCustomerModalKey,
+    openCreateCustomerModal,
+    closeCreateCustomerModal,
+    handleCustomerCreated,
+    createCustomerDefaults,
+  } = usePosCustomerFlow({ initialCustomers });
   const parsedAmount = parseCurrencyInput(amount);
   const isAmountValid = parsedAmount.ok;
-
-  const results = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-
-    if (!normalizedQuery) {
-      return initialCustomers.slice(0, 8);
-    }
-
-    return initialCustomers
-      .filter((customer) => {
-        return (
-          customer.name.toLowerCase().includes(normalizedQuery) ||
-          customer.phone.toLowerCase().includes(normalizedQuery)
-        );
-      })
-      .slice(0, 8);
-  }, [initialCustomers, query]);
 
   useEffect(() => {
     if (state.status === "success") {
@@ -73,20 +74,6 @@ export function PosPurchaseForm({
     amountInputRef.current?.focus();
   }
 
-  useEffect(() => {
-    setSelectedCustomer((current) => {
-      if (!current) {
-        return current;
-      }
-
-      const stillVisible = results.some(
-        (customer) => customer.id === current.id,
-      );
-
-      return stillVisible ? current : null;
-    });
-  }, [results]);
-
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
       <p className="mt-1 text-sm text-slate-600">
@@ -99,12 +86,12 @@ export function PosPurchaseForm({
           customers={results}
           selectedCustomer={selectedCustomer}
           isLoading={false}
-          hasSearched={query.trim().length > 0}
+          hasSearched={hasSearched}
           onQueryChange={setQuery}
-          onSelectCustomer={(customer) => {
-            setSelectedCustomer(customer);
-            setQuery(customer.name);
-          }}
+          onSelectCustomer={selectCustomer}
+          onCreateCustomer={
+            createCustomerAction ? openCreateCustomerModal : undefined
+          }
         />
 
         <form action={formAction} noValidate className="flex flex-col gap-4">
@@ -232,6 +219,17 @@ export function PosPurchaseForm({
           ) : null}
         </form>
       </div>
+
+      {isCreateCustomerModalOpen && createCustomerAction ? (
+        <PosCreateCustomerModal
+          key={createCustomerModalKey}
+          initialName={createCustomerDefaults.name}
+          initialPhone={createCustomerDefaults.phone}
+          action={createCustomerAction}
+          onClose={closeCreateCustomerModal}
+          onCreated={handleCustomerCreated}
+        />
+      ) : null}
     </section>
   );
 }
