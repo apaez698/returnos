@@ -8,8 +8,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { LoyaltyCardHeader } from "@/components/loyalty-card/loyalty-card-header";
-import { LoyaltyProgressBar } from "@/components/loyalty-card/loyalty-progress-bar";
-import { LoyaltyRewardStatus } from "@/components/loyalty-card/loyalty-reward-status";
+import { LoyaltyCardPointsHero } from "@/components/loyalty-card/loyalty-card-points-hero";
+import { LoyaltyCardProgressSection } from "@/components/loyalty-card/loyalty-card-progress-section";
+import { LoyaltyCardStatusMessage } from "@/components/loyalty-card/loyalty-card-status-message";
 
 // ---------------------------------------------------------------------------
 // LoyaltyCardHeader
@@ -29,7 +30,7 @@ describe("LoyaltyCardHeader – tablet layout", () => {
     expect(header?.className).toContain("rounded-3xl");
   });
 
-  it("uses sm:p-4 responsive padding to keep the card compact on tablet", () => {
+  it("uses sm:p-5 responsive padding to preserve touch comfort on tablet", () => {
     const { container } = render(
       <LoyaltyCardHeader
         businessName="Café Delicia"
@@ -39,10 +40,10 @@ describe("LoyaltyCardHeader – tablet layout", () => {
     );
 
     const header = container.querySelector("header");
-    expect(header?.className).toContain("sm:p-4");
+    expect(header?.className).toContain("sm:p-5");
   });
 
-  it("renders business name at text-lg for legibility on tablet", () => {
+  it("renders business name at text-xl for stronger branding hierarchy", () => {
     render(
       <LoyaltyCardHeader
         businessName="Café Delicia"
@@ -51,9 +52,9 @@ describe("LoyaltyCardHeader – tablet layout", () => {
       />,
     );
 
-    // Business name is the text-lg element
+    // Business name is now larger to make branding more prominent.
     const businessEl = screen.getByText("Café Delicia");
-    expect(businessEl.className).toContain("text-lg");
+    expect(businessEl.className).toContain("text-xl");
   });
 
   it("renders customer name at an accessible size", () => {
@@ -71,42 +72,34 @@ describe("LoyaltyCardHeader – tablet layout", () => {
 });
 
 // ---------------------------------------------------------------------------
-// LoyaltyProgressBar
+// LoyaltyCardPointsHero
 // ---------------------------------------------------------------------------
 
-describe("LoyaltyProgressBar – tablet layout", () => {
+describe("LoyaltyCardPointsHero – tablet layout", () => {
   it("renders with rounded-3xl section container", () => {
-    const { container } = render(
-      <LoyaltyProgressBar
-        currentPoints={80}
-        targetPoints={100}
-        progressPercentage={80}
-        remainingPoints={20}
-      />,
-    );
+    const { container } = render(<LoyaltyCardPointsHero currentPoints={80} />);
 
     const section = container.querySelector("section");
     expect(section?.className).toContain("rounded-3xl");
   });
 
-  it("point total is displayed at text-4xl for at-a-glance reading on tablet", () => {
-    render(
-      <LoyaltyProgressBar
-        currentPoints={80}
-        targetPoints={100}
-        progressPercentage={80}
-        remainingPoints={20}
-      />,
-    );
+  it("point total is displayed as the visual hero", () => {
+    render(<LoyaltyCardPointsHero currentPoints={80} />);
 
-    // The large points display
     const ptsEl = screen.getByText("80");
-    expect(ptsEl.className).toContain("text-4xl");
+    expect(ptsEl.className).toContain("text-5xl");
+    expect(ptsEl.className).toContain("md:text-7xl");
   });
+});
 
+// ---------------------------------------------------------------------------
+// LoyaltyCardProgressSection
+// ---------------------------------------------------------------------------
+
+describe("LoyaltyCardProgressSection – tablet layout", () => {
   it("progress bar has role=progressbar with correct aria attributes", () => {
     render(
-      <LoyaltyProgressBar
+      <LoyaltyCardProgressSection
         currentPoints={60}
         targetPoints={100}
         progressPercentage={60}
@@ -119,16 +112,30 @@ describe("LoyaltyProgressBar – tablet layout", () => {
     expect(bar).toHaveAttribute("aria-valuemin", "0");
     expect(bar).toHaveAttribute("aria-valuemax", "100");
   });
+
+  it("renders current vs target and remaining points for quick understanding", () => {
+    render(
+      <LoyaltyCardProgressSection
+        currentPoints={60}
+        targetPoints={100}
+        progressPercentage={60}
+        remainingPoints={40}
+      />,
+    );
+
+    expect(screen.getByText("60 / 100 points")).toBeInTheDocument();
+    expect(screen.getByText("40 points left")).toBeInTheDocument();
+  });
 });
 
 // ---------------------------------------------------------------------------
-// LoyaltyRewardStatus
+// LoyaltyCardStatusMessage
 // ---------------------------------------------------------------------------
 
-describe("LoyaltyRewardStatus – tablet layout", () => {
-  it("redeemable status section uses rounded-3xl and sm:p-4", () => {
+describe("LoyaltyCardStatusMessage – tablet layout", () => {
+  it("redeemable status section uses rounded-3xl and sm:p-5", () => {
     const { container } = render(
-      <LoyaltyRewardStatus
+      <LoyaltyCardStatusMessage
         status="redeemable"
         redeemableRewardName="Café gratis"
         remainingPoints={0}
@@ -137,12 +144,12 @@ describe("LoyaltyRewardStatus – tablet layout", () => {
 
     const section = container.querySelector("section");
     expect(section?.className).toContain("rounded-3xl");
-    expect(section?.className).toContain("sm:p-4");
+    expect(section?.className).toContain("sm:p-5");
   });
 
-  it("in_progress status section uses rounded-3xl and sm:p-4", () => {
+  it("in_progress status section uses rounded-3xl and sm:p-5", () => {
     const { container } = render(
-      <LoyaltyRewardStatus
+      <LoyaltyCardStatusMessage
         status="in_progress"
         nextRewardName="Postre gratis"
         remainingPoints={25}
@@ -151,19 +158,22 @@ describe("LoyaltyRewardStatus – tablet layout", () => {
 
     const section = container.querySelector("section");
     expect(section?.className).toContain("rounded-3xl");
-    expect(section?.className).toContain("sm:p-4");
+    expect(section?.className).toContain("sm:p-5");
   });
 
-  it("reward heading is rendered at text-xl for stronger hierarchy", () => {
+  it("shows a human-readable unlock message in redeemable state", () => {
     render(
-      <LoyaltyRewardStatus
+      <LoyaltyCardStatusMessage
         status="redeemable"
         redeemableRewardName="Café gratis"
         remainingPoints={0}
       />,
     );
 
-    const statusHeading = screen.getByText("Reward unlocked");
-    expect(statusHeading.className).toContain("text-xl");
+    expect(
+      screen.getByText(
+        "You unlocked Café gratis. Show this card at checkout to redeem it.",
+      ),
+    ).toBeInTheDocument();
   });
 });

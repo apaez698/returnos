@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "npx -y node@20.19.0 ./node_modules/vitest/vitest.mjs run",
+    "test:watch": "npx -y node@20.19.0 ./node_modules/vitest/vitest.mjs",
     "seed:bakery": "tsx -r dotenv/config supabase/scripts/seed-bakery-demo.ts"
   },
   "dependencies": {

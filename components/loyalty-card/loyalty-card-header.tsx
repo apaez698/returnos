@@ -24,9 +24,9 @@ export function LoyaltyCardHeader({
   const initials = getInitials(businessName);
 
   return (
-    <header className="rounded-3xl border border-slate-200 bg-white p-3.5 shadow-sm shadow-slate-200/60 sm:p-4 md:p-5">
-      <div className="flex items-center gap-3 sm:gap-3.5 md:gap-4">
-        <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 text-base font-semibold text-slate-700 ring-1 ring-slate-200 sm:h-14 sm:w-14 md:h-16 md:w-16 md:text-lg">
+    <header className="rounded-3xl border border-amber-200/80 bg-gradient-to-r from-amber-50 via-orange-50/70 to-white p-4 shadow-sm shadow-amber-900/10 sm:p-5 md:p-6">
+      <div className="flex items-center gap-3.5 sm:gap-4 md:gap-5">
+        <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white text-xl font-bold text-amber-900 ring-2 ring-amber-200 sm:h-20 sm:w-20 md:h-24 md:w-24 md:text-2xl">
           {businessLogoUrl ? (
             <img
               src={businessLogoUrl}
@@ -34,28 +34,38 @@ export function LoyaltyCardHeader({
               className="h-full w-full object-cover"
             />
           ) : (
-            <span aria-hidden>{initials}</span>
+            <span aria-hidden className="tracking-wide">
+              {initials}
+            </span>
           )}
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate text-lg font-semibold tracking-tight text-slate-900 sm:text-xl md:text-[1.65rem]">
+          <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-amber-700 sm:text-xs">
+            ReturnOS loyalty card
+          </p>
+          <p className="mt-1 truncate text-xl font-bold tracking-tight text-slate-900 sm:text-2xl md:text-[2.1rem]">
             {businessName}
           </p>
-          <p className="mt-1 text-sm font-medium text-slate-600">
-            Loyalty card
+          <p className="mt-1.5 text-sm font-medium text-slate-700 sm:text-base md:text-lg">
+            Earn points every visit and unlock rewards faster.
           </p>
         </div>
       </div>
 
-      <div className="mt-3.5 border-t border-slate-100 pt-3.5 md:mt-4 md:pt-4">
-        <p className="text-xs uppercase tracking-wide text-slate-500">
+      <div className="mt-4 grid gap-2 rounded-2xl border border-white/80 bg-white/85 p-3.5 backdrop-blur-sm sm:grid-cols-[1fr,auto] sm:items-end sm:gap-3 md:mt-5 md:p-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+            Cardholder
+          </p>
+          <p className="mt-1 text-base font-semibold text-slate-900 sm:text-lg md:text-xl">
+            {customerName}
+          </p>
+          <p className="mt-1 text-sm text-slate-600">{maskedPhone}</p>
+        </div>
+        <div className="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-amber-900">
           Customer
-        </p>
-        <p className="mt-1 text-base font-semibold text-slate-900">
-          {customerName}
-        </p>
-        <p className="mt-1 text-sm text-slate-600">{maskedPhone}</p>
+        </div>
       </div>
     </header>
   );

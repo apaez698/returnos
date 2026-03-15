@@ -17,6 +17,7 @@ export function AddToWalletButtons({
       cardToken,
     });
 
+  const isLoading = loadingPlatform !== null;
   const hasAnyWalletPlatform =
     availablePlatforms.apple || availablePlatforms.google;
 
@@ -24,17 +25,15 @@ export function AddToWalletButtons({
     return null;
   }
 
-  const isLoading = loadingPlatform !== null;
-
   return (
     <section className="h-full rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60 sm:p-5 md:p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 md:text-sm">
-            Add to wallet
+            Quick actions
           </h2>
           <p className="mt-2 text-sm text-slate-600 md:text-base">
-            Save this loyalty card to your phone for faster check-ins.
+            Save your card and keep rewards within easy reach.
           </p>
         </div>
         {isLoading ? (
@@ -61,7 +60,11 @@ export function AddToWalletButtons({
               ? "Preparing Apple Wallet..."
               : "Add to Apple Wallet"}
           </button>
-        ) : null}
+        ) : (
+          <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-500">
+            Apple Wallet coming soon
+          </div>
+        )}
 
         {availablePlatforms.google ? (
           <button
@@ -79,7 +82,15 @@ export function AddToWalletButtons({
               ? "Preparing Google Wallet..."
               : "Add to Google Wallet"}
           </button>
-        ) : null}
+        ) : (
+          <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-500">
+            Google Wallet coming soon
+          </div>
+        )}
+
+        <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
+          WhatsApp reminders coming soon
+        </div>
       </div>
 
       {error ? (

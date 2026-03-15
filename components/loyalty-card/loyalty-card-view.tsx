@@ -1,10 +1,11 @@
 import type { LoyaltyCardViewModel } from "@/features/loyalty-card/types/loyalty-card-types";
 import type { WalletPlatformAvailability } from "@/features/wallet/shared/get-wallet-platform-availability";
 import { LoyaltyCardHeader } from "./loyalty-card-header";
-import { LoyaltyProgressBar } from "./loyalty-progress-bar";
-import { LoyaltyRewardStatus } from "./loyalty-reward-status";
-import { LoyaltyCardQr } from "./loyalty-card-qr";
-import { AddToWalletButtons } from "./add-to-wallet-buttons";
+import { LoyaltyCardPointsHero } from "./loyalty-card-points-hero";
+import { LoyaltyCardProgressSection } from "./loyalty-card-progress-section";
+import { LoyaltyCardStatusMessage } from "./loyalty-card-status-message";
+import { LoyaltyCardQrSection } from "./loyalty-card-qr-section";
+import { LoyaltyCardActions } from "./loyalty-card-actions";
 
 interface LoyaltyCardViewProps {
   card: LoyaltyCardViewModel;
@@ -46,12 +47,10 @@ export function LoyaltyCardView({
 }: LoyaltyCardViewProps) {
   const resolvedCustomerIdentifier =
     customerIdentifier ?? buildCustomerIdentifier(card);
-  const hasWalletActions =
-    walletAvailability.apple || walletAvailability.google;
 
   return (
-    <section className="mx-auto w-full max-w-2xl rounded-[1.75rem] border border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-100 p-3.5 shadow-lg shadow-slate-200/60 sm:p-4 md:p-5">
-      <div className="space-y-3.5 md:space-y-4">
+    <section className="mx-auto w-full max-w-4xl rounded-[2rem] border border-amber-100 bg-gradient-to-br from-white via-amber-50/70 to-orange-100/70 p-3 shadow-xl shadow-amber-900/10 sm:p-4 md:p-5 lg:p-6">
+      <div className="space-y-3 md:space-y-4">
         <LoyaltyCardHeader
           businessName={card.business.name}
           businessLogoUrl={businessLogoUrl}
@@ -59,9 +58,12 @@ export function LoyaltyCardView({
           maskedPhone={maskPhone(card.customer.phone)}
         />
 
-        <div className="grid gap-3.5 md:grid-cols-5 md:gap-4">
-          <div className="md:col-span-3">
-            <LoyaltyProgressBar
+        <div className="grid gap-3 md:grid-cols-5 md:gap-4">
+          <div className="space-y-3 md:col-span-3 lg:col-span-3">
+            <LoyaltyCardPointsHero
+              currentPoints={card.loyalty.current_points}
+            />
+            <LoyaltyCardProgressSection
               currentPoints={card.loyalty.current_points}
               targetPoints={card.loyalty.reward_target_points}
               progressPercentage={card.loyalty.progress_percentage_to_target}
@@ -69,8 +71,8 @@ export function LoyaltyCardView({
             />
           </div>
 
-          <div className="md:col-span-2">
-            <LoyaltyRewardStatus
+          <div className="md:col-span-2 lg:col-span-2">
+            <LoyaltyCardStatusMessage
               status={card.loyalty.status}
               redeemableRewardName={card.loyalty.redeemable_reward?.name}
               nextRewardName={card.loyalty.next_reward?.name}
@@ -79,28 +81,22 @@ export function LoyaltyCardView({
           </div>
         </div>
 
-        {hasWalletActions ? (
-          <div className="grid gap-3.5 md:grid-cols-5 md:gap-4">
-            <div className="md:col-span-3">
-              <LoyaltyCardQr
-                qrCodeDataUrl={qrCodeDataUrl}
-                customerIdentifier={resolvedCustomerIdentifier}
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <AddToWalletButtons
-                cardToken={cardToken}
-                availablePlatforms={walletAvailability}
-              />
-            </div>
+        <div className="grid gap-3 md:grid-cols-5 md:gap-4">
+          <div className="md:col-span-3">
+            <LoyaltyCardQrSection
+              qrCodeDataUrl={qrCodeDataUrl}
+              customerIdentifier={resolvedCustomerIdentifier}
+            />
           </div>
-        ) : (
-          <LoyaltyCardQr
-            qrCodeDataUrl={qrCodeDataUrl}
-            customerIdentifier={resolvedCustomerIdentifier}
-          />
-        )}
+
+          <div className="md:col-span-2">
+            <LoyaltyCardActions
+              cardToken={cardToken}
+              availablePlatforms={walletAvailability}
+              businessName={card.business.name}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
