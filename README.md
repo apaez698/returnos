@@ -20,6 +20,18 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment Variables
+
+For WhatsApp Cloud API base integration, configure the following server-side variables:
+
+```bash
+WHATSAPP_ENABLED=true
+WHATSAPP_PHONE_NUMBER_ID=
+WHATSAPP_ACCESS_TOKEN=
+WHATSAPP_API_VERSION=v23.0
+WHATSAPP_VERIFY_TOKEN=
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

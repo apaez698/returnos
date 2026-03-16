@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeWhatsAppPhone } from "@/features/whatsapp/utils/normalize-whatsapp-phone";
 
 const optionalTrimmedString = z
   .string()
@@ -39,7 +40,10 @@ export const createCustomerSchema = z.object({
     .string()
     .trim()
     .min(2, "El nombre es obligatorio y debe tener al menos 2 caracteres."),
-  phone: z.string().trim().min(1, "El telefono es obligatorio."),
+  phone: z
+    .string()
+    .transform((value) => normalizeWhatsAppPhone(value))
+    .refine((value) => value.length > 0, "El telefono es obligatorio."),
   email: optionalTrimmedString.refine(
     (value) => !value || z.email().safeParse(value).success,
     "Ingresa un correo valido.",

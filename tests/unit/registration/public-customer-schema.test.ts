@@ -20,6 +20,9 @@ describe("public customer registration schema", () => {
     const result = createCustomerSchema.safeParse(validInput);
 
     expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.phone).toBe("+525512345678");
+    }
   });
 
   it("fails when name is empty", () => {

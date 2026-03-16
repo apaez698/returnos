@@ -13,6 +13,21 @@ describe("createCustomerSchema", () => {
     const result = createCustomerSchema.safeParse(validCustomer);
 
     expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.phone).toBe("+525512345678");
+    }
+  });
+
+  it("fails when phone only has separators", () => {
+    const result = createCustomerSchema.safeParse({
+      ...validCustomer,
+      phone: " ( ) - . ",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0]?.path).toEqual(["phone"]);
+    }
   });
 
   it("fails when name is empty", () => {
