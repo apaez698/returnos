@@ -117,7 +117,10 @@ export function HowItWorks({
   subtitle = "Tres pasos simples para gestionar tu programa de lealtad",
 }: HowItWorksProps) {
   return (
-    <section className="bg-gradient-to-b from-orange-50/50 to-white px-4 py-16 md:py-24">
+    <section
+      id="how-it-works"
+      className="bg-gradient-to-b from-orange-50/50 to-white px-4 py-16 md:py-24"
+    >
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-12 text-center md:mb-16">

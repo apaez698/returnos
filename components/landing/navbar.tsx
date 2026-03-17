@@ -18,13 +18,13 @@ export function Navbar() {
         {/* Center Navigation - Hidden on mobile */}
         <div className="hidden items-center gap-8 md:flex">
           <Link
-            href="#como-funciona"
+            href="#how-it-works"
             className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
           >
             Cómo funciona
           </Link>
           <Link
-            href="#beneficios"
+            href="#benefits"
             className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
           >
             Beneficios

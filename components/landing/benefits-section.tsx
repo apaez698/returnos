@@ -122,7 +122,7 @@ export function BenefitsSection() {
   ];
 
   return (
-    <section className="py-20">
+    <section id="benefits" className="py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-zinc-900 sm:text-4xl">
