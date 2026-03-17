@@ -23,7 +23,7 @@ describe("HomePage integration", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: "Fidelizacion para restaurantes que aumenta clientes recurrentes",
+        name: /convierte clientes ocasionales en clientes recurrentes/i,
       }),
     ).toBeInTheDocument();
 
@@ -32,21 +32,26 @@ describe("HomePage integration", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: "Campanas automaticas de reactivacion",
+        name: "Campañas automáticas de reactivación",
       }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: "Analitica de negocio en tiempo real",
+        name: "Analítica de negocio en tiempo real",
       }),
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("link", { name: "Comenzar prueba gratis" }),
-    ).toHaveAttribute("href", "/login");
+      screen.getByRole("link", { name: "Empieza gratis en 2 minutos" }),
+    ).toHaveAttribute("href", "/signup");
+
+    const loginLinks = screen.getAllByRole("link", {
+      name: "Iniciar sesión",
+    });
+    expect(loginLinks.length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("link", { name: "Ver demo del dashboard" }),
-    ).toHaveAttribute("href", "/dashboard");
+      loginLinks.some((link) => link.getAttribute("href") === "/login"),
+    ).toBe(true);
   });
 
   it("redirects to dashboard when there is an authenticated user", async () => {

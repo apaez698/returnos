@@ -1,5 +1,5 @@
 const WHATSAPP_LINK =
-  "https://wa.me/<YOUR_NUMBER>?text=Hola%20quiero%20probar%20ReturnOS";
+  "https://wa.me/<YOUR_NUMBER>?text=Hola%2C%20%C2%BFme%20explicas%20la%20demo%20de%20ReturnOS%20en%202%20minutos%3F";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -31,11 +31,11 @@ export function WhatsAppContactButton() {
       href={WHATSAPP_LINK}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Hablar por WhatsApp"
-      className="fixed bottom-4 right-4 z-50 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/35 transition-all hover:-translate-y-0.5 hover:bg-[#22C55E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
+      aria-label="Abrir chat de WhatsApp"
+      className="fixed bottom-4 right-4 z-50 inline-flex min-h-12 items-center gap-2 rounded-full bg-[#16A34A] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#16A34A]/35 transition-all hover:-translate-y-0.5 hover:bg-[#15803D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A] focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
     >
       <WhatsAppIcon className="h-5 w-5" />
-      <span>Hablar por WhatsApp</span>
+      <span>Escríbenos por WhatsApp</span>
     </a>
   );
 }

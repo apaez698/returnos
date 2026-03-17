@@ -25,9 +25,9 @@ describe("LoginPage integration", () => {
   it("renders email input and submit button", () => {
     render(<LoginPage />);
 
-    expect(screen.getByLabelText("Correo electronico")).toBeInTheDocument();
+    expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Enviar enlace" }),
+      screen.getByRole("button", { name: "Enviar enlace de acceso" }),
     ).toBeInTheDocument();
   });
 
@@ -35,11 +35,10 @@ describe("LoginPage integration", () => {
     const user = userEvent.setup();
     render(<LoginPage />);
 
-    await user.type(
-      screen.getByLabelText("Correo electronico"),
-      "invalid-email",
+    await user.type(screen.getByLabelText("Email"), "invalid-email");
+    await user.click(
+      screen.getByRole("button", { name: "Enviar enlace de acceso" }),
     );
-    await user.click(screen.getByRole("button", { name: "Enviar enlace" }));
 
     expect(screen.getByRole("alert")).toHaveTextContent(
       "Ingresa un correo valido.",
@@ -59,11 +58,10 @@ describe("LoginPage integration", () => {
 
     render(<LoginPage />);
 
-    await user.type(
-      screen.getByLabelText("Correo electronico"),
-      "  owner@Bakery.com  ",
+    await user.type(screen.getByLabelText("Email"), "  owner@Bakery.com  ");
+    await user.click(
+      screen.getByRole("button", { name: "Enviar enlace de acceso" }),
     );
-    await user.click(screen.getByRole("button", { name: "Enviar enlace" }));
 
     expect(screen.getByRole("button", { name: "Enviando..." })).toBeDisabled();
     expect(mockSignInWithOtp).toHaveBeenCalledWith({
@@ -80,7 +78,7 @@ describe("LoginPage integration", () => {
 
     expect(
       await screen.findByText(
-        "Revisa tu correo para abrir el enlace de acceso.",
+        "Revisa tu correo y haz clic en el enlace para acceder a tu cuenta.",
       ),
     ).toBeInTheDocument();
   });
@@ -93,11 +91,10 @@ describe("LoginPage integration", () => {
 
     render(<LoginPage />);
 
-    await user.type(
-      screen.getByLabelText("Correo electronico"),
-      "owner@bakery.com",
+    await user.type(screen.getByLabelText("Email"), "owner@bakery.com");
+    await user.click(
+      screen.getByRole("button", { name: "Enviar enlace de acceso" }),
     );
-    await user.click(screen.getByRole("button", { name: "Enviar enlace" }));
 
     await waitFor(() => {
       expect(screen.getByRole("alert")).toHaveTextContent("Auth unavailable");
@@ -111,11 +108,10 @@ describe("LoginPage integration", () => {
 
     render(<LoginPage />);
 
-    await user.type(
-      screen.getByLabelText("Correo electronico"),
-      "owner@bakery.com",
+    await user.type(screen.getByLabelText("Email"), "owner@bakery.com");
+    await user.click(
+      screen.getByRole("button", { name: "Enviar enlace de acceso" }),
     );
-    await user.click(screen.getByRole("button", { name: "Enviar enlace" }));
 
     await waitFor(() => {
       expect(mockSignInWithOtp).toHaveBeenCalledWith({

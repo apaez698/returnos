@@ -46,7 +46,7 @@ describe("RewardProgressCard integration", () => {
     expect(screen.getByText(/in progress/i)).toBeInTheDocument();
     expect(screen.getByText(/current progress/i)).toBeInTheDocument();
     expect(screen.getByText("Free coffee")).toBeInTheDocument();
-    expect(screen.getByText(/40 points to next reward/i)).toBeInTheDocument();
+    expect(screen.getByText(/40 pts para free coffee/i)).toBeInTheDocument();
   });
 
   it("renders redeemable state with next reward goal", () => {
@@ -56,7 +56,7 @@ describe("RewardProgressCard integration", () => {
     expect(screen.getByText(/next goal/i)).toBeInTheDocument();
     expect(screen.getByText("Free coffee")).toBeInTheDocument();
     expect(screen.getByText("20% off order")).toBeInTheDocument();
-    expect(screen.getByText(/80 points to next reward/i)).toBeInTheDocument();
+    expect(screen.getByText(/80 pts para 20% off order/i)).toBeInTheDocument();
   });
 
   it("renders redeemable state without next reward as highest reached", () => {

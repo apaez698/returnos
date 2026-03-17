@@ -1,54 +1,142 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { getEmailValidationError, normalizeEmail } from "@/lib/auth/validation";
 import { createBrowserClient } from "@/lib/supabase/client";
 
+type FormState = "idle" | "loading" | "success" | "error";
+
+function extractRetryAfterSeconds(input: string): number {
+  const match = input.match(/(\d+)\s*seconds?/i);
+  if (!match) {
+    return 60;
+  }
+
+  const parsed = Number.parseInt(match[1], 10);
+  return Number.isNaN(parsed) ? 60 : parsed;
+}
+
+function mapAuthError(error: unknown): {
+  message: string;
+  retryAfterSeconds: number;
+} {
+  const rawMessage =
+    error instanceof Error
+      ? error.message
+      : "No se pudo enviar el enlace. Intenta de nuevo.";
+
+  const normalizedMessage = rawMessage.toLowerCase();
+
+  if (
+    normalizedMessage.includes("rate limit") ||
+    normalizedMessage.includes("email rate")
+  ) {
+    const retryAfterSeconds = extractRetryAfterSeconds(rawMessage);
+
+    return {
+      message: `Ya se envio un enlace recientemente. Espera ${retryAfterSeconds} segundos e intenta otra vez.`,
+      retryAfterSeconds,
+    };
+  }
+
+  return {
+    message: rawMessage,
+    retryAfterSeconds: 0,
+  };
+}
+
+function getAuthRedirectOrigin() {
+  const publicAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+
+  if (!publicAppUrl) {
+    return window.location.origin;
+  }
+
+  try {
+    return new URL(publicAppUrl).origin;
+  } catch {
+    return window.location.origin;
+  }
+}
+
 export default function LoginPage() {
+  const supabase = useMemo(() => createBrowserClient(), []);
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [state, setState] = useState<FormState>("idle");
+  const [message, setMessage] = useState<string | null>(null);
+  const [retryAfterSeconds, setRetryAfterSeconds] = useState(0);
+
+  useEffect(() => {
+    if (retryAfterSeconds <= 0) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setRetryAfterSeconds((current) => (current > 0 ? current - 1 : 0));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [retryAfterSeconds]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!email.trim()) {
-      setError("Ingresa tu correo para continuar.");
+    const normalizedEmail = normalizeEmail(email);
+    const validationError = getEmailValidationError(normalizedEmail);
+
+    if (validationError) {
+      setState("error");
+      setMessage(validationError);
       return;
     }
 
-    const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!looksLikeEmail) {
-      setError("Ingresa un correo valido.");
+    if (retryAfterSeconds > 0) {
+      setState("error");
+      setMessage(
+        `Espera ${retryAfterSeconds} segundos antes de solicitar otro enlace.`,
+      );
       return;
     }
 
-    setError(null);
-    setSuccess(false);
-    setIsLoading(true);
+    setState("loading");
+    setMessage(null);
 
     try {
-      const supabase = createBrowserClient();
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email,
+      const redirectUrl = new URL("/auth/callback", getAuthRedirectOrigin());
+      redirectUrl.searchParams.set("next", "/dashboard");
+      const currentParams = new URLSearchParams(window.location.search);
+
+      const businessId = currentParams.get("business_id");
+      const businessSlug = currentParams.get("business_slug");
+
+      if (businessId) {
+        redirectUrl.searchParams.set("business_id", businessId);
+      }
+      if (businessSlug) {
+        redirectUrl.searchParams.set("business_slug", businessSlug);
+      }
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email: normalizedEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: redirectUrl.toString(),
         },
       });
 
-      if (otpError) {
-        setError(
-          otpError.message || "No se pudo enviar el enlace. Intenta de nuevo.",
-        );
-      } else {
-        setSuccess(true);
-        setEmail("");
+      if (error) {
+        throw error;
       }
-    } catch {
-      setError("No se pudo enviar el enlace. Intenta de nuevo.");
-    } finally {
-      setIsLoading(false);
+
+      setState("success");
+      setMessage("Revisa tu correo para abrir el enlace de acceso.");
+    } catch (error) {
+      const { message: authMessage, retryAfterSeconds: retrySeconds } =
+        mapAuthError(error);
+
+      setState("error");
+      setRetryAfterSeconds(retrySeconds);
+      setMessage(authMessage);
     }
   }
 
@@ -67,7 +155,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {success ? (
+        {state === "success" ? (
           <div className="space-y-4 text-center">
             <div className="rounded-lg border border-green-200 bg-green-50 p-4">
               <p className="text-sm font-medium text-green-700">
@@ -79,7 +167,10 @@ export default function LoginPage() {
             </p>
             <button
               type="button"
-              onClick={() => setSuccess(false)}
+              onClick={() => {
+                setState("idle");
+                setMessage(null);
+              }}
               className="text-sm font-medium text-zinc-900 underline-offset-4 hover:underline"
             >
               Intentar con otro correo
@@ -103,30 +194,35 @@ export default function LoginPage() {
                 value={email}
                 onChange={(event) => {
                   setEmail(event.target.value);
-                  if (error) {
-                    setError(null);
+                  if (state !== "idle") {
+                    setState("idle");
+                    setMessage(null);
                   }
                 }}
-                disabled={isLoading}
+                disabled={state === "loading"}
                 className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
               />
             </div>
 
-            {error ? (
+            {state === "error" && message ? (
               <p
                 className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
                 role="alert"
               >
-                {error}
+                {message}
               </p>
             ) : null}
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={state === "loading" || retryAfterSeconds > 0}
               className="mt-1 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
             >
-              {isLoading ? "Enviando..." : "Enviar enlace de acceso"}
+              {state === "loading"
+                ? "Enviando..."
+                : retryAfterSeconds > 0
+                  ? `Reintentar en ${retryAfterSeconds}s`
+                  : "Enviar enlace de acceso"}
             </button>
           </form>
         )}

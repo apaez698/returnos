@@ -2,7 +2,7 @@ import { CTAButton } from "./cta-button";
 import { LoyaltyCardMockup } from "./loyalty-card-mockup";
 
 const WHATSAPP_LINK =
-  "https://wa.me/<YOUR_NUMBER>?text=Hola%20quiero%20probar%20ReturnOS";
+  "https://wa.me/<YOUR_NUMBER>?text=Hola%2C%20%C2%BFme%20explicas%20la%20demo%20de%20ReturnOS%20en%202%20minutos%3F";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -58,43 +58,38 @@ export function HeroSection() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <CTAButton href="/signup">Empieza gratis en 2 minutos</CTAButton>
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#25D366]/45 bg-white/70 px-6 text-sm font-semibold text-[#1E7A43] transition-colors hover:bg-[#25D366]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2"
-              >
-                <WhatsAppIcon className="h-4 w-4" />
-                <span>Hablar por WhatsApp</span>
-              </a>
-              <CTAButton href="/login" variant="secondary">
-                Iniciar sesión
-              </CTAButton>
+            <div className="space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+                <CTAButton href="/signup">
+                  Empieza gratis en 2 minutos
+                </CTAButton>
+                <CTAButton href="/login" variant="secondary">
+                  Iniciar sesión
+                </CTAButton>
+              </div>
+
+              <div className="inline-flex flex-col items-start gap-2 rounded-2xl border border-[#25D366]/25 bg-[#25D366]/5 px-4 py-3">
+                <a
+                  href={WHATSAPP_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Hablar con asesor por WhatsApp"
+                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-[#25D366]/40 bg-white px-4 text-sm font-semibold text-[#1E7A43] transition-all hover:-translate-y-0.5 hover:border-[#25D366]/70 hover:bg-[#25D366]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2"
+                >
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#25D366]/15">
+                    <WhatsAppIcon className="h-4 w-4" />
+                  </span>
+                  <span>Habla con un asesor en 2 min</span>
+                </a>
+                <p className="text-xs text-zinc-600">
+                  Te guiamos paso a paso para empezar hoy
+                </p>
+              </div>
             </div>
 
             <p className="text-sm text-zinc-600">
               No necesitas tarjeta. Empieza hoy mismo.
             </p>
-
-            {/* Trust indicator */}
-            <div className="pt-4 border-t border-zinc-200/50">
-              <p className="text-sm font-medium text-zinc-600 mb-3">
-                Usado por negocios locales para aumentar clientes recurrentes
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="text-sm font-semibold text-zinc-700">
-                  🇲🇽 México
-                </div>
-                <div className="text-sm font-semibold text-zinc-700">
-                  🇦🇷 Argentina
-                </div>
-                <div className="text-sm font-semibold text-zinc-700">
-                  🇧🇷 Brasil
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right side - Mockup (hidden on mobile) */}

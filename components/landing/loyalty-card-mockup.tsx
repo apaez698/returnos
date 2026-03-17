@@ -2,9 +2,9 @@ export function LoyaltyCardMockup() {
   return (
     <div className="mx-auto w-full max-w-sm">
       {/* Card Container */}
-      <div className="relative h-64 rounded-2xl bg-gradient-to-br from-orange-600 via-orange-500 to-amber-600 p-6 shadow-2xl">
+      <div className="relative h-72 rounded-2xl bg-gradient-to-br from-orange-600 via-orange-500 to-amber-600 p-6 shadow-2xl">
         {/* Top Section */}
-        <div className="mb-8 flex items-start justify-between">
+        <div className="mb-6 flex items-start justify-between">
           <div>
             <p className="text-xs font-semibold tracking-widest text-orange-100 uppercase">
               Tarjeta de Fidelización
@@ -15,7 +15,7 @@ export function LoyaltyCardMockup() {
         </div>
 
         {/* Points Display */}
-        <div className="mb-6 rounded-xl bg-white/20 p-4 backdrop-blur-sm">
+        <div className="mb-3 rounded-xl bg-white/20 p-4 backdrop-blur-sm">
           <p className="text-xs font-medium text-orange-100">
             Puntos acumulados
           </p>
@@ -26,12 +26,12 @@ export function LoyaltyCardMockup() {
         </div>
 
         {/* Progress Bar */}
-        <div className="space-y-1.5">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-orange-200">
+        <div className="mt-1 space-y-2.5 rounded-lg bg-black/10 px-3 py-2.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-orange-100/90">
             Falta para próxima recompensa
           </p>
-          <p className="text-xs font-bold text-white">
-            1,550 pts para café gratis
+          <p className="text-lg font-extrabold leading-tight text-white">
+            Te faltan 1,550 pts para tu café gratis ☕
           </p>
           <div className="h-2 w-full overflow-hidden rounded-full bg-white/25">
             <div className="h-full w-2/3 rounded-full bg-white transition-all" />
@@ -40,7 +40,7 @@ export function LoyaltyCardMockup() {
       </div>
 
       {/* QR Code Mockup */}
-      <div className="mt-6 flex justify-center">
+      <div className="mt-8 flex justify-center">
         <div className="relative h-32 w-32 rounded-lg bg-gradient-to-br from-zinc-100 to-zinc-200 p-2 shadow-lg">
           <div className="grid h-full grid-cols-4 gap-0.5 bg-white">
             {Array.from({ length: 16 }).map((_, i) => (
