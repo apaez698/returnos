@@ -43,6 +43,11 @@ export function HeroSection() {
           <div className="flex flex-col gap-8">
             {/* Headline */}
             <div className="space-y-6">
+              <p className="inline-flex w-fit items-center gap-2 rounded-full border border-orange-200 bg-orange-50/80 px-3 py-1 text-xs font-medium text-orange-700">
+                <span aria-hidden="true">🚀</span>
+                Configuración en menos de 5 minutos
+              </p>
+
               <h1 className="text-4xl font-bold leading-tight text-zinc-950 sm:text-5xl lg:text-6xl">
                 Convierte clientes ocasionales en{" "}
                 <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
@@ -67,6 +72,10 @@ export function HeroSection() {
                   Iniciar sesión
                 </CTAButton>
               </div>
+
+              <p className="text-sm font-medium text-zinc-700">
+                Empieza hoy y activa tu sistema de fidelización en minutos
+              </p>
 
               <div className="inline-flex flex-col items-start gap-2 rounded-2xl border border-[#25D366]/25 bg-[#25D366]/5 px-4 py-3">
                 <a
