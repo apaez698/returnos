@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/landing/hero-section";
 import { FeatureCard } from "@/components/landing/feature-card";
 import { SocialProof } from "@/components/landing/social-proof";
 import { FinalCTASection } from "@/components/landing/final-cta-section";
+import { WhatsAppContactButton } from "@/components/landing/whatsapp-contact-button";
 
 export default async function HomePage() {
   const user = await getCurrentUser();
@@ -53,6 +54,7 @@ export default async function HomePage() {
 
         <FinalCTASection />
       </main>
+      <WhatsAppContactButton />
     </>
   );
 }
