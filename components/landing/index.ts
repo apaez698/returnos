@@ -1,0 +1,9 @@
+export { Navbar } from "./navbar";
+export { HeroSection } from "./hero-section";
+export { CTAButton } from "./cta-button";
+export { FeatureCard } from "./feature-card";
+export { LoyaltyCardMockup } from "./loyalty-card-mockup";
+export { HowItWorks } from "./how-it-works";
+export { BenefitsSection } from "./benefits-section";
+export { SocialProof } from "./social-proof";
+export { FinalCTASection } from "./final-cta-section";
