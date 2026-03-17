@@ -28,7 +28,7 @@ export function FinalCTASection() {
             href="/signup"
             className="inline-flex items-center justify-center rounded-full bg-white text-orange-600 px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-bold transition-all hover:bg-slate-50 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-orange-600 active:scale-95"
           >
-            Crear cuenta gratis
+            Crear cuenta y empezar
           </Link>
 
           {/* Secondary Button */}

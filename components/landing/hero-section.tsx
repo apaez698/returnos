@@ -59,7 +59,7 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <CTAButton href="/signup">Probar gratis</CTAButton>
+              <CTAButton href="/signup">Empieza gratis en 2 minutos</CTAButton>
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
@@ -74,10 +74,14 @@ export function HeroSection() {
               </CTAButton>
             </div>
 
+            <p className="text-sm text-zinc-600">
+              No necesitas tarjeta. Empieza hoy mismo.
+            </p>
+
             {/* Trust indicator */}
             <div className="pt-4 border-t border-zinc-200/50">
-              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">
-                Usado por restaurantes en
+              <p className="text-sm font-medium text-zinc-600 mb-3">
+                Usado por negocios locales para aumentar clientes recurrentes
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="text-sm font-semibold text-zinc-700">
