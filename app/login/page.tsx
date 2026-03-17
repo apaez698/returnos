@@ -1,202 +1,134 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { getEmailValidationError, normalizeEmail } from "@/lib/auth/validation";
-import { createBrowserClient } from "@/lib/supabase/client";
-
-type FormState = "idle" | "loading" | "success" | "error";
-
-function extractRetryAfterSeconds(input: string): number {
-  const match = input.match(/(\d+)\s*seconds?/i);
-  if (!match) {
-    return 60;
-  }
-
-  const parsed = Number.parseInt(match[1], 10);
-  return Number.isNaN(parsed) ? 60 : parsed;
-}
-
-function mapAuthError(error: unknown): {
-  message: string;
-  retryAfterSeconds: number;
-} {
-  const rawMessage =
-    error instanceof Error
-      ? error.message
-      : "No se pudo enviar el enlace. Intenta de nuevo.";
-
-  const normalizedMessage = rawMessage.toLowerCase();
-
-  if (
-    normalizedMessage.includes("rate limit") ||
-    normalizedMessage.includes("email rate")
-  ) {
-    const retryAfterSeconds = extractRetryAfterSeconds(rawMessage);
-
-    return {
-      message: `Ya se envio un enlace recientemente. Espera ${retryAfterSeconds} segundos e intenta otra vez.`,
-      retryAfterSeconds,
-    };
-  }
-
-  return {
-    message: rawMessage,
-    retryAfterSeconds: 0,
-  };
-}
-
-function getAuthRedirectOrigin() {
-  const publicAppUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-
-  if (!publicAppUrl) {
-    return window.location.origin;
-  }
-
-  try {
-    return new URL(publicAppUrl).origin;
-  } catch {
-    return window.location.origin;
-  }
-}
+import Link from "next/link";
+import { FormEvent, useState } from "react";
 
 export default function LoginPage() {
-  const supabase = useMemo(() => createBrowserClient(), []);
+  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [state, setState] = useState<FormState>("idle");
-  const [message, setMessage] = useState<string | null>(null);
-  const [retryAfterSeconds, setRetryAfterSeconds] = useState(0);
-
-  useEffect(() => {
-    if (retryAfterSeconds <= 0) {
-      return;
-    }
-
-    const timer = window.setInterval(() => {
-      setRetryAfterSeconds((current) => (current > 0 ? current - 1 : 0));
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [retryAfterSeconds]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const normalizedEmail = normalizeEmail(email);
-    const validationError = getEmailValidationError(normalizedEmail);
-
-    if (validationError) {
-      setState("error");
-      setMessage(validationError);
+    if (!email.trim() || !password.trim()) {
+      setError("Completa tu correo y contrasena para continuar.");
       return;
     }
 
-    if (retryAfterSeconds > 0) {
-      setState("error");
-      setMessage(
-        `Espera ${retryAfterSeconds} segundos antes de solicitar otro enlace.`,
-      );
+    const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!looksLikeEmail) {
+      setError("Ingresa un correo valido.");
       return;
     }
 
-    setState("loading");
-    setMessage(null);
+    setError(null);
+    setIsLoading(true);
 
     try {
-      const redirectUrl = new URL("/auth/callback", getAuthRedirectOrigin());
-      redirectUrl.searchParams.set("next", "/dashboard");
-      const currentParams = new URLSearchParams(window.location.search);
-
-      const businessId = currentParams.get("business_id");
-      const businessSlug = currentParams.get("business_slug");
-
-      if (businessId) {
-        redirectUrl.searchParams.set("business_id", businessId);
-      }
-      if (businessSlug) {
-        redirectUrl.searchParams.set("business_slug", businessSlug);
-      }
-
-      const { error } = await supabase.auth.signInWithOtp({
-        email: normalizedEmail,
-        options: {
-          emailRedirectTo: redirectUrl.toString(),
-        },
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      setState("success");
-      setMessage("Revisa tu correo para abrir el enlace de acceso.");
-    } catch (error) {
-      const { message: authMessage, retryAfterSeconds: retrySeconds } =
-        mapAuthError(error);
-
-      setState("error");
-      setRetryAfterSeconds(retrySeconds);
-      setMessage(authMessage);
+      // Simulate request latency to expose the loading state in UI.
+      await new Promise((resolve) => window.setTimeout(resolve, 800));
+    } catch {
+      setError("No se pudo iniciar sesion. Intenta de nuevo.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md items-center px-6 py-12">
-      <section className="w-full rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold text-zinc-900">Iniciar sesion</h1>
-        <p className="mt-2 text-sm text-zinc-600">
-          Ingresa tu correo y te enviaremos un enlace para entrar.
-        </p>
+    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-10">
+      <section className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mb-8 text-center">
+          <p className="text-xs font-semibold tracking-[0.24em] text-zinc-500">
+            RETURNOS
+          </p>
+          <h1 className="mt-3 text-2xl font-semibold text-zinc-900">
+            Iniciar sesion
+          </h1>
+          <p className="mt-2 text-sm text-zinc-600">
+            Accede a tu panel de gestion.
+          </p>
+        </div>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit} noValidate>
+        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
           <div>
             <label
               htmlFor="email"
-              className="mb-1 block text-sm font-medium text-zinc-700"
+              className="mb-1.5 block text-sm font-medium text-zinc-700"
             >
-              Correo electronico
+              Email
             </label>
             <input
               id="email"
               name="email"
               type="email"
               autoComplete="email"
-              placeholder="tu@negocio.com"
+              placeholder="tu@empresa.com"
               value={email}
               onChange={(event) => {
                 setEmail(event.target.value);
-                if (state !== "idle") {
-                  setState("idle");
-                  setMessage(null);
+                if (error) {
+                  setError(null);
                 }
               }}
-              disabled={state === "loading"}
-              className="w-full rounded-md border border-zinc-300 px-3 py-2 text-zinc-900 placeholder:text-zinc-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-none disabled:cursor-not-allowed disabled:bg-zinc-100"
+              disabled={isLoading}
+              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
             />
           </div>
 
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-1.5 block text-sm font-medium text-zinc-700"
+            >
+              Contrasena
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                if (error) {
+                  setError(null);
+                }
+              }}
+              disabled={isLoading}
+              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
+            />
+          </div>
+
+          {error ? (
+            <p
+              className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+              role="alert"
+            >
+              {error}
+            </p>
+          ) : null}
+
           <button
             type="submit"
-            disabled={state === "loading" || retryAfterSeconds > 0}
-            className="w-full rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-300"
+            disabled={isLoading}
+            className="mt-1 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
           >
-            {state === "loading"
-              ? "Enviando..."
-              : retryAfterSeconds > 0
-                ? `Reintentar en ${retryAfterSeconds}s`
-                : "Enviar enlace"}
+            {isLoading ? "Iniciando..." : "Iniciar sesion"}
           </button>
         </form>
 
-        {state === "success" && message ? (
-          <p className="mt-4 text-sm text-emerald-700" role="status">
-            {message}
-          </p>
-        ) : null}
-        {state === "error" && message ? (
-          <p className="mt-4 text-sm text-red-700" role="alert">
-            {message}
-          </p>
-        ) : null}
+        <p className="mt-6 text-center text-sm text-zinc-600">
+          No tienes cuenta?{" "}
+          <Link
+            href="/signup"
+            className="font-medium text-zinc-900 underline-offset-4 hover:underline"
+          >
+            Crear cuenta
+          </Link>
+        </p>
       </section>
     </main>
   );
