@@ -1,5 +1,6 @@
 "use client";
 
+import { RewardProgressBar } from "./reward-progress-bar";
 import { CustomerRewardProgress } from "@/lib/rewards/types";
 
 interface CustomerRewardProgressListProps {
@@ -78,21 +79,14 @@ export function CustomerRewardProgressList({
                 </div>
 
                 {progress.status === "in_progress" && (
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                        <div
-                          className="bg-indigo-600 h-full transition-all"
-                          style={{ width: `${progress.progress_percentage}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">
-                        {progress.progress_percentage}%
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-500">
-                      {progress.remaining_points} pts faltantes
-                    </p>
+                  <div className="mt-3">
+                    <RewardProgressBar
+                      remainingPoints={progress.remaining_points}
+                      progressPercentage={progress.progress_percentage}
+                      rewardName={progress.nearest_reward?.name}
+                      colorTheme="indigo"
+                      showPercentage={true}
+                    />
                   </div>
                 )}
 
@@ -161,21 +155,21 @@ export function CustomerRewardProgressList({
                 </td>
                 <td className="px-4 py-3 text-center">
                   {progress.status === "in_progress" ? (
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-slate-200 rounded-full h-1.5 overflow-hidden min-w-20">
+                    <div className="flex items-center gap-3 justify-center min-w-48">
+                      <div className="flex-1 h-2.5 bg-slate-200 rounded-full overflow-hidden">
                         <div
-                          className="bg-indigo-600 h-full transition-all"
+                          className="h-full bg-indigo-600 transition-all rounded-full"
                           style={{ width: `${progress.progress_percentage}%` }}
                         />
                       </div>
-                      <span className="text-xs font-semibold text-slate-700 whitespace-nowrap w-10">
+                      <span className="text-xs font-bold text-indigo-900 whitespace-nowrap w-8">
                         {progress.progress_percentage}%
                       </span>
                     </div>
                   ) : progress.status === "redeemable" ? (
-                    <span className="text-emerald-600 font-medium">100%</span>
+                    <span className="text-emerald-600 font-bold">100%</span>
                   ) : (
-                    <span className="text-slate-500">—</span>
+                    <span className="text-slate-400">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">

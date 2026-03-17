@@ -2,6 +2,7 @@
 
 import { calculateRewardProgress } from "@/lib/rewards/progress";
 import { CustomerRewardProgress, RewardRule } from "@/lib/rewards/types";
+import { RewardProgressBar } from "./reward-progress-bar";
 
 interface RewardProgressCardProps {
   customer: Pick<
@@ -59,20 +60,15 @@ export function RewardProgressCard({
             {progress.nextReward.reward_description}
           </p>
 
-          <div className="mt-3 flex items-center justify-between gap-2">
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
-              <div
-                className="h-full bg-indigo-600 transition-all"
-                style={{ width: `${progress.progressPercentageToNext}%` }}
-              />
-            </div>
-            <span className="whitespace-nowrap text-xs font-semibold text-slate-700">
-              {progress.progressPercentageToNext}%
-            </span>
+          <div className="mt-3">
+            <RewardProgressBar
+              remainingPoints={progress.remainingPointsToNext}
+              progressPercentage={progress.progressPercentageToNext}
+              rewardName={progress.nextReward.name}
+              colorTheme="indigo"
+              showPercentage={true}
+            />
           </div>
-          <p className="mt-2 text-xs text-slate-500">
-            {progress.remainingPointsToNext} points to next reward
-          </p>
         </section>
       )}
 
@@ -102,20 +98,15 @@ export function RewardProgressCard({
                 {progress.nextReward.reward_description}
               </p>
 
-              <div className="mt-3 flex items-center justify-between gap-2">
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
-                  <div
-                    className="h-full bg-indigo-600 transition-all"
-                    style={{ width: `${progress.progressPercentageToNext}%` }}
-                  />
-                </div>
-                <span className="whitespace-nowrap text-xs font-semibold text-slate-700">
-                  {progress.progressPercentageToNext}%
-                </span>
+              <div className="mt-3">
+                <RewardProgressBar
+                  remainingPoints={progress.remainingPointsToNext}
+                  progressPercentage={progress.progressPercentageToNext}
+                  rewardName={progress.nextReward.name}
+                  colorTheme="indigo"
+                  showPercentage={true}
+                />
               </div>
-              <p className="mt-2 text-xs text-slate-500">
-                {progress.remainingPointsToNext} points to next reward
-              </p>
             </section>
           ) : (
             <p className="text-xs text-slate-500">Highest reward reached.</p>

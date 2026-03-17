@@ -1,3 +1,4 @@
+import { RewardProgressBar } from "@/components/rewards/reward-progress-bar";
 import { PosRewardThreshold } from "@/lib/pos/types";
 
 interface PurchaseRewardProgressProps {
@@ -56,38 +57,27 @@ export function PurchaseRewardProgress({
   }
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-slate-50 p-2.5 md:p-3">
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+    <section className="rounded-lg border border-slate-200 bg-slate-50 p-3 md:p-4">
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-700">
           Progreso de recompensa
         </p>
-        <p className="text-xs font-semibold text-slate-700">
-          {progressPercentage}%
-        </p>
       </div>
 
-      <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
-        <div
-          className="h-full rounded-full bg-indigo-600 transition-all"
-          style={{ width: `${progressPercentage}%` }}
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={progressPercentage}
-          aria-label="Progreso de recompensa"
-        />
-      </div>
-
-      <p className="mt-2 text-xs text-slate-600">
-        {targetPoints
-          ? `${updatedPoints} / ${targetPoints} puntos para la siguiente recompensa`
-          : hasRewards
-            ? "Ya alcanzo la recompensa mas alta disponible."
-            : "Sin recompensas activas para mostrar progreso."}
-      </p>
+      {nextReward && (
+        <div className="mb-4">
+          <RewardProgressBar
+            remainingPoints={remainingPoints}
+            progressPercentage={progressPercentage}
+            rewardName={nextReward.name}
+            colorTheme="indigo"
+            showPercentage={true}
+          />
+        </div>
+      )}
 
       <p
-        className={`mt-2 rounded-md border px-2.5 py-2 text-sm font-medium ${
+        className={`rounded-md border px-3 py-2 text-sm font-medium ${
           unlockedRewardName
             ? "border-amber-200 bg-amber-50 text-amber-900"
             : "border-slate-200 bg-white text-slate-900"

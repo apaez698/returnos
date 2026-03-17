@@ -2,18 +2,19 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { createBrowserClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
-  const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!email.trim() || !password.trim()) {
-      setError("Completa tu correo y contrasena para continuar.");
+    if (!email.trim()) {
+      setError("Ingresa tu correo para continuar.");
       return;
     }
 
@@ -24,13 +25,28 @@ export default function LoginPage() {
     }
 
     setError(null);
+    setSuccess(false);
     setIsLoading(true);
 
     try {
-      // Simulate request latency to expose the loading state in UI.
-      await new Promise((resolve) => window.setTimeout(resolve, 800));
+      const supabase = createBrowserClient();
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (otpError) {
+        setError(
+          otpError.message || "No se pudo enviar el enlace. Intenta de nuevo.",
+        );
+      } else {
+        setSuccess(true);
+        setEmail("");
+      }
     } catch {
-      setError("No se pudo iniciar sesion. Intenta de nuevo.");
+      setError("No se pudo enviar el enlace. Intenta de nuevo.");
     } finally {
       setIsLoading(false);
     }
@@ -51,74 +67,69 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-          <div>
-            <label
-              htmlFor="email"
-              className="mb-1.5 block text-sm font-medium text-zinc-700"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="tu@empresa.com"
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                if (error) {
-                  setError(null);
-                }
-              }}
-              disabled={isLoading}
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-1.5 block text-sm font-medium text-zinc-700"
-            >
-              Contrasena
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                if (error) {
-                  setError(null);
-                }
-              }}
-              disabled={isLoading}
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
-            />
-          </div>
-
-          {error ? (
-            <p
-              className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-              role="alert"
-            >
-              {error}
+        {success ? (
+          <div className="space-y-4 text-center">
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+              <p className="text-sm font-medium text-green-700">
+                Te enviamos un enlace a tu correo para iniciar sesion
+              </p>
+            </div>
+            <p className="text-sm text-zinc-600">
+              Revisa tu correo y haz clic en el enlace para acceder a tu cuenta.
             </p>
-          ) : null}
+            <button
+              type="button"
+              onClick={() => setSuccess(false)}
+              className="text-sm font-medium text-zinc-900 underline-offset-4 hover:underline"
+            >
+              Intentar con otro correo
+            </button>
+          </div>
+        ) : (
+          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-1.5 block text-sm font-medium text-zinc-700"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="tu@empresa.com"
+                value={email}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+                  if (error) {
+                    setError(null);
+                  }
+                }}
+                disabled={isLoading}
+                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="mt-1 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
-          >
-            {isLoading ? "Iniciando..." : "Iniciar sesion"}
-          </button>
-        </form>
+            {error ? (
+              <p
+                className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="mt-1 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
+            >
+              {isLoading ? "Enviando..." : "Enviar enlace de acceso"}
+            </button>
+          </form>
+        )}
 
         <p className="mt-6 text-center text-sm text-zinc-600">
           No tienes cuenta?{" "}

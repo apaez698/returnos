@@ -61,7 +61,10 @@ export function RewardProgressBar({
   colorTheme = "indigo",
 }: RewardProgressBarProps) {
   const theme = colorThemes[colorTheme];
-  const normalizedProgress = Math.min(100, Math.max(0, Math.round(progressPercentage)));
+  const normalizedProgress = Math.min(
+    100,
+    Math.max(0, Math.round(progressPercentage)),
+  );
 
   const defaultLabel = rewardName
     ? `${remainingPoints} pts para ${rewardName}`
@@ -82,7 +85,9 @@ export function RewardProgressBar({
       </div>
 
       {/* Progress bar with rounded corners */}
-      <div className={`relative h-3 w-full overflow-hidden rounded-full ${theme.background} shadow-sm`}>
+      <div
+        className={`relative h-3 w-full overflow-hidden rounded-full ${theme.background} shadow-sm`}
+      >
         <div
           className={`h-full rounded-full ${theme.fill} transition-all duration-500 ease-out`}
           style={{ width: `${normalizedProgress}%` }}
