@@ -1,12 +1,43 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { CTAButton } from "./cta-button";
 
 export function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleSectionClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    sectionId: "how-it-works" | "benefits",
+  ) => {
+    if (pathname === "/") {
+      event.preventDefault();
+      const section = document.getElementById(sectionId);
+      section?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    router.push(`/#${sectionId}`);
+  };
+
+  const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === "/") {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <nav className="sticky top-0 z-50 border-b border-zinc-200/50 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 sm:px-10">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link
+          href="/"
+          onClick={handleLogoClick}
+          className="flex items-center gap-2"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-orange-600 to-orange-700">
             <span className="text-sm font-bold text-white">R</span>
           </div>
@@ -18,13 +49,15 @@ export function Navbar() {
         {/* Center Navigation - Hidden on mobile */}
         <div className="hidden items-center gap-8 md:flex">
           <Link
-            href="#how-it-works"
+            href="/#how-it-works"
+            onClick={(event) => handleSectionClick(event, "how-it-works")}
             className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
           >
             Cómo funciona
           </Link>
           <Link
-            href="#benefits"
+            href="/#benefits"
+            onClick={(event) => handleSectionClick(event, "benefits")}
             className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
           >
             Beneficios

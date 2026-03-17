@@ -81,8 +81,16 @@ export function CustomerRewardProgressList({
                 {progress.status === "in_progress" && (
                   <div className="mt-3">
                     <RewardProgressBar
-                      remainingPoints={progress.remaining_points}
-                      progressPercentage={progress.progress_percentage}
+                      remainingPoints={
+                        progress.remaining_points_to_next ??
+                        progress.remaining_points ??
+                        0
+                      }
+                      progressPercentage={
+                        progress.progress_percentage_to_next ??
+                        progress.progress_percentage ??
+                        0
+                      }
                       rewardName={progress.nearest_reward?.name}
                       colorTheme="indigo"
                       showPercentage={true}
@@ -159,11 +167,16 @@ export function CustomerRewardProgressList({
                       <div className="flex-1 h-2.5 bg-slate-200 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-indigo-600 transition-all rounded-full"
-                          style={{ width: `${progress.progress_percentage}%` }}
+                          style={{
+                            width: `${progress.progress_percentage_to_next ?? progress.progress_percentage ?? 0}%`,
+                          }}
                         />
                       </div>
                       <span className="text-xs font-bold text-indigo-900 whitespace-nowrap w-8">
-                        {progress.progress_percentage}%
+                        {progress.progress_percentage_to_next ??
+                          progress.progress_percentage ??
+                          0}
+                        %
                       </span>
                     </div>
                   ) : progress.status === "redeemable" ? (

@@ -5,6 +5,8 @@ import HomePage from "@/app/page";
 import { getCurrentUser } from "@/lib/auth/get-current-user";
 import { redirect } from "next/navigation";
 
+const pushMock = vi.fn();
+
 vi.mock("@/lib/auth/get-current-user", () => ({
   getCurrentUser: vi.fn(),
 }));
@@ -13,6 +15,10 @@ vi.mock("next/navigation", () => ({
   redirect: vi.fn(() => {
     throw new Error("NEXT_REDIRECT");
   }),
+  useRouter: vi.fn(() => ({
+    push: pushMock,
+  })),
+  usePathname: vi.fn(() => "/"),
 }));
 
 describe("HomePage integration", () => {

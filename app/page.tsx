@@ -20,8 +20,56 @@ export default async function HomePage() {
       <main>
         <HeroSection />
 
+        <section id="how-it-works" className="bg-white px-6 py-20 sm:px-10">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <h2 className="text-3xl font-bold text-zinc-950 sm:text-4xl">
+                Cómo funciona
+              </h2>
+              <p className="mt-4 text-lg text-zinc-600">
+                En solo 3 pasos conviertes visitas en clientes recurrentes
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+                <h3 className="text-xl font-semibold text-zinc-900">
+                  Registra la compra
+                </h3>
+                <p className="mt-3 leading-relaxed text-zinc-600">
+                  Busca al cliente por teléfono y registra su consumo en
+                  segundos.
+                </p>
+              </article>
+
+              <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+                <h3 className="text-xl font-semibold text-zinc-900">
+                  Acumula puntos automáticamente
+                </h3>
+                <p className="mt-3 leading-relaxed text-zinc-600">
+                  ReturnOS calcula los puntos y muestra el progreso hacia la
+                  próxima recompensa.
+                </p>
+              </article>
+
+              <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+                <h3 className="text-xl font-semibold text-zinc-900">
+                  Haz que regresen
+                </h3>
+                <p className="mt-3 leading-relaxed text-zinc-600">
+                  Motiva nuevas visitas con recompensas y seguimiento simple
+                  desde caja.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
         {/* Features Section */}
-        <section className="border-t border-zinc-200/50 bg-gradient-to-b from-white to-slate-50 px-6 py-20 sm:px-10 lg:py-28">
+        <section
+          id="benefits"
+          className="border-t border-zinc-200/50 bg-gradient-to-b from-white to-slate-50 px-6 py-20 sm:px-10 lg:py-28"
+        >
           <div className="mx-auto max-w-7xl">
             <div className="mb-16 text-center">
               <h2 className="text-3xl font-bold text-zinc-950 sm:text-4xl">
