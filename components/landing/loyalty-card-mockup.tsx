@@ -26,14 +26,16 @@ export function LoyaltyCardMockup() {
         </div>
 
         {/* Progress Bar */}
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-orange-100">
+        <div className="space-y-1.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-orange-200">
             Falta para próxima recompensa
           </p>
-          <div className="h-2 w-full rounded-full bg-white/20">
-            <div className="h-full w-2/3 rounded-full bg-white/80"></div>
+          <p className="text-xs font-bold text-white">
+            1,550 pts para café gratis
+          </p>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-white/25">
+            <div className="h-full w-2/3 rounded-full bg-white transition-all" />
           </div>
-          <p className="text-xs text-orange-100">1,550 pts para café gratis</p>
         </div>
       </div>
 
