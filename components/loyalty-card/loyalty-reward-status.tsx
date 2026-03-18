@@ -17,18 +17,18 @@ export function LoyaltyRewardStatus({
     return (
       <section className="h-full rounded-3xl border border-emerald-300 bg-gradient-to-b from-emerald-50 to-emerald-100 p-4 shadow-sm shadow-emerald-100 sm:p-4 md:p-6">
         <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-800 md:text-sm">
-          Reward status
+          Estado de recompensa
         </h2>
         <p className="mt-3 text-xl font-bold tracking-tight text-emerald-950 md:text-[1.75rem]">
-          Reward unlocked
+          Recompensa desbloqueada
         </p>
         <p className="mt-2.5 text-sm text-emerald-900 sm:text-base">
           {redeemableRewardName
-            ? `You can redeem: ${redeemableRewardName}`
-            : "You can redeem your reward on your next visit."}
+            ? `Puedes canjear: ${redeemableRewardName}`
+            : "Puedes canjear tu recompensa en tu próxima visita."}
         </p>
         <p className="mt-3 rounded-xl border border-emerald-300/80 bg-white/70 px-3 py-2 text-sm font-medium text-emerald-900">
-          Show this card at checkout and ask to redeem.
+          Muestra esta tarjeta en caja y pide el canje.
         </p>
       </section>
     );
@@ -38,18 +38,18 @@ export function LoyaltyRewardStatus({
     return (
       <section className="h-full rounded-3xl border border-amber-300 bg-gradient-to-b from-amber-50 to-amber-100 p-4 shadow-sm shadow-amber-100 sm:p-4 md:p-6">
         <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-800 md:text-sm">
-          Reward status
+          Estado de recompensa
         </h2>
         <p className="mt-3 text-xl font-bold tracking-tight text-amber-950 md:text-[1.75rem]">
-          Keep going
+          Sigue adelante
         </p>
         <p className="mt-2.5 text-sm font-medium text-amber-950 sm:text-base">
           {nextRewardName
-            ? `${remainingPoints} points left to unlock ${nextRewardName}.`
-            : `${remainingPoints} points left to unlock your next reward.`}
+            ? `${remainingPoints} punto${remainingPoints === 1 ? "" : "s"} para desbloquear ${nextRewardName}.`
+            : `${remainingPoints} punto${remainingPoints === 1 ? "" : "s"} para desbloquear tu próxima recompensa.`}
         </p>
         <p className="mt-3 rounded-xl border border-amber-300/80 bg-white/70 px-3 py-2 text-sm text-amber-900">
-          Every purchase moves you closer.
+          Cada compra te acerca más.
         </p>
       </section>
     );
@@ -58,16 +58,16 @@ export function LoyaltyRewardStatus({
   return (
     <section className="h-full rounded-3xl border border-slate-200 bg-gradient-to-b from-slate-50 to-slate-100 p-4 shadow-sm shadow-slate-200/50 sm:p-4 md:p-6">
       <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-600 md:text-sm">
-        Reward status
+        Estado de recompensa
       </h2>
       <p className="mt-3 text-xl font-bold tracking-tight text-slate-900 md:text-[1.75rem]">
-        No rewards available yet
+        Sin recompensas disponibles aún
       </p>
       <p className="mt-2.5 text-sm text-slate-700 sm:text-base">
-        New rewards will appear here as soon as this business adds them.
+        Las nuevas recompensas aparecerán aquí en cuanto el negocio las agregue.
       </p>
       <p className="mt-3 rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-sm text-slate-700">
-        Keep collecting points and check back soon.
+        Sigue acumulando puntos y vuelve pronto.
       </p>
     </section>
   );

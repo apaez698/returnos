@@ -17,7 +17,7 @@ export default async function DashboardInactiveCustomersPage() {
     if (err instanceof Error) {
       error = err.message;
     } else {
-      error = "Could not load inactive customers.";
+      error = "No se pudieron cargar los clientes inactivos.";
     }
   }
 
@@ -29,18 +29,20 @@ export default async function DashboardInactiveCustomersPage() {
   });
 
   return (
-    <DashboardLayout pageTitle="Inactive Customers">
+    <DashboardLayout pageTitle="Clientes inactivos">
       <div className="space-y-6">
         <section>
           <p className="dashboard-explainer text-slate-600">
-            Customers who have not visited in the last 14 days. Review and
-            re-engage them to increase retention.
+            Clientes que no han visitado en los últimos 14 días. Revísalos y
+            vuelve a involucrarlos para aumentar la retención.
           </p>
         </section>
 
         {error && (
           <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-            <p className="font-medium">Unable to load inactive customers</p>
+            <p className="font-medium">
+              No se pudieron cargar los clientes inactivos
+            </p>
             <p className="mt-1">{error}</p>
           </div>
         )}

@@ -38,7 +38,7 @@ export function LoyaltyCardActions({
     return window.location.href;
   }, []);
 
-  const shareTitle = `${businessName} loyalty card`;
+  const shareTitle = `Tarjeta de fidelidad de ${businessName}`;
 
   async function handleCopyLink() {
     if (!shareUrl || !navigator.clipboard) {
@@ -64,7 +64,7 @@ export function LoyaltyCardActions({
     try {
       await navigator.share({
         title: shareTitle,
-        text: "Scan this card to collect loyalty points.",
+        text: "Escanea esta tarjeta para acumular puntos de fidelidad.",
         url: shareUrl,
       });
       setShareStatus("shared");
@@ -79,15 +79,15 @@ export function LoyaltyCardActions({
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 md:text-sm">
-            Card actions
+            Acciones de tarjeta
           </h2>
           <p className="mt-1 text-sm text-slate-600 md:text-base">
-            Save, share, and keep your loyalty card one tap away.
+            Guarda, comparte y mantén tu tarjeta de fidelidad a un toque.
           </p>
         </div>
         {isLoading ? (
           <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 md:text-sm">
-            Preparing...
+            Preparando...
           </span>
         ) : null}
       </div>
@@ -98,7 +98,9 @@ export function LoyaltyCardActions({
           onClick={handleCopyLink}
           className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50 active:scale-[0.99]"
         >
-          {copyStatus === "copied" ? "Link copied" : "Copy card link"}
+          {copyStatus === "copied"
+            ? "Enlace copiado"
+            : "Copiar enlace de tarjeta"}
         </button>
 
         <button
@@ -108,10 +110,10 @@ export function LoyaltyCardActions({
           className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-900 bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {shareStatus === "shared"
-            ? "Shared"
+            ? "Compartido"
             : canUseShare
-              ? "Share card"
-              : "Share unavailable"}
+              ? "Compartir tarjeta"
+              : "Compartir no disponible"}
         </button>
       </div>
 
@@ -124,12 +126,12 @@ export function LoyaltyCardActions({
             className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loadingPlatform === "apple"
-              ? "Preparing Apple Wallet..."
-              : "Add to Apple Wallet"}
+              ? "Preparando Apple Wallet..."
+              : "Agregar a Apple Wallet"}
           </button>
         ) : (
           <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-500">
-            Apple Wallet coming soon
+            Apple Wallet próximamente
           </div>
         )}
 
@@ -141,29 +143,29 @@ export function LoyaltyCardActions({
             className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-900 bg-slate-900 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loadingPlatform === "google"
-              ? "Preparing Google Wallet..."
-              : "Add to Google Wallet"}
+              ? "Preparando Google Wallet..."
+              : "Agregar a Google Wallet"}
           </button>
         ) : (
           <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-500">
-            Google Wallet coming soon
+            Google Wallet próximamente
           </div>
         )}
       </div>
 
       <div className="mt-3 rounded-xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
-        WhatsApp reminders coming soon
+        Recordatorios por WhatsApp próximamente
       </div>
 
       {copyStatus === "error" ? (
         <p className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 md:text-base">
-          Could not copy link. Please try again.
+          No se pudo copiar el enlace. Inténtalo de nuevo.
         </p>
       ) : null}
 
       {shareStatus === "error" ? (
         <p className="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 md:text-base">
-          Sharing is not available on this device right now.
+          Compartir no está disponible en este dispositivo ahora.
         </p>
       ) : null}
 

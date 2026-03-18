@@ -73,15 +73,15 @@ describe("CampaignSuggestionsList", () => {
 
       const firstCard = cards[0];
       expect(
-        within(firstCard).getByText(/inactive customers/i),
+        within(firstCard).getByText(/clientes inactivos/i),
       ).toBeInTheDocument();
-      expect(within(firstCard).getByText(/14\+ days/i)).toBeInTheDocument();
+      expect(within(firstCard).getByText(/14\+ d.as/i)).toBeInTheDocument();
 
       const secondCard = cards[1];
       expect(
-        within(secondCard).getByText(/inactive customers/i),
+        within(secondCard).getByText(/clientes inactivos/i),
       ).toBeInTheDocument();
-      expect(within(secondCard).getByText(/30\+ days/i)).toBeInTheDocument();
+      expect(within(secondCard).getByText(/30\+ d.as/i)).toBeInTheDocument();
     });
 
     it("selects the first suggestion by default", () => {
@@ -89,10 +89,12 @@ describe("CampaignSuggestionsList", () => {
 
       const cards = screen.getAllByRole("article");
       expect(
-        within(cards[0]).getByRole("button", { name: /suggestion selected/i }),
+        within(cards[0]).getByRole("button", {
+          name: /sugerencia seleccionada/i,
+        }),
       ).toBeInTheDocument();
       expect(
-        within(cards[1]).getByRole("button", { name: /use suggestion/i }),
+        within(cards[1]).getByRole("button", { name: /usar sugerencia/i }),
       ).toBeInTheDocument();
     });
 
@@ -102,7 +104,7 @@ describe("CampaignSuggestionsList", () => {
 
       const cards = screen.getAllByRole("article");
       await user.click(
-        within(cards[1]).getByRole("button", { name: /use suggestion/i }),
+        within(cards[1]).getByRole("button", { name: /usar sugerencia/i }),
       );
 
       expect(onSelectSuggestion).toHaveBeenCalledTimes(1);
@@ -115,14 +117,14 @@ describe("CampaignSuggestionsList", () => {
 
       const cards = screen.getAllByRole("article");
       await user.click(
-        within(cards[1]).getByRole("button", { name: /use suggestion/i }),
+        within(cards[1]).getByRole("button", { name: /usar sugerencia/i }),
       );
 
       expect(
-        within(cards[1]).getByRole("button", { name: /suggestion selected/i }),
+        within(cards[1]).getByRole("button", { name: /sugerencia seleccionada/i }),
       ).toBeInTheDocument();
       expect(
-        within(cards[0]).getByRole("button", { name: /use suggestion/i }),
+        within(cards[0]).getByRole("button", { name: /usar sugerencia/i }),
       ).toBeInTheDocument();
     });
 

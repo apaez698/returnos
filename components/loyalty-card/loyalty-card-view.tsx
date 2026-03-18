@@ -18,13 +18,13 @@ interface LoyaltyCardViewProps {
 
 function maskPhone(phone: string | null): string {
   if (!phone) {
-    return "Phone not available";
+    return "Teléfono no disponible";
   }
 
   const visibleDigits = phone.replace(/\D/g, "");
 
   if (visibleDigits.length < 4) {
-    return "Phone not available";
+    return "Teléfono no disponible";
   }
 
   const lastFour = visibleDigits.slice(-4);

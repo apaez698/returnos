@@ -123,8 +123,8 @@ describe("LoyaltyCardProgressSection – tablet layout", () => {
       />,
     );
 
-    expect(screen.getByText("60 / 100 points")).toBeInTheDocument();
-    expect(screen.getByText("40 points left")).toBeInTheDocument();
+    expect(screen.getByText("60 / 100 puntos")).toBeInTheDocument();
+    expect(screen.getByText("40 puntos restantes")).toBeInTheDocument();
   });
 });
 
@@ -172,7 +172,7 @@ describe("LoyaltyCardStatusMessage – tablet layout", () => {
 
     expect(
       screen.getByText(
-        "You unlocked Café gratis. Show this card at checkout to redeem it.",
+        "¡Desbloqueaste Café gratis! Muestra esta tarjeta en caja para canjearlo.",
       ),
     ).toBeInTheDocument();
   });

@@ -11,9 +11,9 @@ interface TeamMembersTableProps {
 }
 
 function formatRole(role: TeamMember["role"]): string {
-  if (role === "owner") return "Owner";
-  if (role === "admin") return "Admin";
-  return "Staff";
+  if (role === "owner") return "Propietario";
+  if (role === "admin") return "Administrador";
+  return "Colaborador";
 }
 
 function formatDate(dateInput: string): string {

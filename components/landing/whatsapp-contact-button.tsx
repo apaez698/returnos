@@ -1,5 +1,5 @@
 const WHATSAPP_LINK =
-  "https://wa.me/<YOUR_NUMBER>?text=Hola%2C%20%C2%BFme%20explicas%20la%20demo%20de%20ReturnOS%20en%202%20minutos%3F";
+  "https://wa.me/593963247907?text=Hola%2C%20quiero%20ver%20c%C3%B3mo%20ReturnOS%20puede%20ayudar%20a%20mi%20negocio";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (

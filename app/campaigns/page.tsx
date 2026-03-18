@@ -3,8 +3,8 @@ import { RoutePlaceholder } from "@/components/placeholders/route-placeholder";
 export default function CampaignsPage() {
   return (
     <RoutePlaceholder
-      title="Campaigns"
-      description="Create reactivation campaigns for inactive customers."
+      title="Campañas"
+      description="Crea campañas de reactivación para clientes inactivos."
     />
   );
 }

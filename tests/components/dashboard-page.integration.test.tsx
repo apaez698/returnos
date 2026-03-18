@@ -45,10 +45,10 @@ describe("Dashboard integration", () => {
   it("renders all metric cards with expected labels", async () => {
     render(await DashboardPage());
 
-    expect(screen.getByText("Total Customers")).toBeInTheDocument();
-    expect(screen.getByText("Active Visits")).toBeInTheDocument();
-    expect(screen.getByText("Rewards Redeemed")).toBeInTheDocument();
-    expect(screen.getByText("Campaign Reach")).toBeInTheDocument();
+    expect(screen.getByText("Total de clientes")).toBeInTheDocument();
+    expect(screen.getByText("Visitas activas")).toBeInTheDocument();
+    expect(screen.getByText("Recompensas canjeadas")).toBeInTheDocument();
+    expect(screen.getByText("Alcance de campañas")).toBeInTheDocument();
   });
 
   it("displays metric values", async () => {
@@ -64,20 +64,20 @@ describe("Dashboard integration", () => {
     render(await DashboardPage());
 
     expect(
-      screen.getByRole("heading", { name: "Recent Activity", level: 2 }),
+      screen.getByRole("heading", { name: "Actividad reciente", level: 2 }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("No recent visits or reward redemptions yet."),
+      screen.getByText("Aún no hay visitas ni canjes recientes."),
     ).toBeInTheDocument();
   });
 
   it("displays trend indicators for metrics", async () => {
     render(await DashboardPage());
 
-    expect(screen.getByText("Current business total")).toBeInTheDocument();
-    expect(screen.getByText("Last 30 days")).toBeInTheDocument();
-    expect(screen.getByText("All time")).toBeInTheDocument();
-    expect(screen.getByText("From campaign deliveries")).toBeInTheDocument();
+    expect(screen.getByText("Total del negocio")).toBeInTheDocument();
+    expect(screen.getByText("Últimos 30 días")).toBeInTheDocument();
+    expect(screen.getByText("Histórico total")).toBeInTheDocument();
+    expect(screen.getByText("De envíos de campaña")).toBeInTheDocument();
   });
 
   it("renders the dashboard content wrapper", async () => {
@@ -91,12 +91,12 @@ describe("Dashboard integration", () => {
     render(await DashboardPage());
 
     expect(
-      screen.getByRole("heading", { name: "Inactive Customers", level: 2 }),
+      screen.getByRole("heading", { name: "Clientes inactivos", level: 2 }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("No inactive customers right now."),
+      screen.getByText("Sin clientes inactivos por ahora."),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "View all" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Ver todos" })).toHaveAttribute(
       "href",
       "/dashboard/inactive-customers",
     );

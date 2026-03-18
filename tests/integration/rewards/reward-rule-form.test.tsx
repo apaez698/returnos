@@ -34,7 +34,7 @@ function makeValidationAwareAction() {
 
         return {
           status: "error",
-          message: "Please fix the form errors.",
+          message: "Por favor, corrige los errores del formulario.",
           fieldErrors: {
             name: fieldErrors.name?.[0],
             points_required: fieldErrors.points_required?.[0],
@@ -45,7 +45,7 @@ function makeValidationAwareAction() {
 
       return {
         status: "success",
-        message: "Reward rule saved.",
+        message: "Regla de recompensa guardada.",
       };
     },
   );
@@ -56,16 +56,18 @@ describe("RewardRuleForm integration", () => {
     render(<RewardRuleForm action={makeIdleAction()} />);
 
     expect(
-      screen.getByRole("heading", { name: /create reward rule/i }),
+      screen.getByRole("heading", { name: /crear regla de recompensa/i }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/points required/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/reward description/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/nombre/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/puntos requeridos/i)).toBeInTheDocument();
     expect(
-      screen.getByRole("checkbox", { name: /active/i }),
+      screen.getByLabelText(/descripci.n de la recompensa/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /save reward rule/i }),
+      screen.getByRole("checkbox", { name: /activa/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /guardar regla de recompensa/i }),
     ).toBeInTheDocument();
   });
 
@@ -75,19 +77,21 @@ describe("RewardRuleForm integration", () => {
 
     render(<RewardRuleForm action={action} />);
 
-    await user.click(screen.getByRole("button", { name: /save reward rule/i }));
+    await user.click(
+      screen.getByRole("button", { name: /guardar regla de recompensa/i }),
+    );
 
     expect(
-      await screen.findByText("Please fix the form errors."),
+      await screen.findByText("Por favor, corrige los errores del formulario."),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Name must be at least 2 characters."),
+      screen.getByText("El nombre debe tener al menos 2 caracteres."),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Points must be greater than 0."),
+      screen.getByText("Los puntos deben ser mayores que 0."),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Reward description must be at least 2 characters."),
+      screen.getByText("La descripción debe tener al menos 2 caracteres."),
     ).toBeInTheDocument();
     expect(action).toHaveBeenCalledTimes(1);
   });
@@ -98,14 +102,16 @@ describe("RewardRuleForm integration", () => {
 
     render(<RewardRuleForm action={action} />);
 
-    await user.type(screen.getByLabelText(/name/i), "Free coffee");
-    await user.type(screen.getByLabelText(/points required/i), "50");
+    await user.type(screen.getByLabelText(/nombre/i), "Free coffee");
+    await user.type(screen.getByLabelText(/puntos requeridos/i), "50");
     await user.type(
-      screen.getByLabelText(/reward description/i),
+      screen.getByLabelText(/descripci.n de la recompensa/i),
       "Any medium coffee for free.",
     );
 
-    await user.click(screen.getByRole("button", { name: /save reward rule/i }));
+    await user.click(
+      screen.getByRole("button", { name: /guardar regla de recompensa/i }),
+    );
 
     await waitFor(() => {
       expect(action).toHaveBeenCalledTimes(1);
@@ -125,7 +131,7 @@ describe("RewardRuleForm integration", () => {
 
     render(<RewardRuleForm action={makeIdleAction()} />);
 
-    const activeCheckbox = screen.getByRole("checkbox", { name: /active/i });
+    const activeCheckbox = screen.getByRole("checkbox", { name: /activa/i });
 
     expect(activeCheckbox).toBeChecked();
 

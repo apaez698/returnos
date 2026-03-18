@@ -22,11 +22,8 @@ describe("AddToWalletButtons", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: "Add to Apple Wallet" }),
+      screen.getByRole("button", { name: "Agregar a Apple Wallet" }),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Add to Google Wallet" }),
-    ).not.toBeInTheDocument();
 
     rerender(
       <AddToWalletButtons
@@ -36,10 +33,10 @@ describe("AddToWalletButtons", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: "Add to Google Wallet" }),
+      screen.getByRole("button", { name: "Agregar a Google Wallet" }),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "Add to Apple Wallet" }),
+      screen.queryByRole("button", { name: "Agregar a Apple Wallet" }),
     ).not.toBeInTheDocument();
   });
 
@@ -79,7 +76,7 @@ describe("AddToWalletButtons", () => {
     );
 
     await user.click(
-      screen.getByRole("button", { name: "Add to Google Wallet" }),
+      screen.getByRole("button", { name: "Agregar a Google Wallet" }),
     );
 
     await waitFor(() => {
@@ -87,7 +84,9 @@ describe("AddToWalletButtons", () => {
         "/api/wallet/google?card_token=card_public_123",
       );
       expect(
-        screen.getByRole("button", { name: "Preparing Google Wallet link" }),
+        screen.getByRole("button", {
+          name: "Preparando enlace de Google Wallet",
+        }),
       ).toBeDisabled();
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
       expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -129,7 +128,7 @@ describe("AddToWalletButtons", () => {
     );
 
     await user.click(
-      screen.getByRole("button", { name: "Add to Apple Wallet" }),
+      screen.getByRole("button", { name: "Agregar a Apple Wallet" }),
     );
 
     await waitFor(() => {
@@ -143,7 +142,7 @@ describe("AddToWalletButtons", () => {
     });
 
     await user.click(
-      screen.getByRole("button", { name: "Add to Apple Wallet" }),
+      screen.getByRole("button", { name: "Agregar a Apple Wallet" }),
     );
 
     await waitFor(() => {

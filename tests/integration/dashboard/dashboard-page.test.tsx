@@ -84,10 +84,10 @@ describe("DashboardPage — real-data integration", () => {
     it("renders all four metric card labels", async () => {
       await renderPage();
 
-      expect(screen.getByText("Total Customers")).toBeInTheDocument();
-      expect(screen.getByText("Active Visits")).toBeInTheDocument();
-      expect(screen.getByText("Rewards Redeemed")).toBeInTheDocument();
-      expect(screen.getByText("Campaign Reach")).toBeInTheDocument();
+      expect(screen.getByText("Total de clientes")).toBeInTheDocument();
+      expect(screen.getByText("Visitas activas")).toBeInTheDocument();
+      expect(screen.getByText("Recompensas canjeadas")).toBeInTheDocument();
+      expect(screen.getByText("Alcance de campañas")).toBeInTheDocument();
     });
 
     it("renders totalCustomers value from mocked data", async () => {
@@ -117,10 +117,10 @@ describe("DashboardPage — real-data integration", () => {
     it("renders metric trend labels beneath each card", async () => {
       await renderPage();
 
-      expect(screen.getByText("Current business total")).toBeInTheDocument();
-      expect(screen.getByText("Last 30 days")).toBeInTheDocument();
-      expect(screen.getByText("All time")).toBeInTheDocument();
-      expect(screen.getByText("From campaign deliveries")).toBeInTheDocument();
+      expect(screen.getByText("Total del negocio")).toBeInTheDocument();
+      expect(screen.getByText("Últimos 30 días")).toBeInTheDocument();
+      expect(screen.getByText("Histórico total")).toBeInTheDocument();
+      expect(screen.getByText("De envíos de campaña")).toBeInTheDocument();
     });
 
     it("renders all metrics as zero when data contains zero values", async () => {
@@ -150,14 +150,14 @@ describe("DashboardPage — real-data integration", () => {
       await renderPage();
 
       expect(
-        screen.getByRole("heading", { name: "Inactive Customers", level: 2 }),
+        screen.getByRole("heading", { name: "Clientes inactivos", level: 2 }),
       ).toBeInTheDocument();
     });
 
     it("renders the 'View all' link pointing to /dashboard/inactive-customers", async () => {
       await renderPage();
 
-      expect(screen.getByRole("link", { name: "View all" })).toHaveAttribute(
+      expect(screen.getByRole("link", { name: "Ver todos" })).toHaveAttribute(
         "href",
         "/dashboard/inactive-customers",
       );
@@ -173,8 +173,8 @@ describe("DashboardPage — real-data integration", () => {
     it("renders days-inactive count for each customer", async () => {
       await renderPage();
 
-      expect(screen.getByText("55 days inactive")).toBeInTheDocument();
-      expect(screen.getByText("38 days inactive")).toBeInTheDocument();
+      expect(screen.getByText("55 días sin visitar")).toBeInTheDocument();
+      expect(screen.getByText("38 días sin visitar")).toBeInTheDocument();
     });
 
     it("renders all customers when multiple are present", async () => {
@@ -250,14 +250,14 @@ describe("DashboardPage — real-data integration", () => {
 
       await renderPage();
 
-      expect(screen.getByText("∞ days inactive")).toBeInTheDocument();
+      expect(screen.getByText("∞ días sin visitar")).toBeInTheDocument();
     });
 
     it("does not show the empty-state message when inactive customers are present", async () => {
       await renderPage();
 
       expect(
-        screen.queryByText("No inactive customers right now."),
+        screen.queryByText("Sin clientes inactivos por ahora."),
       ).not.toBeInTheDocument();
     });
   });
@@ -267,11 +267,11 @@ describe("DashboardPage — real-data integration", () => {
   // ----------------------------------------------------------
 
   describe("recent activity section", () => {
-    it("renders the 'Recent Activity' section heading", async () => {
+    it("renders the 'Actividad reciente' section heading", async () => {
       await renderPage();
 
       expect(
-        screen.getByRole("heading", { name: "Recent Activity", level: 2 }),
+        screen.getByRole("heading", { name: "Actividad reciente", level: 2 }),
       ).toBeInTheDocument();
     });
 
@@ -328,7 +328,7 @@ describe("DashboardPage — real-data integration", () => {
       await renderPage();
 
       expect(
-        screen.queryByText("No recent visits or reward redemptions yet."),
+        screen.queryByText("Aún no hay visitas ni canjes recientes."),
       ).not.toBeInTheDocument();
     });
   });
@@ -347,7 +347,7 @@ describe("DashboardPage — real-data integration", () => {
       await renderPage();
 
       expect(
-        screen.getByText("No inactive customers right now."),
+        screen.getByText("Sin clientes inactivos por ahora."),
       ).toBeInTheDocument();
     });
 
@@ -360,7 +360,7 @@ describe("DashboardPage — real-data integration", () => {
       await renderPage();
 
       expect(
-        screen.getByText("No recent visits or reward redemptions yet."),
+        screen.getByText("Aún no hay visitas ni canjes recientes."),
       ).toBeInTheDocument();
     });
 
@@ -374,10 +374,10 @@ describe("DashboardPage — real-data integration", () => {
       await renderPage();
 
       expect(
-        screen.getByText("No inactive customers right now."),
+        screen.getByText("Sin clientes inactivos por ahora."),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("No recent visits or reward redemptions yet."),
+        screen.getByText("Aún no hay visitas ni canjes recientes."),
       ).toBeInTheDocument();
     });
   });
@@ -404,7 +404,7 @@ describe("DashboardPage — real-data integration", () => {
       await renderPage();
 
       expect(
-        screen.getByText("No inactive customers right now."),
+        screen.getByText("Sin clientes inactivos por ahora."),
       ).toBeInTheDocument();
     });
 
@@ -412,7 +412,7 @@ describe("DashboardPage — real-data integration", () => {
       await renderPage();
 
       expect(
-        screen.getByText("No recent visits or reward redemptions yet."),
+        screen.getByText("Aún no hay visitas ni canjes recientes."),
       ).toBeInTheDocument();
     });
 

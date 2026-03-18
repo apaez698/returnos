@@ -26,10 +26,10 @@ export function LoyaltyCardProgressSection({
     return (
       <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60 sm:p-5 md:p-6">
         <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-600 md:text-sm">
-          Progress to next reward
+          Progreso hacia la próxima recompensa
         </h3>
         <p className="mt-2 text-sm text-slate-700 sm:text-base">
-          This business has no active rewards yet.
+          Este negocio aún no tiene recompensas activas.
         </p>
       </section>
     );
@@ -38,15 +38,15 @@ export function LoyaltyCardProgressSection({
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60 sm:p-5 md:p-6">
       <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-600 md:text-sm mb-4">
-        Progress to next reward
+        Progreso hacia la próxima recompensa
       </h3>
 
       {/* Progress label above bar */}
       <div className="flex items-center justify-between gap-3 mb-2">
         <p className="text-sm font-bold text-slate-900 truncate">
           {remainingPoints > 0
-            ? `${remainingPoints} point${remainingPoints === 1 ? "" : "s"} left`
-            : "Reward threshold reached"}
+            ? `${remainingPoints} punto${remainingPoints === 1 ? "" : "s"} restante${remainingPoints === 1 ? "" : "s"}`
+            : "Umbral de recompensa alcanzado"}
         </p>
         <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700 whitespace-nowrap">
           {normalizedProgress}%
@@ -62,17 +62,17 @@ export function LoyaltyCardProgressSection({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={normalizedProgress}
-          aria-label="Progress toward next reward"
+          aria-label="Progreso hacia la próxima recompensa"
         />
       </div>
 
       {/* Points summary below bar with proper spacing */}
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
         <p className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 sm:px-4 sm:py-2.5 sm:text-sm">
-          {currentPoints} / {targetPoints} points
+          {currentPoints} / {targetPoints} puntos
         </p>
         <p className="rounded-lg border border-amber-100 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900 sm:px-4 sm:py-2.5 sm:text-sm">
-          Current: {currentPoints}
+          Actual: {currentPoints}
         </p>
       </div>
     </section>

@@ -42,13 +42,13 @@ export function LoyaltyCardHeader({
 
         <div className="min-w-0 flex-1">
           <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-amber-700 sm:text-xs">
-            ReturnOS loyalty card
+            Tarjeta de fidelidad ReturnOS
           </p>
           <p className="mt-1 truncate text-xl font-bold tracking-tight text-slate-900 sm:text-2xl md:text-[2.1rem]">
             {businessName}
           </p>
           <p className="mt-1.5 text-sm font-medium text-slate-700 sm:text-base md:text-lg">
-            Earn points every visit and unlock rewards faster.
+            Acumula puntos en cada visita y desbloquea recompensas más rápido.
           </p>
         </div>
       </div>
@@ -56,7 +56,7 @@ export function LoyaltyCardHeader({
       <div className="mt-4 grid gap-2 rounded-2xl border border-white/80 bg-white/85 p-3.5 backdrop-blur-sm sm:grid-cols-[1fr,auto] sm:items-end sm:gap-3 md:mt-5 md:p-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-            Cardholder
+            Titular
           </p>
           <p className="mt-1 text-base font-semibold text-slate-900 sm:text-lg md:text-xl">
             {customerName}
@@ -64,7 +64,7 @@ export function LoyaltyCardHeader({
           <p className="mt-1 text-sm text-slate-600">{maskedPhone}</p>
         </div>
         <div className="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-amber-900">
-          Customer
+          Cliente
         </div>
       </div>
     </header>

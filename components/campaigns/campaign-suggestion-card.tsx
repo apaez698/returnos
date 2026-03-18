@@ -2,7 +2,7 @@ import type { CampaignSuggestion } from "@/lib/campaigns/types";
 
 function getAudienceLabel(audienceType: CampaignSuggestion["audienceType"]) {
   if (audienceType === "inactive_customers") {
-    return "Inactive customers";
+    return "Clientes inactivos";
   }
 
   return audienceType;
@@ -39,10 +39,10 @@ export function CampaignSuggestionCard({
 
       <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-600">
         <span className="rounded-md bg-slate-100 px-2.5 py-1">
-          Audience: {getAudienceLabel(suggestion.audienceType)}
+          Audiencia: {getAudienceLabel(suggestion.audienceType)}
         </span>
         <span className="rounded-md bg-slate-100 px-2.5 py-1">
-          Inactivity: {suggestion.targetInactiveDays}+ days
+          Inactividad: {suggestion.targetInactiveDays}+ días
         </span>
       </div>
 
@@ -56,7 +56,7 @@ export function CampaignSuggestionCard({
               : "bg-slate-900 text-white hover:bg-slate-700"
           }`}
         >
-          {isSelected ? "Suggestion selected" : "Use suggestion"}
+          {isSelected ? "Sugerencia seleccionada" : "Usar sugerencia"}
         </button>
 
         <button

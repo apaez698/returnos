@@ -43,8 +43,8 @@ describe("RewardProgressCard integration", () => {
   it("renders in_progress state with remaining points", () => {
     renderCard(60);
 
-    expect(screen.getByText(/in progress/i)).toBeInTheDocument();
-    expect(screen.getByText(/current progress/i)).toBeInTheDocument();
+    expect(screen.getByText(/en progreso/i)).toBeInTheDocument();
+    expect(screen.getByText(/progreso actual/i)).toBeInTheDocument();
     expect(screen.getByText("Free coffee")).toBeInTheDocument();
     expect(screen.getByText(/40 pts para free coffee/i)).toBeInTheDocument();
   });
@@ -52,8 +52,8 @@ describe("RewardProgressCard integration", () => {
   it("renders redeemable state with next reward goal", () => {
     renderCard(120);
 
-    expect(screen.getAllByText(/reward available/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/next goal/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/recompensa disponible/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/pr.xima meta/i)).toBeInTheDocument();
     expect(screen.getByText("Free coffee")).toBeInTheDocument();
     expect(screen.getByText("20% off order")).toBeInTheDocument();
     expect(screen.getByText(/80 pts para 20% off order/i)).toBeInTheDocument();
@@ -62,9 +62,9 @@ describe("RewardProgressCard integration", () => {
   it("renders redeemable state without next reward as highest reached", () => {
     renderCard(250);
 
-    expect(screen.getAllByText(/reward available/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/recompensa disponible/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/highest reward reached\./i)).toBeInTheDocument();
-    expect(screen.queryByText(/next goal/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/pr.xima meta/i)).not.toBeInTheDocument();
     expect(
       screen.queryByText(/points to next reward/i),
     ).not.toBeInTheDocument();
@@ -76,11 +76,11 @@ describe("RewardProgressCard integration", () => {
       ACTIVE_REWARD_RULES.map((rule) => ({ ...rule, is_active: false })),
     );
 
-    expect(screen.getByText(/^no reward$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^sin recompensa$/i)).toBeInTheDocument();
     expect(
       screen.getByText(/no rewards available yet for this customer\./i),
     ).toBeInTheDocument();
-    expect(screen.queryByText(/reward available/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/next goal/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/recompensa disponible/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/pr.xima meta/i)).not.toBeInTheDocument();
   });
 });

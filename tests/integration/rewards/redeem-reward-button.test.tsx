@@ -12,7 +12,7 @@ function makeAction(result: RedeemRewardResult) {
 
 describe("RedeemRewardButton integration", () => {
   describe("Button visibility", () => {
-    it("should display the Redeem reward button", () => {
+    it("should display the canjear recompensa button", () => {
       render(
         <RedeemRewardButton
           customerId="customer-1"
@@ -26,7 +26,7 @@ describe("RedeemRewardButton integration", () => {
       );
 
       expect(
-        screen.getByRole("button", { name: /redeem reward/i }),
+        screen.getByRole("button", { name: /canjear recompensa/i }),
       ).toBeInTheDocument();
     });
 
@@ -44,7 +44,7 @@ describe("RedeemRewardButton integration", () => {
       );
 
       const redeemButton = screen.getByRole("button", {
-        name: /redeem reward/i,
+        name: /canjear recompensa/i,
       });
       expect(redeemButton).toBeInTheDocument();
       expect(redeemButton).toBeEnabled();
@@ -64,7 +64,7 @@ describe("RedeemRewardButton integration", () => {
       );
 
       const redeemButton = screen.getByRole("button", {
-        name: /redeem reward/i,
+        name: /canjear recompensa/i,
       });
       expect(redeemButton).toBeInTheDocument();
       expect(redeemButton).toBeEnabled();
@@ -87,10 +87,10 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       expect(
-        screen.getByRole("dialog", { name: /confirm reward redemption/i }),
+        screen.getByRole("dialog", { name: /confirmar canje de recompensa/i }),
       ).toBeInTheDocument();
     });
 
@@ -109,7 +109,7 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       // Verify reward name
       expect(screen.getByText("Cafe gratis")).toBeInTheDocument();
@@ -137,10 +137,10 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       const confirmButton = screen.getByRole("button", {
-        name: /confirm redemption/i,
+        name: /confirmar canje/i,
       });
       expect(confirmButton).toBeDisabled();
     });
@@ -160,14 +160,14 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       // Points after redemption should be 250 - 150 = 100
       expect(screen.getByText("100")).toBeInTheDocument();
     });
   });
 
-  describe("Confirm redemption", () => {
+  describe("confirmar canje", () => {
     it("should call the redemption action when confirm button is clicked", async () => {
       const user = userEvent.setup();
       const action = makeAction({
@@ -188,9 +188,9 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       await waitFor(() => {
@@ -218,9 +218,9 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       // Dialog should close
@@ -255,9 +255,9 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       const successElement = await screen.findByText(successMessage);
@@ -285,9 +285,9 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       await waitFor(() => {
@@ -316,13 +316,13 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       expect(
-        screen.getByRole("dialog", { name: /confirm reward redemption/i }),
+        screen.getByRole("dialog", { name: /confirmar canje de recompensa/i }),
       ).toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: /cancel/i }));
+      await user.click(screen.getByRole("button", { name: /cancelar/i }));
 
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
@@ -347,8 +347,8 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
-      await user.click(screen.getByRole("button", { name: /cancel/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
+      await user.click(screen.getByRole("button", { name: /cancelar/i }));
 
       expect(action).not.toHaveBeenCalled();
     });
@@ -369,19 +369,19 @@ describe("RedeemRewardButton integration", () => {
       );
 
       // Open dialog
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       expect(
-        screen.getByRole("dialog", { name: /confirm reward redemption/i }),
+        screen.getByRole("dialog", { name: /confirmar canje de recompensa/i }),
       ).toBeInTheDocument();
 
       // Cancel
-      await user.click(screen.getByRole("button", { name: /cancel/i }));
+      await user.click(screen.getByRole("button", { name: /cancelar/i }));
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
       // Reopen dialog
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       expect(
-        screen.getByRole("dialog", { name: /confirm reward redemption/i }),
+        screen.getByRole("dialog", { name: /confirmar canje de recompensa/i }),
       ).toBeInTheDocument();
     });
   });
@@ -408,9 +408,9 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       expect(await screen.findByText(errorMessage)).toBeInTheDocument();
@@ -437,9 +437,9 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       await waitFor(() => {
@@ -468,19 +468,19 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       await waitFor(() => {
         expect(
-          screen.getByRole("dialog", { name: /confirm reward redemption/i }),
+          screen.getByRole("dialog", { name: /confirmar canje de recompensa/i }),
         ).toBeInTheDocument();
       });
 
       expect(
-        screen.getByRole("dialog", { name: /confirm reward redemption/i }),
+        screen.getByRole("dialog", { name: /confirmar canje de recompensa/i }),
       ).toHaveTextContent(errorMessage);
     });
   });
@@ -508,17 +508,17 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       const confirmButton = screen.getByRole("button", {
-        name: /confirming redemption|redeeming/i,
+        name: /confirmar canje|canjeando/i,
       });
       expect(confirmButton).toBeDisabled();
 
-      const cancelButton = screen.getByRole("button", { name: /cancel/i });
+      const cancelButton = screen.getByRole("button", { name: /cancelar/i });
       expect(cancelButton).toBeDisabled();
 
       resolveAction!();
@@ -546,14 +546,14 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
       await user.click(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       );
 
       await waitFor(() => {
         expect(
-          screen.getByRole("button", { name: /redeeming/i }),
+          screen.getByRole("button", { name: /canjeando/i }),
         ).toBeInTheDocument();
       });
 
@@ -577,12 +577,12 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       // Verify 0 points are displayed
       expect(screen.getAllByText("0")).toHaveLength(2); // Current points and after redemption
       expect(
-        screen.getByRole("button", { name: /confirm redemption/i }),
+        screen.getByRole("button", { name: /confirmar canje/i }),
       ).toBeDisabled();
     });
 
@@ -601,7 +601,7 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       expect(screen.getByText("10000")).toBeInTheDocument();
       expect(screen.getByText("9900")).toBeInTheDocument(); // Points after redemption
@@ -624,7 +624,7 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       expect(screen.getByText(longRewardName)).toBeInTheDocument();
     });
@@ -645,11 +645,11 @@ describe("RedeemRewardButton integration", () => {
         />,
       );
 
-      await user.click(screen.getByRole("button", { name: /redeem reward/i }));
+      await user.click(screen.getByRole("button", { name: /canjear recompensa/i }));
 
       // Verify long customer name is displayed in the dialog
       expect(
-        screen.getByRole("dialog", { name: /confirm reward redemption/i }),
+        screen.getByRole("dialog", { name: /confirmar canje de recompensa/i }),
       ).toHaveTextContent(longCustomerName);
     });
   });

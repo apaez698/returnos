@@ -8,16 +8,16 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: "📊" },
-  { label: "Customers", href: "/dashboard/customers", icon: "👥" },
+  { label: "Clientes", href: "/dashboard/customers", icon: "👥" },
   { label: "Caja", href: "/dashboard/caja", icon: "🧾" },
   {
-    label: "Inactive Customers",
+    label: "Clientes inactivos",
     href: "/dashboard/inactive-customers",
     icon: "⏳",
   },
-  { label: "Visits", href: "/dashboard/visits", icon: "📍" },
-  { label: "Rewards", href: "/dashboard/rewards", icon: "🎁" },
-  { label: "Campaigns", href: "/dashboard/campaigns", icon: "📢" },
+  { label: "Visitas", href: "/dashboard/visits", icon: "📍" },
+  { label: "Recompensas", href: "/dashboard/rewards", icon: "🎁" },
+  { label: "Campañas", href: "/dashboard/campaigns", icon: "📢" },
 ];
 
 export function DashboardNavigation() {

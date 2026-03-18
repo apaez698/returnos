@@ -3,8 +3,8 @@ import { RoutePlaceholder } from "@/components/placeholders/route-placeholder";
 export default function VisitsPage() {
   return (
     <RoutePlaceholder
-      title="Visits"
-      description="Track and validate customer visits."
+      title="Visitas"
+      description="Registra y valida las visitas de tus clientes."
     />
   );
 }

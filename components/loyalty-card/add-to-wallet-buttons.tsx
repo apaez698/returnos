@@ -30,15 +30,15 @@ export function AddToWalletButtons({
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 md:text-sm">
-            Quick actions
+            Acciones rápidas
           </h2>
           <p className="mt-2 text-sm text-slate-600 md:text-base">
-            Save your card and keep rewards within easy reach.
+            Guarda tu tarjeta y mantén tus recompensas al alcance.
           </p>
         </div>
         {isLoading ? (
           <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 md:text-sm">
-            Preparing...
+            Preparando...
           </span>
         ) : null}
       </div>
@@ -52,17 +52,17 @@ export function AddToWalletButtons({
             className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-3 text-base font-semibold text-slate-800 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
             aria-label={
               loadingPlatform === "apple"
-                ? "Preparing Apple Wallet pass"
-                : "Add to Apple Wallet"
+                ? "Preparando pase de Apple Wallet"
+                : "Agregar a Apple Wallet"
             }
           >
             {loadingPlatform === "apple"
-              ? "Preparing Apple Wallet..."
-              : "Add to Apple Wallet"}
+              ? "Preparando Apple Wallet..."
+              : "Agregar a Apple Wallet"}
           </button>
         ) : (
           <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-500">
-            Apple Wallet coming soon
+            Apple Wallet próximamente
           </div>
         )}
 
@@ -74,22 +74,22 @@ export function AddToWalletButtons({
             className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-900 bg-slate-900 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
             aria-label={
               loadingPlatform === "google"
-                ? "Preparing Google Wallet link"
-                : "Add to Google Wallet"
+                ? "Preparando enlace de Google Wallet"
+                : "Agregar a Google Wallet"
             }
           >
             {loadingPlatform === "google"
-              ? "Preparing Google Wallet..."
-              : "Add to Google Wallet"}
+              ? "Preparando Google Wallet..."
+              : "Agregar a Google Wallet"}
           </button>
         ) : (
           <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-500">
-            Google Wallet coming soon
+            Google Wallet próximamente
           </div>
         )}
 
         <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800">
-          WhatsApp reminders coming soon
+          Recordatorios por WhatsApp próximamente
         </div>
       </div>
 

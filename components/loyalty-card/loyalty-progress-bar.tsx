@@ -27,15 +27,15 @@ export function LoyaltyProgressBar({
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 md:text-sm">
-            Current points
+            Puntos actuales
           </h2>
           <p className="mt-1 text-sm text-slate-600">
-            Your live loyalty balance
+            Tu saldo de fidelidad en tiempo real
           </p>
         </div>
         {hasTarget ? (
           <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-900">
-            {normalizedProgress}% to reward
+            {normalizedProgress}% hacia la recompensa
           </span>
         ) : null}
       </div>
@@ -45,7 +45,7 @@ export function LoyaltyProgressBar({
           {currentPoints}
         </p>
         <p className="pb-1.5 text-base font-semibold text-slate-600 sm:pb-2 md:text-lg">
-          points
+          puntos
         </p>
       </div>
 
@@ -57,7 +57,7 @@ export function LoyaltyProgressBar({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={normalizedProgress}
-          aria-label="Reward progress"
+          aria-label="Progreso de recompensa"
         />
       </div>
 
@@ -65,16 +65,16 @@ export function LoyaltyProgressBar({
         <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-3.5 md:p-4">
           <p className="text-sm font-semibold text-slate-900 sm:text-base">
             {remainingPoints > 0
-              ? `${remainingPoints} points left until your next reward`
-              : "Reward level reached. You can claim on your next visit."}
+              ? `${remainingPoints} punto${remainingPoints === 1 ? "" : "s"} para tu próxima recompensa`
+              : "Nivel de recompensa alcanzado. Puedes canjearlo en tu próxima visita."}
           </p>
           <p className="mt-1.5 text-sm text-slate-600 sm:text-base">
-            {currentPoints} / {targetPoints} points
+            {currentPoints} / {targetPoints} puntos
           </p>
         </div>
       ) : (
         <p className="mt-4 text-sm text-slate-600 md:text-base">
-          This business has no active rewards yet.
+          Este negocio aún no tiene recompensas activas.
         </p>
       )}
     </section>

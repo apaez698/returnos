@@ -57,7 +57,7 @@ export function RedeemRewardButton({
         onClick={() => setOpen(true)}
         className="rounded-md bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
       >
-        Redeem reward
+        Canjear recompensa
       </button>
 
       {state.message ? (

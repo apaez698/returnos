@@ -10,7 +10,7 @@ function formatActivityDate(value: string): string {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return "Date unavailable";
+    return "Fecha no disponible";
   }
 
   return new Intl.DateTimeFormat("es-MX", {
@@ -53,28 +53,28 @@ export default async function DashboardPage() {
     <DashboardLayout pageTitle="Dashboard">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
-          label="Total Customers"
+          label="Total de clientes"
           value={formatMetric(totalCustomers)}
           icon="👥"
-          trend="Current business total"
+          trend="Total del negocio"
         />
         <MetricCard
-          label="Active Visits"
+          label="Visitas activas"
           value={formatMetric(totalVisits)}
           icon="📍"
-          trend="Last 30 days"
+          trend="Últimos 30 días"
         />
         <MetricCard
-          label="Rewards Redeemed"
+          label="Recompensas canjeadas"
           value={formatMetric(totalRewardsRedeemed)}
           icon="🎁"
-          trend="All time"
+          trend="Histórico total"
         />
         <MetricCard
-          label="Campaign Reach"
+          label="Alcance de campañas"
           value={formatMetric(campaignReach)}
           icon="📢"
-          trend="From campaign deliveries"
+          trend="De envíos de campaña"
         />
       </div>
 
@@ -82,23 +82,23 @@ export default async function DashboardPage() {
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">
-              Inactive Customers
+              Clientes inactivos
             </h2>
             <p className="dashboard-explainer mt-1 text-slate-600">
-              Top 5 customers with 14+ days since their last visit.
+              Los 5 clientes con 14+ días desde su última visita.
             </p>
           </div>
           <a
             href="/dashboard/inactive-customers"
             className="text-sm font-medium text-slate-700 underline underline-offset-4 hover:text-slate-900"
           >
-            View all
+            Ver todos
           </a>
         </div>
 
         {inactiveSummary.length === 0 ? (
           <div className="rounded-lg border border-slate-200 bg-white p-6 text-slate-600">
-            No inactive customers right now.
+            Sin clientes inactivos por ahora.
           </div>
         ) : (
           <ul className="space-y-3">
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-medium text-slate-900">{customer.name}</p>
                   <p className="text-sm text-slate-600">
-                    {customer.daysSinceLastVisit ?? "∞"} days inactive
+                    {customer.daysSinceLastVisit ?? "∞"} días sin visitar
                   </p>
                 </div>
               </li>
@@ -121,11 +121,11 @@ export default async function DashboardPage() {
 
       <div className="mt-12">
         <h2 className="text-2xl font-bold text-slate-900 mb-6">
-          Recent Activity
+          Actividad reciente
         </h2>
         {recentActivity.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-lg p-8 text-center text-slate-600">
-            <p>No recent visits or reward redemptions yet.</p>
+            <p>Aún no hay visitas ni canjes recientes.</p>
           </div>
         ) : (
           <ul className="space-y-3">

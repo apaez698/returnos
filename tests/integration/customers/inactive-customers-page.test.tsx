@@ -40,11 +40,11 @@ describe("DashboardInactiveCustomersPage", () => {
     render(await DashboardInactiveCustomersPage());
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Inactive Customers" }),
+      screen.getByRole("heading", { level: 1, name: "Clientes inactivos" }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Customers who have not visited in the last 14 days. Review and re-engage them to increase retention.",
+        "Clientes que no han visitado en los últimos 14 días. Revísalos y vuelve a involucrarlos para aumentar la retención.",
       ),
     ).toBeInTheDocument();
   });
@@ -175,7 +175,7 @@ describe("DashboardInactiveCustomersPage", () => {
     render(await DashboardInactiveCustomersPage());
 
     expect(
-      screen.getByText("Unable to load inactive customers"),
+      screen.getByText("No se pudieron cargar los clientes inactivos"),
     ).toBeInTheDocument();
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
@@ -188,10 +188,10 @@ describe("DashboardInactiveCustomersPage", () => {
     render(await DashboardInactiveCustomersPage());
 
     expect(
-      screen.getByText("Unable to load inactive customers"),
+      screen.getByText("No se pudieron cargar los clientes inactivos"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Could not load inactive customers."),
+      screen.getByText("No se pudieron cargar los clientes inactivos."),
     ).toBeInTheDocument();
   });
 
