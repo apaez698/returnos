@@ -5,14 +5,22 @@ import { useEffect, useState } from "react";
 const QR_CELL_COUNT = 16;
 const QR_REFRESH_INTERVAL_MS = 900;
 
+function createInitialQrCells() {
+  return Array.from({ length: QR_CELL_COUNT }, (_, index) => index % 3 === 0);
+}
+
 function createQrCells() {
   return Array.from({ length: QR_CELL_COUNT }, () => Math.random() > 0.4);
 }
 
 export function LoyaltyCardMockup() {
-  const [qrCells, setQrCells] = useState<boolean[]>(() => createQrCells());
+  const [qrCells, setQrCells] = useState<boolean[]>(() =>
+    createInitialQrCells(),
+  );
 
   useEffect(() => {
+    setQrCells(createQrCells());
+
     const intervalId = window.setInterval(() => {
       setQrCells(createQrCells());
     }, QR_REFRESH_INTERVAL_MS);

@@ -1,29 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
 import { CTAButton } from "./cta-button";
 
-export function Navbar() {
-  const router = useRouter();
-  const pathname = usePathname();
+type NavbarProps = {
+  logoOnly?: boolean;
+};
 
+export function Navbar({ logoOnly = false }: NavbarProps) {
   const handleSectionClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
     sectionId: "how-it-works" | "benefits",
   ) => {
-    if (pathname === "/") {
+    if (window.location.pathname === "/") {
       event.preventDefault();
       const section = document.getElementById(sectionId);
       section?.scrollIntoView({ behavior: "smooth", block: "start" });
-      return;
     }
-
-    router.push(`/#${sectionId}`);
   };
 
   const handleLogoClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === "/") {
+    if (window.location.pathname === "/") {
       event.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -46,34 +43,40 @@ export function Navbar() {
           </span>
         </Link>
 
+        {logoOnly ? <div aria-hidden="true" className="h-8 w-8" /> : null}
+
         {/* Center Navigation - Hidden on mobile */}
-        <div className="hidden items-center gap-8 md:flex">
-          <Link
-            href="/#how-it-works"
-            onClick={(event) => handleSectionClick(event, "how-it-works")}
-            className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
-          >
-            Cómo funciona
-          </Link>
-          <Link
-            href="/#benefits"
-            onClick={(event) => handleSectionClick(event, "benefits")}
-            className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
-          >
-            Beneficios
-          </Link>
-        </div>
+        {!logoOnly ? (
+          <div className="hidden items-center gap-8 md:flex">
+            <Link
+              href="/#how-it-works"
+              onClick={(event) => handleSectionClick(event, "how-it-works")}
+              className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
+            >
+              Cómo funciona
+            </Link>
+            <Link
+              href="/#benefits"
+              onClick={(event) => handleSectionClick(event, "benefits")}
+              className="text-sm font-medium text-zinc-700 transition-colors hover:text-orange-600"
+            >
+              Beneficios
+            </Link>
+          </div>
+        ) : null}
 
         {/* Right side buttons */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Link
-            href="/login"
-            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-zinc-700 ring-1 ring-zinc-300 transition-colors hover:bg-zinc-50 sm:inline-flex"
-          >
-            Iniciar sesión
-          </Link>
-          <CTAButton href="/signup">Crear cuenta</CTAButton>
-        </div>
+        {!logoOnly ? (
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/login"
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-zinc-700 ring-1 ring-zinc-300 transition-colors hover:bg-zinc-50 sm:inline-flex"
+            >
+              Iniciar sesión
+            </Link>
+            <CTAButton href="/signup">Crear cuenta</CTAButton>
+          </div>
+        ) : null}
       </div>
     </nav>
   );

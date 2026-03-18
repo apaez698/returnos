@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Navbar } from "@/components/landing/navbar";
 import { getEmailValidationError, normalizeEmail } from "@/lib/auth/validation";
 import { createBrowserClient } from "@/lib/supabase/client";
 
@@ -141,102 +142,115 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-10">
-      <section className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
-        <div className="mb-8 text-center">
-          <p className="text-xs font-semibold tracking-[0.24em] text-zinc-500">
-            RETURNOS
-          </p>
-          <h1 className="mt-3 text-2xl font-semibold text-zinc-900">
-            Iniciar sesion
-          </h1>
-          <p className="mt-2 text-sm text-zinc-600">
-            Accede a tu panel de gestion.
-          </p>
-        </div>
-
-        {state === "success" ? (
-          <div className="space-y-4 text-center">
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4">
-              <p className="text-sm font-medium text-green-700">
-                Te enviamos un enlace a tu correo para iniciar sesion
-              </p>
-            </div>
-            <p className="text-sm text-zinc-600">
-              Revisa tu correo y haz clic en el enlace para acceder a tu cuenta.
+    <>
+      <Navbar logoOnly />
+      <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-zinc-50 px-4 py-10">
+        <section className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="mb-8 text-center">
+            <p className="text-xs font-semibold tracking-[0.24em] text-zinc-500">
+              RETURNOS
             </p>
-            <button
-              type="button"
-              onClick={() => {
-                setState("idle");
-                setMessage(null);
-              }}
-              className="text-sm font-medium text-zinc-900 underline-offset-4 hover:underline"
-            >
-              Intentar con otro correo
-            </button>
+            <h1 className="mt-3 text-2xl font-semibold text-zinc-900">
+              Iniciar sesion
+            </h1>
+            <p className="mt-2 text-sm text-zinc-600">
+              Accede a tu panel de gestion.
+            </p>
           </div>
-        ) : (
-          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-zinc-700"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="tu@empresa.com"
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                  if (state !== "idle") {
-                    setState("idle");
-                    setMessage(null);
-                  }
-                }}
-                disabled={state === "loading"}
-                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
-              />
-            </div>
 
-            {state === "error" && message ? (
-              <p
-                className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-                role="alert"
-              >
-                {message}
+          {state === "success" ? (
+            <div className="space-y-4 text-center">
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                <p className="text-sm font-medium text-green-700">
+                  Te enviamos un enlace a tu correo para iniciar sesion
+                </p>
+              </div>
+              <p className="text-sm text-zinc-600">
+                Revisa tu correo y haz clic en el enlace para acceder a tu
+                cuenta.
               </p>
-            ) : null}
+              <button
+                type="button"
+                onClick={() => {
+                  setState("idle");
+                  setMessage(null);
+                }}
+                className="text-sm font-medium text-zinc-900 underline-offset-4 hover:underline"
+              >
+                Intentar con otro correo
+              </button>
+            </div>
+          ) : (
+            <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-1.5 block text-sm font-medium text-zinc-700"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="tu@empresa.com"
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    if (state !== "idle") {
+                      setState("idle");
+                      setMessage(null);
+                    }
+                  }}
+                  disabled={state === "loading"}
+                  className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:bg-zinc-100"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={state === "loading" || retryAfterSeconds > 0}
-              className="mt-1 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
+              {state === "error" && message ? (
+                <p
+                  className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+                  role="alert"
+                >
+                  {message}
+                </p>
+              ) : null}
+
+              <button
+                type="submit"
+                disabled={state === "loading" || retryAfterSeconds > 0}
+                className="mt-1 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
+              >
+                {state === "loading"
+                  ? "Enviando..."
+                  : retryAfterSeconds > 0
+                    ? `Reintentar en ${retryAfterSeconds}s`
+                    : "Enviar enlace de acceso"}
+              </button>
+            </form>
+          )}
+
+          <p className="mt-6 text-center text-sm text-zinc-600">
+            No tienes cuenta?{" "}
+            <Link
+              href="/signup"
+              className="font-medium text-zinc-900 underline-offset-4 hover:underline"
             >
-              {state === "loading"
-                ? "Enviando..."
-                : retryAfterSeconds > 0
-                  ? `Reintentar en ${retryAfterSeconds}s`
-                  : "Enviar enlace de acceso"}
-            </button>
-          </form>
-        )}
+              Crear cuenta
+            </Link>
+          </p>
 
-        <p className="mt-6 text-center text-sm text-zinc-600">
-          No tienes cuenta?{" "}
-          <Link
-            href="/signup"
-            className="font-medium text-zinc-900 underline-offset-4 hover:underline"
-          >
-            Crear cuenta
-          </Link>
-        </p>
-      </section>
-    </main>
+          <p className="mt-3 text-center text-sm text-zinc-600">
+            <Link
+              href="/"
+              className="font-medium text-zinc-900 underline-offset-4 hover:underline"
+            >
+              Volver al inicio
+            </Link>
+          </p>
+        </section>
+      </main>
+    </>
   );
 }
