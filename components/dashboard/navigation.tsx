@@ -18,6 +18,7 @@ const navItems: NavItem[] = [
   { label: "Visitas", href: "/dashboard/visits", icon: "📍" },
   { label: "Recompensas", href: "/dashboard/rewards", icon: "🎁" },
   { label: "Campañas", href: "/dashboard/campaigns", icon: "📢" },
+  { label: "Prueba de Mensajes", href: "/dashboard/test-messages", icon: "📱" },
 ];
 
 export function DashboardNavigation() {

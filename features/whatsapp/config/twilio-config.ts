@@ -22,8 +22,12 @@ export function getTwilioConfig(): TwilioConfig {
   const enabled = parseBooleanFlag(process.env.TWILIO_ENABLED, true);
   const accountSid = process.env.TWILIO_ACCOUNT_SID?.trim() ?? "";
   const authToken = process.env.TWILIO_AUTH_TOKEN?.trim() ?? "";
-  const fromPhoneNumber =
-    process.env.TWILIO_WHATSAPP_PHONE_NUMBER?.trim() ?? "";
+  let fromPhoneNumber = process.env.TWILIO_WHATSAPP_PHONE_NUMBER?.trim() ?? "";
+
+  // Si el número viene con prefijo whatsapp:, lo removemos
+  if (fromPhoneNumber.startsWith("whatsapp:")) {
+    fromPhoneNumber = fromPhoneNumber.replace("whatsapp:", "");
+  }
 
   if (!enabled) {
     return {

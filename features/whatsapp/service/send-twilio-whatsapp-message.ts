@@ -6,6 +6,7 @@ import { getTwilioConfig } from "@/features/whatsapp/config/twilio-config";
 export interface SendTwilioWhatsAppMessageInput {
   to: string; // Teléfono destino (debe incluir +)
   text: string; // Mensaje a enviar
+  mediaUrl?: string; // URL de imagen, video o documento (opcional)
 }
 
 export interface TwilioSentMessage {
@@ -47,11 +48,22 @@ export async function sendTwilioWhatsAppMessage(
     const client = twilio(config.accountSid, config.authToken);
 
     // Enviar mensaje
-    const message = await client.messages.create({
-      from: `whatsapp:${config.fromPhoneNumber}`,
-      to: `whatsapp:${input.to}`,
-      body: input.text,
-    });
+    let message;
+
+    if (input.mediaUrl) {
+      message = await client.messages.create({
+        from: `whatsapp:${config.fromPhoneNumber}`,
+        to: `whatsapp:${input.to}`,
+        body: input.text,
+        mediaUrl: [input.mediaUrl],
+      } as Parameters<typeof client.messages.create>[0]);
+    } else {
+      message = await client.messages.create({
+        from: `whatsapp:${config.fromPhoneNumber}`,
+        to: `whatsapp:${input.to}`,
+        body: input.text,
+      });
+    }
 
     return {
       ok: true,

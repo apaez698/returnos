@@ -21,6 +21,7 @@ const mainNavItems: NavItem[] = [
 const managementNavItems: NavItem[] = [
   { label: "Visitas", href: "/dashboard/visits", icon: "📍" },
   { label: "Inactivos", href: "/dashboard/inactive-customers", icon: "⏳" },
+  { label: "Prueba de Mensajes", href: "/dashboard/test-messages", icon: "📱" },
   { label: "Equipo", href: "/dashboard/settings/team", icon: "🛠️" },
 ];
 
