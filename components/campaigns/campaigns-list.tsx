@@ -16,6 +16,30 @@ const statusStyle: Record<CampaignRecord["status"], string> = {
   sent: "bg-emerald-100 text-emerald-800",
 };
 
+function formatDate(iso: string | null): string {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString("es-MX", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function MessageCounters({ campaign }: { campaign: CampaignRecord }) {
+  if (campaign.total_messages === 0)
+    return <span className="text-slate-400">—</span>;
+  return (
+    <span className="tabular-nums text-slate-700">
+      {campaign.messages_sent}/{campaign.total_messages}
+      {campaign.messages_failed > 0 && (
+        <span className="ml-1 text-rose-600">
+          ({campaign.messages_failed} fallidos)
+        </span>
+      )}
+    </span>
+  );
+}
+
 export function CampaignsList({ campaigns }: CampaignsListProps) {
   if (campaigns.length === 0) {
     return (
@@ -49,6 +73,21 @@ export function CampaignsList({ campaigns }: CampaignsListProps) {
                 ? ` (${campaign.target_inactive_days}+ dias)`
                 : ""}
             </p>
+
+            <div className="flex gap-4 text-xs text-slate-500">
+              {campaign.scheduled_at && (
+                <span>Programada: {formatDate(campaign.scheduled_at)}</span>
+              )}
+              {campaign.sent_at && (
+                <span>Último envío: {formatDate(campaign.sent_at)}</span>
+              )}
+            </div>
+
+            {campaign.total_messages > 0 && (
+              <p className="text-xs text-slate-500">
+                Mensajes: <MessageCounters campaign={campaign} />
+              </p>
+            )}
           </article>
         ))}
       </div>
@@ -60,6 +99,8 @@ export function CampaignsList({ campaigns }: CampaignsListProps) {
               <th className="px-4 py-3 font-medium">Campana</th>
               <th className="px-4 py-3 font-medium">Tipo</th>
               <th className="px-4 py-3 font-medium">Audiencia</th>
+              <th className="px-4 py-3 font-medium">Mensajes</th>
+              <th className="px-4 py-3 font-medium">Programada</th>
               <th className="px-4 py-3 font-medium">Estado</th>
             </tr>
           </thead>
@@ -82,6 +123,17 @@ export function CampaignsList({ campaigns }: CampaignsListProps) {
                       ({campaign.target_inactive_days}+ dias)
                     </span>
                   ) : null}
+                </td>
+                <td className="px-4 py-3 text-sm">
+                  <MessageCounters campaign={campaign} />
+                </td>
+                <td className="px-4 py-3 text-slate-700">
+                  {formatDate(campaign.scheduled_at)}
+                  {campaign.sent_at && (
+                    <p className="text-xs text-slate-500">
+                      Último:&nbsp;{formatDate(campaign.sent_at)}
+                    </p>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <span

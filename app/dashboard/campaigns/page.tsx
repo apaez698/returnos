@@ -19,7 +19,7 @@ async function getCampaignsForCurrentBusiness(): Promise<CampaignRecord[]> {
   const { data, error } = await supabase
     .from("campaigns")
     .select(
-      "id, business_id, name, campaign_type, audience_type, message, target_inactive_days, status, created_at",
+      "id, business_id, name, campaign_type, audience_type, message, target_inactive_days, status, scheduled_at, sent_at, total_messages, messages_sent, messages_failed, created_at",
     )
     .eq("business_id", businessId)
     .order("created_at", { ascending: false });

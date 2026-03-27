@@ -30,6 +30,11 @@ interface MockCampaign {
   message: string;
   target_inactive_days: number | null;
   status: "draft" | "scheduled" | "sent";
+  scheduled_at: string | null;
+  sent_at: string | null;
+  total_messages: number;
+  messages_sent: number;
+  messages_failed: number;
   created_at: string;
 }
 
@@ -109,8 +114,8 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
 
   describe("when inactive customers exist", () => {
     beforeEach(() => {
-      // Ana (last visited 2026-02-20) is inactive for ~20 days (today is 2026-03-11)
-      // Luis (last visited 2026-03-09) is inactive for ~2 days
+      // Ana (last visited 2026-02-20) is inactive for ~35 days (today is 2026-03-27, threshold 14 days)
+      // Luis (last visited 2026-03-21) is active for ~6 days
       vi.mocked(getCustomersWithPointsForCurrentBusiness).mockResolvedValue([
         {
           id: "cust-1",
@@ -123,7 +128,7 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           id: "cust-2",
           name: "Luis",
           phone: "555-0002",
-          last_visit_at: "2026-03-09T10:00:00Z",
+          last_visit_at: "2026-03-21T10:00:00Z",
           points: 10,
         } as MockCustomer,
       ]);
@@ -190,20 +195,20 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
 
   describe("when no inactive customers exist", () => {
     beforeEach(() => {
-      // Both customers recently visited
+      // Both customers recently visited (within last 14 days relative to 2026-03-27)
       vi.mocked(getCustomersWithPointsForCurrentBusiness).mockResolvedValue([
         {
           id: "cust-1",
           name: "Ana",
           phone: "555-0001",
-          last_visit_at: "2026-03-10T10:00:00Z",
+          last_visit_at: "2026-03-20T10:00:00Z",
           points: 60,
         },
         {
           id: "cust-2",
           name: "Luis",
           phone: "555-0002",
-          last_visit_at: "2026-03-09T10:00:00Z",
+          last_visit_at: "2026-03-25T10:00:00Z",
           points: 10,
         } as MockCustomer,
       ]);
@@ -283,6 +288,11 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           message: "Vuelve esta semana",
           target_inactive_days: 14,
           status: "draft",
+          scheduled_at: null,
+          sent_at: null,
+          total_messages: 0,
+          messages_sent: 0,
+          messages_failed: 0,
           created_at: "2026-03-10T00:00:00Z",
         },
         {
@@ -294,6 +304,11 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           message: "Regresa y obtén 20% de descuento",
           target_inactive_days: 21,
           status: "scheduled",
+          scheduled_at: "2026-04-01T10:00:00Z",
+          sent_at: null,
+          total_messages: 0,
+          messages_sent: 0,
+          messages_failed: 0,
           created_at: "2026-03-08T00:00:00Z",
         },
       ];
@@ -322,6 +337,11 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           message: "Message 1",
           target_inactive_days: 14,
           status: "draft",
+          scheduled_at: null,
+          sent_at: null,
+          total_messages: 0,
+          messages_sent: 0,
+          messages_failed: 0,
           created_at: "2026-03-10T00:00:00Z",
         },
         {
@@ -333,6 +353,11 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           message: "Message 2",
           target_inactive_days: 14,
           status: "scheduled",
+          scheduled_at: "2026-04-01T10:00:00Z",
+          sent_at: null,
+          total_messages: 0,
+          messages_sent: 0,
+          messages_failed: 0,
           created_at: "2026-03-09T00:00:00Z",
         },
         {
@@ -344,6 +369,11 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           message: "Message 3",
           target_inactive_days: 14,
           status: "sent",
+          scheduled_at: "2026-03-07T10:00:00Z",
+          sent_at: "2026-03-08T15:00:00Z",
+          total_messages: 10,
+          messages_sent: 9,
+          messages_failed: 1,
           created_at: "2026-03-08T00:00:00Z",
         },
       ];
@@ -377,6 +407,11 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           message: "Test message",
           target_inactive_days: 14,
           status: "draft",
+          scheduled_at: null,
+          sent_at: null,
+          total_messages: 0,
+          messages_sent: 0,
+          messages_failed: 0,
           created_at: "2026-03-10T00:00:00Z",
         },
       ];
@@ -407,6 +442,11 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
           message: "MESSAGE 999 UNIQUE ONLY",
           target_inactive_days: 14,
           status: "draft",
+          scheduled_at: null,
+          sent_at: null,
+          total_messages: 0,
+          messages_sent: 0,
+          messages_failed: 0,
           created_at: "2026-03-10T00:00:00Z",
         },
       ];
@@ -420,6 +460,37 @@ describe("DashboardCampaignsPage (/dashboard/campaigns)", () => {
       // Message might appear in multiple places (suggestions/list), just check it exists
       const messages = screen.queryAllByText(/MESSAGE 999 UNIQUE ONLY/i);
       expect(messages.length).toBeGreaterThan(0);
+    });
+
+    it("displays message counters for campaigns with sent messages", async () => {
+      const mockCampaigns: MockCampaign[] = [
+        {
+          id: "camp-sent",
+          business_id: "biz-1",
+          name: "Campaña Enviada Con Contadores",
+          campaign_type: "reactivation",
+          audience_type: "inactive_customers",
+          message: "Vuelve pronto",
+          target_inactive_days: 14,
+          status: "sent",
+          scheduled_at: "2026-03-07T10:00:00Z",
+          sent_at: "2026-03-08T15:00:00Z",
+          total_messages: 10,
+          messages_sent: 8,
+          messages_failed: 2,
+          created_at: "2026-03-07T00:00:00Z",
+        },
+      ];
+
+      vi.mocked(createServerClient).mockReturnValue(
+        createSupabaseMock(mockCampaigns) as never,
+      );
+
+      await renderPage();
+
+      // Counters: "8/10" and failed "2 fallidos"
+      expect(screen.getAllByText(/8\/10/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/2 fallidos/i).length).toBeGreaterThan(0);
     });
   });
 
